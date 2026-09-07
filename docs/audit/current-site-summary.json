@@ -1,0 +1,154 @@
+{
+  "auditedAt": "2026-09-07T10:53:47.333Z",
+  "origin": "https://www.corail-plongee.com",
+  "sitemapCounts": {
+    "pages": 57,
+    "posts": 90,
+    "products": 31,
+    "tags": 1
+  },
+  "totalUrls": 179,
+  "successful": 176,
+  "errors": [
+    {
+      "url": "https://www.corail-plongee.com/en/en-404/",
+      "status": 404,
+      "error": null
+    },
+    {
+      "url": "https://www.corail-plongee.com/sample-page/",
+      "status": 404,
+      "error": null
+    },
+    {
+      "url": "https://www.corail-plongee.com/en/boutique/appointment/",
+      "status": 404,
+      "error": null
+    }
+  ],
+  "redirected": [
+    {
+      "from": "https://www.corail-plongee.com/commander/",
+      "to": "https://www.corail-plongee.com/panier/"
+    },
+    {
+      "from": "https://www.corail-plongee.com/sample-page/",
+      "to": "https://www.corail-plongee.com/boutique/"
+    },
+    {
+      "from": "https://www.corail-plongee.com/en/boutique/appointment/",
+      "to": "https://www.corail-plongee.com/en/shop/"
+    },
+    {
+      "from": "https://www.corail-plongee.com/tag/evenement-a-venir/",
+      "to": "https://www.corail-plongee.com/evenements/"
+    }
+  ],
+  "missingTitle": [],
+  "missingDescription": [
+    "https://www.corail-plongee.com/en/boutique/cetacean-excursions/",
+    "https://www.corail-plongee.com/en/boutique/package-6-dives-level-1-or-open-water-diver/",
+    "https://www.corail-plongee.com/en/boutique/initiation-40-min-2-persons-minimum/",
+    "https://www.corail-plongee.com/en/boutique/stress-and-rescue-specialty-react-right-kit-included-5-dives-lessons/"
+  ],
+  "missingH1": [
+    "https://www.corail-plongee.com/mon-compte/",
+    "https://www.corail-plongee.com/commander/",
+    "https://www.corail-plongee.com/panier/",
+    "https://www.corail-plongee.com/en/cart/",
+    "https://www.corail-plongee.com/en/continual-courses/",
+    "https://www.corail-plongee.com/en/french-to-american-american-to-french/",
+    "https://www.corail-plongee.com/en/my-account/",
+    "https://www.corail-plongee.com/en/ssii-adv-training-course-to-ffessm-pad-40/",
+    "https://www.corail-plongee.com/en/ssii-training-course-to-ffessm-level-3/",
+    "https://www.corail-plongee.com/en/ssii-training-course-to-ffessm-level-2/",
+    "https://www.corail-plongee.com/en/i-discover-initiation/"
+  ],
+  "multipleH1": [
+    {
+      "url": "https://www.corail-plongee.com/blog/",
+      "h1": [
+        "Blog sur la Plongée à la Réunion",
+        "Blog"
+      ]
+    },
+    {
+      "url": "https://www.corail-plongee.com/en/blog-about-diving-in-reunion-island/",
+      "h1": [
+        "Blog about Diving in Reunion Island",
+        "Blog"
+      ]
+    },
+    {
+      "url": "https://www.corail-plongee.com/en/our-blog/",
+      "h1": [
+        "Blog about Diving in Reunion Island",
+        "Blog"
+      ]
+    },
+    {
+      "url": "https://www.corail-plongee.com/en/privacy-policies/",
+      "h1": [
+        "Privacy Policies",
+        "Privacy Policia"
+      ]
+    },
+    {
+      "url": "https://www.corail-plongee.com/evenements/",
+      "h1": [
+        "Évènements",
+        "&Eacute;v&egrave;nements"
+      ]
+    },
+    {
+      "url": "https://www.corail-plongee.com/je-decouvre-bapteme/",
+      "h1": [
+        "Je découvre – Baptême",
+        "Je d&eacute;couvre - Bapt&ecirc;me"
+      ]
+    },
+    {
+      "url": "https://www.corail-plongee.com/en/i-discover-baptism/",
+      "h1": [
+        "I discover – Baptism",
+        "I discover - Baptism"
+      ]
+    },
+    {
+      "url": "https://www.corail-plongee.com/conditions-generales-de-vente/",
+      "h1": [
+        "Extrait Conditions générales de vente",
+        "Extrait des conditions générales de vente"
+      ]
+    },
+    {
+      "url": "https://www.corail-plongee.com/tag/evenement-a-venir/",
+      "h1": [
+        "Évènements",
+        "&Eacute;v&egrave;nements"
+      ]
+    }
+  ],
+  "allZuuritLinks": [
+    "https://public.zuurit.com/corailplongee/login?redirect=billing",
+    "https://public.zuurit.com/corailplongee/agenda",
+    "https://public.zuurit.com/corailplongee/booking",
+    "https://public.zuurit.com/corailplongee/shop"
+  ],
+  "allExternalLinks": [
+    "https://public.zuurit.com/corailplongee/login?redirect=billing",
+    "https://public.zuurit.com/corailplongee/agenda",
+    "https://public.zuurit.com/corailplongee/booking",
+    "https://public.zuurit.com/corailplongee/shop",
+    "https://web.facebook.com/corailplongeereunion/?_rdc=1&_rdr",
+    "https://www.instagram.com/corail.plongee/",
+    "https://digidatale.com/",
+    "https://capstonai.com/",
+    "https://my.divessi.com/login",
+    "https://www.instagram.com/17841408623710676/",
+    "https://www.google.com/search?q=https://www.corail-plongee.com/plonger-reunion/",
+    "https://www.google.com/search?q=https://www.corail-plongee.com/je-plonge-autonome/",
+    "https://www.google.com/search?q=https://www.corail-plongee.com/commander/",
+    "http://onclick=history.go(-1);/"
+  ]
+}

@@ -7,8 +7,9 @@ Cette V1 doit rester sur une URL Vercel de préproduction. Ne pas connecter `cor
 ## État des connexions au 7 septembre 2026
 
 - GitHub cible : `corailplongee67/Sitecorailplongee`.
-- Supabase cible : projet `Sitewebcorailoplongee` (`cdlbxuxwkrqukbjeedok`).
-- La session Vercel locale est authentifiée comme `digitark428` et ne voit que l’espace `digitark428's projects`. Elle ne correspond donc pas encore au compte propriétaire Corail Plongée.
+- Supabase cible : projet `Sitewebcorailoplongee` (`cdlbxuxwkrqukbjeedok`), migration initiale appliquée avec succès.
+- La CLI Vercel locale est authentifiée comme `digitark428`, mais le navigateur propriétaire est connecté à l’équipe `corailplongee67-1157's projects`. Le projet doit être géré dans cette équipe uniquement.
+- Projet Vercel créé : `sitecorailplongee`. Le préréglage initial incorrect « Other » a été remplacé par « Next.js » avant le second déploiement.
 
 Aucun projet Corail Plongée ne doit être créé dans cet espace personnel par erreur.
 

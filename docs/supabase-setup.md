@@ -20,14 +20,14 @@ La migration `supabase/migrations/20260907112457_initial_content_admin.sql` cré
 
 ## Application de la migration
 
-Après connexion du bon compte Supabase :
+La migration initiale a été appliquée avec succès au projet cible depuis l’éditeur SQL le 7 septembre 2026. Lors de la première liaison de la CLI, marquer cette version comme déjà appliquée avant de pousser les migrations suivantes :
 
 ```bash
 npx supabase link --project-ref cdlbxuxwkrqukbjeedok
-npx supabase db push
+npx supabase migration repair --status applied 20260907112457
 ```
 
-Vérifier ensuite dans le tableau de bord que les trois tables et le bucket existent.
+Vérifier ensuite dans le tableau de bord que les trois tables et le bucket existent. Les futures migrations pourront être appliquées normalement avec `npx supabase db push`.
 
 ## Administrateur unique
 

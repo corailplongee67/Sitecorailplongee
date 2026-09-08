@@ -13,6 +13,8 @@ const redirectPaths = new Set([
   "/sample-page/",
   "/en/boutique/appointment/",
   "/tag/evenement-a-venir/",
+  "/nos-tarifs/",
+  "/en/rates/",
 ]);
 
 function pathFor(slug: string[]) {

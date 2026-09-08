@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Menu, UserRound, X } from "lucide-react";
+import { LockKeyhole, Menu, UserRound, X } from "lucide-react";
 import { useState } from "react";
 import { nav, type Locale } from "@/lib/site-data";
 
@@ -21,6 +21,9 @@ export function Header({
   return (
     <header className="site-header">
       <div className="header-inner shell">
+        <Link className="admin-lock-link" href="/admin/" aria-label={isFr ? "Accéder à l’administration" : "Open administration"} title={isFr ? "Administration" : "Administration"}>
+          <LockKeyhole size={16} />
+        </Link>
         <Link className="brand" href={isFr ? "/" : "/en/home/"}>
           <Image
             src="/images/brand/logo.png"

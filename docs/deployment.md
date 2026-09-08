@@ -4,10 +4,10 @@
 
 Cette V1 doit rester sur une URL Vercel de préproduction. Ne pas connecter `corail-plongee.com`, ne pas modifier les DNS OVH et ne pas désactiver le WordPress actuel.
 
-## État des connexions au 7 septembre 2026
+## État des connexions au 8 septembre 2026
 
 - GitHub cible : `corailplongee67/Sitecorailplongee`.
-- Supabase cible : projet `Sitewebcorailoplongee` (`cdlbxuxwkrqukbjeedok`), migration initiale appliquée avec succès.
+- Supabase cible : projet `Sitewebcorailoplongee` (`cdlbxuxwkrqukbjeedok`), migrations initiale et catalogue tarifaire appliquées avec succès. Les 50 tarifs sont présents dans la base.
 - La CLI Vercel locale est authentifiée comme `digitark428`, mais le navigateur propriétaire est connecté à l’équipe `corailplongee67-1157's projects`. Le projet doit être géré dans cette équipe uniquement.
 - Projet Vercel créé : `sitecorailplongee`. Le préréglage initial incorrect « Other » a été remplacé par « Next.js » avant le second déploiement.
 - Préproduction publique : `https://sitecorailplongee.vercel.app`.
@@ -32,7 +32,7 @@ NEXT_PUBLIC_ALLOW_INDEXING=false
 5. Déployer et conserver l’URL `*.vercel.app` pour les validations client.
 6. Vérifier `/`, `/en/home/`, `/nos-tarifs/`, un article historique, `/admin/`, `/robots.txt` et `/sitemap.xml`.
 
-Les pages `/`, `/en/home/`, `/nos-tarifs/`, `/decouverte/` et `/admin/` ont été contrôlées avec succès sur l’URL publique après la promotion. La connexion de l’administration à Supabase reste conditionnée à l’ajout des variables publiques ci-dessus dans Vercel.
+Les pages `/`, `/en/home/`, `/decouverte/` et `/admin/` ont été contrôlées avec succès sur l’URL publique après la promotion initiale. La nouvelle page `/nos-tarifs/`, sa version anglaise et l’éditeur complet des tarifs doivent être contrôlés après le prochain déploiement. La connexion de l’administration à Supabase reste conditionnée à l’ajout des variables publiques ci-dessus dans Vercel.
 
 ## GitHub
 

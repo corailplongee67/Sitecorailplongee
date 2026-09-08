@@ -17,6 +17,14 @@ function slugify(input: string) {
     .replace(/^-|-$/g, "");
 }
 
+function revalidatePrices() {
+  revalidatePath("/");
+  revalidatePath("/en/home/");
+  revalidatePath("/nos-tarifs/");
+  revalidatePath("/en/rates/");
+  revalidatePath("/admin/");
+}
+
 async function requireAdmin() {
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
@@ -100,20 +108,74 @@ export async function deleteEvent(formData: FormData) {
 export async function savePrice(formData: FormData) {
   const supabase = await requireAdmin();
   const id = value(formData, "id");
+  const labelFr = value(formData, "label_fr");
+  const sectionCode = value(formData, "section_code");
+  const requestedPriceColumn = value(formData, "price_column");
+  const priceColumn: "standard" | "guided" | "autonomous" = ["standard", "guided", "autonomous"].includes(requestedPriceColumn)
+    ? requestedPriceColumn as "standard" | "guided" | "autonomous"
+    : "standard";
   const payload = {
+    content_key: value(formData, "content_key") || `${sectionCode}-${slugify(labelFr)}-${crypto.randomUUID().slice(0, 8)}`,
+    section_code: sectionCode,
     category: value(formData, "category"),
-    label_fr: value(formData, "label_fr"),
+    category_en: value(formData, "category_en"),
+    subcategory_fr: value(formData, "subcategory_fr"),
+    subcategory_en: value(formData, "subcategory_en"),
+    group_intro_fr: value(formData, "group_intro_fr"),
+    group_intro_en: value(formData, "group_intro_en"),
+    label_fr: labelFr,
     label_en: value(formData, "label_en"),
+    description_fr: value(formData, "description_fr") || null,
+    description_en: value(formData, "description_en") || null,
     amount_cents: Math.max(0, Math.round(Number(value(formData, "amount_euros")) * 100)),
+    prefix_fr: value(formData, "prefix_fr") || null,
+    prefix_en: value(formData, "prefix_en") || null,
+    suffix_fr: value(formData, "suffix_fr") || null,
+    suffix_en: value(formData, "suffix_en") || null,
+    price_column: priceColumn,
+    comparison_key: value(formData, "comparison_key") || null,
     booking_link_key: value(formData, "booking_link_key") || "main_booking",
     display_order: Number(value(formData, "display_order")) || 0,
     active: formData.get("active") === "on",
   };
-  if (id) await supabase.from("prices").update(payload).eq("id", id);
-  else await supabase.from("prices").insert(payload);
-  revalidatePath("/");
-  revalidatePath("/en/home/");
-  revalidatePath("/admin/");
+  const { error } = id
+    ? await supabase.from("prices").update(payload).eq("id", id)
+    : await supabase.from("prices").insert(payload);
+  if (error) throw error;
+  revalidatePrices();
+}
+
+export async function deletePrice(formData: FormData) {
+  const supabase = await requireAdmin();
+  const { error } = await supabase.from("prices").delete().eq("id", value(formData, "id"));
+  if (error) throw error;
+  revalidatePrices();
+}
+
+export async function savePriceSection(formData: FormData) {
+  const supabase = await requireAdmin();
+  const id = value(formData, "id");
+  const layout: "list" | "comparison" = value(formData, "layout") === "comparison" ? "comparison" : "list";
+  const bookingLinkKey = value(formData, "booking_link_key");
+  const payload = {
+    title_fr: value(formData, "title_fr"),
+    title_en: value(formData, "title_en"),
+    intro_fr: value(formData, "intro_fr"),
+    intro_en: value(formData, "intro_en"),
+    note_fr: value(formData, "note_fr"),
+    note_en: value(formData, "note_en"),
+    guided_label_fr: value(formData, "guided_label_fr"),
+    guided_label_en: value(formData, "guided_label_en"),
+    autonomous_label_fr: value(formData, "autonomous_label_fr"),
+    autonomous_label_en: value(formData, "autonomous_label_en"),
+    booking_link_key: bookingLinkKey === "__none" ? null : bookingLinkKey,
+    display_order: Number(value(formData, "display_order")) || 0,
+    layout,
+    active: formData.get("active") === "on",
+  };
+  const { error } = await supabase.from("price_sections").update(payload).eq("id", id);
+  if (error) throw error;
+  revalidatePrices();
 }
 
 export async function saveBookingLink(formData: FormData) {

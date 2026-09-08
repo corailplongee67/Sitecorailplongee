@@ -3,7 +3,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { CalendarDays, ExternalLink, Link2, LogOut, Plus, Save, Tags, Trash2 } from "lucide-react";
 import { createClient, hasSupabaseEnv } from "@/lib/supabase/server";
-import { deleteEvent, saveBookingLink, saveEvent, savePrice, signOut } from "./actions";
+import type { PublicCatalogPrice, PublicPriceSection } from "@/lib/pricing-data";
+import { deleteEvent, deletePrice, saveBookingLink, saveEvent, savePrice, savePriceSection, signOut } from "./actions";
 
 export const metadata = { title: "Administration", robots: { index: false, follow: false } };
 
@@ -65,12 +66,14 @@ export default async function AdminPage() {
     return <main className="admin-setup shell"><h1>Accès non autorisé</h1><p>Ce compte ne possède pas le rôle administrateur.</p><form action={signOut}><button className="button button-navy">Se déconnecter</button></form></main>;
   }
 
-  const [{ data: events }, { data: prices }, { data: bookingLinks }] = await Promise.all([
+  const [{ data: events }, { data: priceSections }, { data: prices }, { data: bookingLinks }] = await Promise.all([
     supabase.from("events").select("*").order("starts_at", { ascending: false }),
+    supabase.from("price_sections").select("*").order("display_order"),
     supabase.from("prices").select("*").order("display_order"),
     supabase.from("booking_links").select("*").order("key"),
   ]);
   const bookingKeys = (bookingLinks ?? []).map((link) => link.key);
+  const sectionOptions = (priceSections ?? []).map((section) => ({ code: section.code, title: section.title_fr }));
   const storageBase = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/event-images/`;
 
   return (
@@ -100,10 +103,22 @@ export default async function AdminPage() {
         </section>
 
         <section id="prices" className="admin-section">
-          <div className="admin-section-title"><div><Tags /><div><h2>Tarifs</h2><p>Montants affichés sur le site.</p></div></div><span>{prices?.length ?? 0}</span></div>
-          <details className="admin-editor new-editor"><summary><Plus /> Ajouter un tarif</summary><form action={savePrice}><PriceFields bookingKeys={bookingKeys} /></form></details>
+          <div className="admin-section-title"><div><Tags /><div><h2>Tarifs</h2><p>Toutes les rubriques, prestations, précisions et montants de la page Tarifs.</p></div></div><span>{prices?.length ?? 0}</span></div>
+
+          <div className="admin-subsection-heading"><h3>Rubriques de la page</h3><p>Modifiez ici les titres, textes d’introduction, notes et boutons de chaque bloc.</p></div>
+          <div className="admin-items admin-section-editors">
+            {(priceSections ?? []).map((section) => (
+              <details className="admin-editor compact-editor" key={section.id}>
+                <summary><div><strong>{section.title_fr}</strong><small>{section.code} · ordre {section.display_order}</small></div><span className={section.active ? "status-live" : "status-draft"}>{section.active ? "Visible" : "Masquée"}</span></summary>
+                <form action={savePriceSection}><PriceSectionFields section={section as PublicPriceSection} bookingKeys={bookingKeys} /></form>
+              </details>
+            ))}
+          </div>
+
+          <div className="admin-subsection-heading admin-price-heading"><h3>Prestations et montants</h3><p>Chaque ligne est entièrement modifiable, en français et en anglais.</p></div>
+          <details className="admin-editor new-editor"><summary><Plus /> Ajouter un tarif</summary><form action={savePrice}><PriceFields bookingKeys={bookingKeys} sectionOptions={sectionOptions} /></form></details>
           <div className="admin-items">
-            {(prices ?? []).map((price) => <details className="admin-editor compact-editor" key={price.id}><summary><div><strong>{price.label_fr}</strong><small>{price.category}</small></div><b>{(price.amount_cents / 100).toLocaleString("fr-FR")} €</b></summary><form action={savePrice}><PriceFields price={price} bookingKeys={bookingKeys} /></form></details>)}
+            {(prices ?? []).map((price) => <details className="admin-editor compact-editor" key={price.id}><summary><div><strong>{price.label_fr}</strong><small>{price.category}{price.subcategory_fr ? ` · ${price.subcategory_fr}` : ""}</small></div><b>{price.prefix_fr}{(price.amount_cents / 100).toLocaleString("fr-FR")} €{price.suffix_fr}</b></summary><form action={savePrice}><PriceFields price={price as PublicCatalogPrice} bookingKeys={bookingKeys} sectionOptions={sectionOptions} /></form><form className="delete-form" action={deletePrice}><input type="hidden" name="id" value={price.id} /><button type="submit"><Trash2 /> Supprimer ce tarif</button></form></details>)}
           </div>
         </section>
 
@@ -116,9 +131,11 @@ export default async function AdminPage() {
   );
 }
 
-function PriceFields({ price, bookingKeys }: { price?: {
-  id: string; category: string; label_fr: string; label_en: string; amount_cents: number;
-  booking_link_key: string; display_order: number; active: boolean;
-}; bookingKeys: string[] }) {
-  return <><input type="hidden" name="id" value={price?.id ?? ""} /><div className="field-grid field-grid-3"><label>Catégorie<input name="category" defaultValue={price?.category} required /></label><label>Libellé français<input name="label_fr" defaultValue={price?.label_fr} required /></label><label>Libellé anglais<input name="label_en" defaultValue={price?.label_en} required /></label><label>Prix en euros<input type="number" step="0.01" min="0" name="amount_euros" defaultValue={price ? price.amount_cents / 100 : ""} required /></label><label>Ordre<input type="number" name="display_order" defaultValue={price?.display_order ?? 0} /></label><label>Lien<select name="booking_link_key" defaultValue={price?.booking_link_key ?? "main_booking"}>{bookingKeys.map((key) => <option key={key}>{key}</option>)}</select></label></div><label className="check-field"><input type="checkbox" name="active" defaultChecked={price?.active ?? true} /> Visible sur le site</label><button className="button button-navy" type="submit"><Save size={16} /> Enregistrer</button></>;
+function PriceSectionFields({ section, bookingKeys }: { section: PublicPriceSection; bookingKeys: string[] }) {
+  return <><input type="hidden" name="id" value={section.id} /><input type="hidden" name="layout" value={section.layout} /><div className="field-grid"><label>Titre français<input name="title_fr" defaultValue={section.title_fr} required /></label><label>Titre anglais<input name="title_en" defaultValue={section.title_en} required /></label><label>Introduction française<textarea name="intro_fr" defaultValue={section.intro_fr} rows={3} /></label><label>Introduction anglaise<textarea name="intro_en" defaultValue={section.intro_en} rows={3} /></label><label>Note française<textarea name="note_fr" defaultValue={section.note_fr} rows={3} /></label><label>Note anglaise<textarea name="note_en" defaultValue={section.note_en} rows={3} /></label></div>{section.layout === "comparison" ? <div className="field-grid"><label>Colonne encadrée FR<input name="guided_label_fr" defaultValue={section.guided_label_fr} /></label><label>Guided column EN<input name="guided_label_en" defaultValue={section.guided_label_en} /></label><label>Colonne autonome FR<input name="autonomous_label_fr" defaultValue={section.autonomous_label_fr} /></label><label>Autonomous column EN<input name="autonomous_label_en" defaultValue={section.autonomous_label_en} /></label></div> : <><input type="hidden" name="guided_label_fr" value={section.guided_label_fr} /><input type="hidden" name="guided_label_en" value={section.guided_label_en} /><input type="hidden" name="autonomous_label_fr" value={section.autonomous_label_fr} /><input type="hidden" name="autonomous_label_en" value={section.autonomous_label_en} /></>}<div className="field-grid field-grid-3"><label>Ordre<input type="number" name="display_order" defaultValue={section.display_order} /></label><label>Bouton de réservation<select name="booking_link_key" defaultValue={section.booking_link_key ?? "__none"}><option value="__none">Aucun bouton</option>{bookingKeys.map((key) => <option key={key}>{key}</option>)}</select></label><label className="check-field"><input type="checkbox" name="active" defaultChecked={section.active} /> Rubrique visible</label></div><button className="button button-navy" type="submit"><Save size={16} /> Enregistrer la rubrique</button></>;
+}
+
+function PriceFields({ price, bookingKeys, sectionOptions }: { price?: PublicCatalogPrice; bookingKeys: string[]; sectionOptions: Array<{ code: string; title: string }> }) {
+  const selectedSection = sectionOptions.find((section) => section.code === price?.section_code) ?? sectionOptions[0];
+  return <><input type="hidden" name="id" value={price?.id ?? ""} /><input type="hidden" name="content_key" value={price?.content_key ?? ""} /><div className="field-grid field-grid-3"><label>Rubrique<select name="section_code" defaultValue={price?.section_code ?? selectedSection?.code}>{sectionOptions.map((section) => <option value={section.code} key={section.code}>{section.title}</option>)}</select></label><label>Nom de rubrique FR<input name="category" defaultValue={price?.category ?? selectedSection?.title} required /></label><label>Nom de rubrique EN<input name="category_en" defaultValue={price?.category_en ?? ""} required /></label><label>Sous-rubrique française<input name="subcategory_fr" defaultValue={price?.subcategory_fr} placeholder="Facultatif" /></label><label>Sous-rubrique anglaise<input name="subcategory_en" defaultValue={price?.subcategory_en} placeholder="Optional" /></label><label>Ordre<input type="number" name="display_order" defaultValue={price?.display_order ?? 0} /></label></div><div className="field-grid"><label>Texte d’introduction du groupe FR<input name="group_intro_fr" defaultValue={price?.group_intro_fr} placeholder="Affiché une fois sous la sous-rubrique" /></label><label>Group introduction EN<input name="group_intro_en" defaultValue={price?.group_intro_en} /></label><label>Prestation française<input name="label_fr" defaultValue={price?.label_fr} required /></label><label>Prestation anglaise<input name="label_en" defaultValue={price?.label_en} required /></label><label>Précision française<textarea name="description_fr" defaultValue={price?.description_fr ?? ""} rows={3} /></label><label>Précision anglaise<textarea name="description_en" defaultValue={price?.description_en ?? ""} rows={3} /></label></div><div className="field-grid field-grid-3"><label>Prix en euros<input type="number" step="0.01" min="0" name="amount_euros" defaultValue={price ? price.amount_cents / 100 : ""} required /></label><label>Préfixe FR<input name="prefix_fr" defaultValue={price?.prefix_fr ?? ""} placeholder="Ex. +" /></label><label>Préfixe EN<input name="prefix_en" defaultValue={price?.prefix_en ?? ""} placeholder="Ex. +" /></label><label>Suffixe FR<input name="suffix_fr" defaultValue={price?.suffix_fr ?? ""} placeholder="Ex. / pers." /></label><label>Suffixe EN<input name="suffix_en" defaultValue={price?.suffix_en ?? ""} placeholder="Ex. / person" /></label><label>Lien<select name="booking_link_key" defaultValue={price?.booking_link_key ?? "main_booking"}>{bookingKeys.map((key) => <option key={key}>{key}</option>)}</select></label><label>Colonne<select name="price_column" defaultValue={price?.price_column ?? "standard"}><option value="standard">Liste simple</option><option value="guided">Exploration encadrée</option><option value="autonomous">Exploration autonome</option></select></label><label>Clé de comparaison<input name="comparison_key" defaultValue={price?.comparison_key ?? ""} placeholder="Ex. 4 pour le forfait 4 plongées" /></label><label className="check-field"><input type="checkbox" name="active" defaultChecked={price?.active ?? true} /> Visible sur le site</label></div><button className="button button-navy" type="submit"><Save size={16} /> Enregistrer</button></>;
 }

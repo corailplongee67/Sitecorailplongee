@@ -1,4 +1,10 @@
 import { fallbackBookingLinks, fallbackPrices, type BookingKey } from "./site-data";
+import {
+  fallbackPriceCatalog,
+  fallbackPriceSections,
+  type PublicCatalogPrice,
+  type PublicPriceSection,
+} from "./pricing-data";
 import { createClient, hasSupabaseEnv } from "./supabase/server";
 
 export type PublicEvent = {
@@ -60,6 +66,30 @@ export async function getFeaturedPrices(): Promise<PublicPrice[]> {
     .limit(8);
 
   return data ?? [];
+}
+
+export async function getPriceCatalog(): Promise<{
+  sections: PublicPriceSection[];
+  prices: PublicCatalogPrice[];
+}> {
+  if (!hasSupabaseEnv()) {
+    return { sections: fallbackPriceSections, prices: fallbackPriceCatalog };
+  }
+
+  const supabase = await createClient();
+  const [sectionResult, priceResult] = await Promise.all([
+    supabase.from("price_sections").select("*").eq("active", true).order("display_order"),
+    supabase.from("prices").select("*").eq("active", true).order("display_order"),
+  ]);
+
+  if (sectionResult.error || priceResult.error || !sectionResult.data?.length || !priceResult.data?.length) {
+    return { sections: fallbackPriceSections, prices: fallbackPriceCatalog };
+  }
+
+  return {
+    sections: sectionResult.data as PublicPriceSection[],
+    prices: priceResult.data as PublicCatalogPrice[],
+  };
 }
 
 export async function getUpcomingEvents(): Promise<PublicEvent[]> {

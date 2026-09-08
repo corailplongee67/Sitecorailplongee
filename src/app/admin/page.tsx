@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { CalendarDays, ExternalLink, Link2, LogOut, Plus, Save, Tags, Trash2 } from "lucide-react";
 import { createClient, hasSupabaseEnv } from "@/lib/supabase/server";
 import type { PublicCatalogPrice, PublicPriceSection } from "@/lib/pricing-data";
-import { deleteEvent, deletePrice, saveBookingLink, saveEvent, savePrice, savePriceSection, signOut } from "./actions";
+import { deleteEvent, deletePrice, importLegacyEvents, saveBookingLink, saveEvent, savePrice, savePriceSection, signOut } from "./actions";
 
 export const metadata = { title: "Administration", robots: { index: false, follow: false } };
 
@@ -14,8 +14,10 @@ function dateTimeInput(value: string | null) {
 
 function EventFields({ event, bookingKeys }: { event?: {
   id: string; slug_fr: string; slug_en: string | null; title_fr: string; title_en: string;
-  description_fr: string; description_en: string; starts_at: string; ends_at: string | null;
-  image_paths: string[]; booking_link_key: string; published: boolean;
+  excerpt_fr: string; excerpt_en: string; description_fr: string; description_en: string;
+  location_fr: string; location_en: string; starts_at: string; ends_at: string | null;
+  image_paths: string[]; cover_image_url: string | null; booking_link_key: string;
+  title_color: string; text_color: string; card_color_start: string; card_color_end: string; published: boolean;
 }; bookingKeys: string[] }) {
   return (
     <>
@@ -28,17 +30,29 @@ function EventFields({ event, bookingKeys }: { event?: {
         <label>Slug anglais<input name="slug_en" defaultValue={event?.slug_en ?? ""} placeholder="created automatically" /></label>
       </div>
       <div className="field-grid">
+        <label>Résumé français<textarea name="excerpt_fr" defaultValue={event?.excerpt_fr} rows={3} placeholder="Texte court visible sur la carte" /></label>
+        <label>Résumé anglais<textarea name="excerpt_en" defaultValue={event?.excerpt_en} rows={3} placeholder="Short text shown on the card" /></label>
         <label>Description française<textarea name="description_fr" defaultValue={event?.description_fr} rows={4} /></label>
         <label>Description anglaise<textarea name="description_en" defaultValue={event?.description_en} rows={4} /></label>
       </div>
       <div className="field-grid field-grid-3">
+        <label>Lieu en français<input name="location_fr" defaultValue={event?.location_fr ?? "Saint-Gilles-les-Bains"} /></label>
+        <label>Lieu en anglais<input name="location_en" defaultValue={event?.location_en ?? "Saint-Gilles-les-Bains"} /></label>
         <label>Début<input type="datetime-local" name="starts_at" defaultValue={dateTimeInput(event?.starts_at ?? null)} required /></label>
         <label>Fin (facultatif)<input type="datetime-local" name="ends_at" defaultValue={dateTimeInput(event?.ends_at ?? null)} /></label>
         <label>Lien de réservation<select name="booking_link_key" defaultValue={event?.booking_link_key ?? "agenda"}>{bookingKeys.map((key) => <option key={key}>{key}</option>)}</select></label>
       </div>
       <div className="field-grid">
         <label>Photos (JPG, PNG ou WebP, 8 Mo max)<input type="file" name="images" accept="image/jpeg,image/png,image/webp" multiple /></label>
+        <label>Adresse d’une photo existante<input type="url" name="cover_image_url" defaultValue={event?.cover_image_url ?? ""} placeholder="https://…" /></label>
+        {event?.image_paths.length ? <label className="check-field"><input type="checkbox" name="replace_images" /> Remplacer toutes les photos envoyées</label> : null}
         <label className="check-field"><input type="checkbox" name="published" defaultChecked={event?.published ?? false} /> Visible sur le site</label>
+      </div>
+      <div className="event-color-fields">
+        <label><span>Couleur du titre</span><input type="color" name="title_color" defaultValue={event?.title_color ?? "#ffb000"} /></label>
+        <label><span>Couleur du texte</span><input type="color" name="text_color" defaultValue={event?.text_color ?? "#ffffff"} /></label>
+        <label><span>Dégradé · début</span><input type="color" name="card_color_start" defaultValue={event?.card_color_start ?? "#052b43"} /></label>
+        <label><span>Dégradé · fin</span><input type="color" name="card_color_end" defaultValue={event?.card_color_end ?? "#0b6078"} /></label>
       </div>
       <p className="field-help">Les horaires sont saisis selon le fuseau de La Réunion.</p>
       <button className="button button-navy" type="submit"><Save size={16} /> Enregistrer</button>
@@ -89,12 +103,13 @@ export default async function AdminPage() {
 
         <section id="events" className="admin-section">
           <div className="admin-section-title"><div><CalendarDays /><div><h2>Évènements</h2><p>Programme bilingue et photos des sorties.</p></div></div><span>{events?.length ?? 0}</span></div>
+          <form className="admin-import-form" action={importLegacyEvents}><button className="button button-outline-admin" type="submit"><CalendarDays /> Importer ou actualiser les archives du site actuel</button><small>Les évènements déjà modifiés dans l’administration conserveront leur identité, les archives manquantes seront ajoutées.</small></form>
           <details className="admin-editor new-editor"><summary><Plus /> Ajouter un évènement</summary><form action={saveEvent}><EventFields bookingKeys={bookingKeys} /></form></details>
           <div className="admin-items">
             {(events ?? []).map((event) => (
               <details className="admin-editor" key={event.id}>
                 <summary><div><strong>{event.title_fr}</strong><small>{new Intl.DateTimeFormat("fr-FR", { dateStyle: "medium", timeStyle: "short", timeZone: "Indian/Reunion" }).format(new Date(event.starts_at))}</small></div><span className={event.published ? "status-live" : "status-draft"}>{event.published ? "Publié" : "Brouillon"}</span></summary>
-                {event.image_paths.length ? <div className="admin-thumbnails">{event.image_paths.map((path) => <Image key={path} src={`${storageBase}${path}`} alt="" width={120} height={80} />)}</div> : null}
+                {event.image_paths.length || event.cover_image_url ? <div className="admin-thumbnails">{event.image_paths.map((path) => <Image key={path} src={`${storageBase}${path}`} alt="" width={120} height={80} />)}{!event.image_paths.length && event.cover_image_url ? <Image src={event.cover_image_url} alt="" width={120} height={80} /> : null}</div> : null}
                 <form action={saveEvent}><EventFields event={event} bookingKeys={bookingKeys} /></form>
                 <form className="delete-form" action={deleteEvent}><input type="hidden" name="id" value={event.id} /><input type="hidden" name="image_paths" value={JSON.stringify(event.image_paths)} /><button type="submit"><Trash2 /> Supprimer l’évènement</button></form>
               </details>

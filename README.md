@@ -9,6 +9,8 @@ Préproduction du site bilingue de Corail Plongée, centre de plongée à Saint-
 - métadonnées SEO, sitemap, canonicals et règles d’indexation de préproduction ;
 - CTA Zuurit centralisés dans Supabase ;
 - espace `/admin` privé pour les évènements bilingues, tarifs et liens de réservation ;
+- page Évènements centrée sur la semaine en cours, avec recherche d’archives, fiches détaillées et réservation ;
+- cartes d’évènements entièrement personnalisables dans l’administration (contenu, dates, lieux, photos et couleurs) ;
 - photos d’évènements dans Supabase Storage ;
 - aucun formulaire public d’inscription et aucune administration du blog.
 

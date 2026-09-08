@@ -5,18 +5,12 @@ import {
   type PublicCatalogPrice,
   type PublicPriceSection,
 } from "./pricing-data";
+import { fallbackEvents, type PublicEvent } from "./events-data";
 import { createClient, hasSupabaseEnv } from "./supabase/server";
 
-export type PublicEvent = {
-  id: string;
-  title_fr: string;
-  title_en: string;
-  description_fr: string;
-  description_en: string;
-  starts_at: string;
-  image_paths: string[];
-  booking_link_key: string;
-};
+export type { PublicEvent } from "./events-data";
+
+const eventSelect = "id,slug_fr,slug_en,title_fr,title_en,excerpt_fr,excerpt_en,description_fr,description_en,location_fr,location_en,starts_at,ends_at,image_paths,cover_image_url,booking_link_key,title_color,text_color,card_color_start,card_color_end";
 
 export type PublicPrice = {
   id: string;
@@ -93,18 +87,35 @@ export async function getPriceCatalog(): Promise<{
 }
 
 export async function getUpcomingEvents(): Promise<PublicEvent[]> {
-  if (!hasSupabaseEnv()) return [];
+  if (!hasSupabaseEnv()) {
+    return fallbackEvents
+      .filter((event) => new Date(event.ends_at ?? event.starts_at).getTime() >= Date.now())
+      .sort((a, b) => new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime())
+      .slice(0, 3);
+  }
 
   const supabase = await createClient();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("events")
-    .select(
-      "id,title_fr,title_en,description_fr,description_en,starts_at,image_paths,booking_link_key",
-    )
+    .select(eventSelect)
     .eq("published", true)
     .gte("starts_at", new Date().toISOString())
     .order("starts_at")
     .limit(3);
 
-  return data ?? [];
+  return error ? [] : (data as PublicEvent[] ?? []);
+}
+
+export async function getEventsCatalog(): Promise<PublicEvent[]> {
+  if (!hasSupabaseEnv()) return fallbackEvents;
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("events")
+    .select(eventSelect)
+    .eq("published", true)
+    .order("starts_at", { ascending: false });
+
+  if (error || !data?.length) return fallbackEvents;
+  return data as PublicEvent[];
 }

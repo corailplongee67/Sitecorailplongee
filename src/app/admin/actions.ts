@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { fallbackEvents } from "@/lib/events-data";
 import { createClient } from "@/lib/supabase/server";
 
 function value(formData: FormData, key: string) {
@@ -15,6 +16,19 @@ function slugify(input: string) {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
+}
+
+function color(formData: FormData, key: string, fallback: string) {
+  const candidate = value(formData, key);
+  return /^#[0-9a-f]{6}$/i.test(candidate) ? candidate : fallback;
+}
+
+function revalidateEvents() {
+  revalidatePath("/");
+  revalidatePath("/en/home/");
+  revalidatePath("/evenements/");
+  revalidatePath("/en/our-events/");
+  revalidatePath("/admin/");
 }
 
 function revalidatePrices() {
@@ -58,7 +72,8 @@ export async function saveEvent(formData: FormData) {
   const titleFr = value(formData, "title_fr");
   const titleEn = value(formData, "title_en");
   const existingPaths = JSON.parse(value(formData, "existing_image_paths") || "[]") as string[];
-  const imagePaths = [...existingPaths];
+  const replaceImages = formData.get("replace_images") === "on";
+  const imagePaths = replaceImages ? [] : [...existingPaths];
 
   for (const entry of formData.getAll("images")) {
     if (!(entry instanceof File) || entry.size === 0) continue;
@@ -71,7 +86,13 @@ export async function saveEvent(formData: FormData) {
       contentType: entry.type,
       upsert: false,
     });
-    if (!error) imagePaths.push(path);
+    if (error) throw error;
+    imagePaths.push(path);
+  }
+
+  const coverImageUrl = value(formData, "cover_image_url");
+  if (coverImageUrl && new URL(coverImageUrl).protocol !== "https:") {
+    throw new Error("L’image externe doit utiliser HTTPS.");
   }
 
   const payload = {
@@ -80,29 +101,56 @@ export async function saveEvent(formData: FormData) {
     slug_en: value(formData, "slug_en") || slugify(titleEn) || null,
     title_fr: titleFr,
     title_en: titleEn,
+    excerpt_fr: value(formData, "excerpt_fr"),
+    excerpt_en: value(formData, "excerpt_en"),
     description_fr: value(formData, "description_fr"),
     description_en: value(formData, "description_en"),
+    location_fr: value(formData, "location_fr") || "Saint-Gilles-les-Bains",
+    location_en: value(formData, "location_en") || "Saint-Gilles-les-Bains",
     starts_at: new Date(value(formData, "starts_at")).toISOString(),
     ends_at: value(formData, "ends_at") ? new Date(value(formData, "ends_at")).toISOString() : null,
     image_paths: imagePaths,
+    cover_image_url: coverImageUrl || null,
     booking_link_key: value(formData, "booking_link_key") || "agenda",
+    title_color: color(formData, "title_color", "#ffb000"),
+    text_color: color(formData, "text_color", "#ffffff"),
+    card_color_start: color(formData, "card_color_start", "#052b43"),
+    card_color_end: color(formData, "card_color_end", "#0b6078"),
     published: formData.get("published") === "on",
   };
 
-  await supabase.from("events").upsert(payload);
-  revalidatePath("/");
-  revalidatePath("/en/home/");
-  revalidatePath("/admin/");
+  const { error } = await supabase.from("events").upsert(payload);
+  if (error) throw error;
+  if (replaceImages && existingPaths.length) {
+    const { error: removalError } = await supabase.storage.from("event-images").remove(existingPaths);
+    if (removalError) throw removalError;
+  }
+  revalidateEvents();
 }
 
 export async function deleteEvent(formData: FormData) {
   const supabase = await requireAdmin();
   const id = value(formData, "id");
   const paths = JSON.parse(value(formData, "image_paths") || "[]") as string[];
-  if (paths.length) await supabase.storage.from("event-images").remove(paths);
-  await supabase.from("events").delete().eq("id", id);
-  revalidatePath("/");
-  revalidatePath("/admin/");
+  if (paths.length) {
+    const { error } = await supabase.storage.from("event-images").remove(paths);
+    if (error) throw error;
+  }
+  const { error } = await supabase.from("events").delete().eq("id", id);
+  if (error) throw error;
+  revalidateEvents();
+}
+
+export async function importLegacyEvents() {
+  const supabase = await requireAdmin();
+  const rows = fallbackEvents.map((event) => {
+    const { id, ...archiveEvent } = event;
+    void id;
+    return { ...archiveEvent, published: true };
+  });
+  const { error } = await supabase.from("events").upsert(rows, { onConflict: "slug_fr", ignoreDuplicates: true });
+  if (error) throw error;
+  revalidateEvents();
 }
 
 export async function savePrice(formData: FormData) {

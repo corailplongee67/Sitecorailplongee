@@ -12,6 +12,7 @@ Cette V1 doit rester sur une URL Vercel de préproduction. Ne pas connecter `cor
 - Projet Vercel créé : `sitecorailplongee`. Le préréglage initial incorrect « Other » a été remplacé par « Next.js » avant le second déploiement.
 - Préproduction publique : `https://sitecorailplongee.vercel.app`.
 - Le commit `b654cdd` a été promu avec succès dans l’environnement Production Vercel le 7 septembre 2026. Ici, « Production » désigne uniquement l’environnement Vercel associé à l’URL de préproduction : le domaine public historique n’a pas été modifié.
+- Le commit `7643177` contenant la nouvelle page Tarifs et l’administration complète du catalogue a été promu sur cette même URL le 8 septembre 2026.
 
 Aucun projet Corail Plongée ne doit être créé dans cet espace personnel par erreur.
 
@@ -32,7 +33,7 @@ NEXT_PUBLIC_ALLOW_INDEXING=false
 5. Déployer et conserver l’URL `*.vercel.app` pour les validations client.
 6. Vérifier `/`, `/en/home/`, `/nos-tarifs/`, un article historique, `/admin/`, `/robots.txt` et `/sitemap.xml`.
 
-Les pages `/`, `/en/home/`, `/decouverte/` et `/admin/` ont été contrôlées avec succès sur l’URL publique après la promotion initiale. La nouvelle page `/nos-tarifs/`, sa version anglaise et l’éditeur complet des tarifs doivent être contrôlés après le prochain déploiement. La connexion de l’administration à Supabase reste conditionnée à l’ajout des variables publiques ci-dessus dans Vercel.
+La nouvelle page `/nos-tarifs/`, ses 50 tarifs et le cadenas menant à `/admin/` ont été contrôlés avec succès sur l’URL publique après la promotion du 8 septembre. La connexion de l’administration à Supabase reste conditionnée à l’ajout des variables publiques ci-dessus dans Vercel ; tant qu’elles sont absentes, `/admin/` affiche volontairement l’écran d’attente de connexion.
 
 ## GitHub
 

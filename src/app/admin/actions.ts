@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { fallbackEvents } from "@/lib/events-data";
+import { nextAvailableEventSlug } from "@/lib/event-slugs";
 import { createClient } from "@/lib/supabase/server";
 
 function value(formData: FormData, key: string) {
@@ -68,7 +69,8 @@ export async function signOut() {
 
 export async function saveEvent(formData: FormData) {
   const supabase = await requireAdmin();
-  const id = value(formData, "id") || crypto.randomUUID();
+  const existingId = value(formData, "id");
+  const id = existingId || crypto.randomUUID();
   const titleFr = value(formData, "title_fr");
   const titleEn = value(formData, "title_en");
   const existingPaths = JSON.parse(value(formData, "existing_image_paths") || "[]") as string[];
@@ -95,10 +97,24 @@ export async function saveEvent(formData: FormData) {
     throw new Error("L’image externe doit utiliser HTTPS.");
   }
 
+  let slugQuery = supabase.from("events").select("slug_fr,slug_en");
+  if (existingId) slugQuery = slugQuery.neq("id", existingId);
+  const { data: existingSlugs, error: slugError } = await slugQuery;
+  if (slugError) throw slugError;
+
+  const slugFr = nextAvailableEventSlug(
+    value(formData, "slug_fr") || slugify(titleFr),
+    (existingSlugs ?? []).map((event) => event.slug_fr),
+  );
+  const requestedSlugEn = value(formData, "slug_en") || slugify(titleEn);
+  const slugEn = requestedSlugEn
+    ? nextAvailableEventSlug(requestedSlugEn, (existingSlugs ?? []).map((event) => event.slug_en))
+    : null;
+
   const payload = {
     id,
-    slug_fr: value(formData, "slug_fr") || slugify(titleFr),
-    slug_en: value(formData, "slug_en") || slugify(titleEn) || null,
+    slug_fr: slugFr,
+    slug_en: slugEn,
     title_fr: titleFr,
     title_en: titleEn,
     excerpt_fr: value(formData, "excerpt_fr"),

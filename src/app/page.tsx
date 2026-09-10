@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { HomePage } from "@/components/HomePage";
-import { getBookingLinks, getFeaturedPrices, getUpcomingEvents } from "@/lib/content-data";
+import { FrenchHomePage } from "@/components/FrenchHomePage";
+import { getBookingLinks, getUpcomingEvents } from "@/lib/content-data";
 
 export const metadata: Metadata = {
   title: "Plongée sous-marine à La Réunion – Réservez maintenant",
@@ -13,11 +13,10 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const [bookingLinks, prices, events] = await Promise.all([
+  const [bookingLinks, events] = await Promise.all([
     getBookingLinks(),
-    getFeaturedPrices(),
     getUpcomingEvents(),
   ]);
 
-  return <HomePage locale="fr" bookingLinks={bookingLinks} prices={prices} events={events} />;
+  return <FrenchHomePage bookingLinks={bookingLinks} events={events} />;
 }

@@ -2,21 +2,37 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { LockKeyhole, Menu, UserRound, X } from "lucide-react";
+import { ChevronDown, LockKeyhole, Menu, UserRound, X } from "lucide-react";
 import { useState } from "react";
 import { nav, type Locale } from "@/lib/site-data";
 
 export function Header({
   locale,
   bookingUrl,
+  giftUrl,
   accountUrl,
 }: {
   locale: Locale;
   bookingUrl: string;
+  giftUrl: string;
   accountUrl: string;
 }) {
   const [open, setOpen] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
+  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const isFr = locale === "fr";
+  const items = nav[locale];
+
+  function itemHref(item: (typeof items)[number]) {
+    if (item.bookingKey === "gift_dive") return giftUrl;
+    if (item.bookingKey === "agenda") return bookingUrl;
+    return item.href ?? "#";
+  }
+
+  function closeMobileNavigation() {
+    setOpen(false);
+    setMobileServicesOpen(false);
+  }
 
   return (
     <header className="site-header">
@@ -35,10 +51,39 @@ export function Header({
         </Link>
 
         <nav className="desktop-nav" aria-label={isFr ? "Navigation principale" : "Main navigation"}>
-          {nav[locale].map((item) => (
-            <Link key={item.href} href={item.href}>
+          {items.map((item) => item.children ? (
+            <div
+              className={`desktop-nav-group${servicesOpen ? " is-open" : ""}`}
+              key={item.href}
+              onMouseLeave={() => setServicesOpen(false)}
+              onBlur={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget)) setServicesOpen(false);
+              }}
+            >
+              <div className="desktop-nav-parent">
+                <Link href={item.href ?? "#"}>{item.label}</Link>
+                <button
+                  type="button"
+                  aria-expanded={servicesOpen}
+                  aria-controls="desktop-services-menu"
+                  aria-label={isFr ? "Ouvrir le menu des prestations" : "Open services menu"}
+                  onClick={() => setServicesOpen((value) => !value)}
+                >
+                  <ChevronDown size={14} />
+                </button>
+              </div>
+              <div id="desktop-services-menu" className="desktop-dropdown">
+                {item.children.map((child) => (
+                  <Link key={child.href} href={child.href}>{child.label}</Link>
+                ))}
+              </div>
+            </div>
+          ) : item.bookingKey ? (
+            <a className="desktop-nav-action" key={item.label} href={itemHref(item)} target="_blank" rel="noreferrer">
               {item.label}
-            </Link>
+            </a>
+          ) : (
+            <Link key={item.href} href={itemHref(item)}>{item.label}</Link>
           ))}
         </nav>
 
@@ -48,9 +93,6 @@ export function Header({
           </Link>
           <a className="account-link" href={accountUrl} target="_blank" rel="noreferrer" aria-label={isFr ? "Mon compte" : "My account"}>
             <UserRound size={19} />
-          </a>
-          <a className="button button-small button-coral desktop-book" href={bookingUrl} target="_blank" rel="noreferrer">
-            {isFr ? "Réserver" : "Book"}
           </a>
           <button
             className="menu-toggle"
@@ -67,14 +109,33 @@ export function Header({
 
       {open ? (
         <nav id="mobile-navigation" className="mobile-nav" aria-label="Navigation mobile">
-          {nav[locale].map((item) => (
-            <Link key={item.href} href={item.href} onClick={() => setOpen(false)}>
-              {item.label}
-            </Link>
+          {items.map((item) => item.children ? (
+            <div className="mobile-nav-group" key={item.href}>
+              <div className="mobile-nav-parent">
+                <Link href={item.href ?? "#"} onClick={closeMobileNavigation}>{item.label}</Link>
+                <button
+                  type="button"
+                  aria-expanded={mobileServicesOpen}
+                  aria-controls="mobile-services-menu"
+                  aria-label={isFr ? "Afficher les prestations" : "Show services"}
+                  onClick={() => setMobileServicesOpen((value) => !value)}
+                >
+                  <ChevronDown size={20} />
+                </button>
+              </div>
+              {mobileServicesOpen ? (
+                <div id="mobile-services-menu" className="mobile-subnav">
+                  {item.children.map((child) => (
+                    <Link key={child.href} href={child.href} onClick={closeMobileNavigation}>{child.label}</Link>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          ) : item.bookingKey ? (
+            <a key={item.label} href={itemHref(item)} target="_blank" rel="noreferrer" onClick={closeMobileNavigation}>{item.label}</a>
+          ) : (
+            <Link key={item.href} href={itemHref(item)} onClick={closeMobileNavigation}>{item.label}</Link>
           ))}
-          <a href={bookingUrl} target="_blank" rel="noreferrer">
-            {isFr ? "Réserver une plongée" : "Book a dive"}
-          </a>
         </nav>
       ) : null}
     </header>

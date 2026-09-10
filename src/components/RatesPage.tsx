@@ -120,7 +120,7 @@ export function RatesPage({
 
   return (
     <>
-      <Header locale={locale} bookingUrl={bookingLinks.main_booking} accountUrl={bookingLinks.customer_account} />
+      <Header locale={locale} bookingUrl={bookingLinks.agenda} giftUrl={bookingLinks.gift_dive} accountUrl={bookingLinks.customer_account} />
       <main className="rates-main">
         <section className="rates-hero">
           <Image src="/images/hero/corail-reef.jpg" alt={fr ? "Récif corallien à La Réunion" : "Coral reef in Reunion Island"} fill priority sizes="100vw" />

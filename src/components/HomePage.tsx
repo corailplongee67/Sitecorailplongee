@@ -34,7 +34,8 @@ export function HomePage({
     <>
       <Header
         locale={locale}
-        bookingUrl={bookingLinks.main_booking}
+        bookingUrl={bookingLinks.agenda}
+        giftUrl={bookingLinks.gift_dive}
         accountUrl={bookingLinks.customer_account}
       />
       <main>

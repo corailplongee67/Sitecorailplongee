@@ -27,24 +27,59 @@ export const fallbackBookingLinks: Record<BookingKey, string> = {
   exploration_booking: "https://public.zuurit.com/corailplongee/booking",
 };
 
+export type NavigationItem = {
+  label: string;
+  href?: string;
+  bookingKey?: "gift_dive" | "agenda";
+  children?: Array<{ label: string; href: string }>;
+};
+
 export const nav = {
   fr: [
-    { label: "Découvrir", href: "/decouverte/" },
-    { label: "Se former", href: "/nos-prestations/" },
-    { label: "Explorer", href: "/je-plonge-autonome/" },
-    { label: "Cétacés", href: "/sorties-cetaces-2/" },
+    { label: "Accueil", href: "/" },
+    { label: "Qui sommes-nous ?", href: "/qui-sommes-nous/" },
+    {
+      label: "Nos prestations",
+      href: "/nos-prestations/",
+      children: [
+        { label: "Découverte", href: "/decouverte/" },
+        { label: "Initiation & Vie Marine", href: "/je-decouvre-initiation/" },
+        { label: "Formation SSI", href: "/formation_ssi/" },
+        { label: "Formation française", href: "/formation-francaise/" },
+        { label: "Exploration", href: "/je-plonge-autonome/" },
+        { label: "Passerelles", href: "/passerelle/" },
+        { label: "Sorties cétacés", href: "/sorties-cetaces-2/" },
+      ],
+    },
+    { label: "Offrir une plongée", bookingKey: "gift_dive" },
+    { label: "Réserver une sortie", bookingKey: "agenda" },
     { label: "Tarifs", href: "/nos-tarifs/" },
-    { label: "Évènements", href: "/evenements/" },
+    { label: "Événements", href: "/evenements/" },
+    { label: "Contact", href: "/contactez-nous/" },
   ],
   en: [
-    { label: "Discover", href: "/en/discover/" },
-    { label: "Training", href: "/en/our-services/" },
-    { label: "Explore", href: "/en/i-dive/" },
-    { label: "Cetaceans", href: "/en/cetacean-excursions/" },
+    { label: "Home", href: "/en/home/" },
+    { label: "About us", href: "/en/about-us/" },
+    {
+      label: "Our services",
+      href: "/en/our-services/",
+      children: [
+        { label: "Discover", href: "/en/discover/" },
+        { label: "Initiation & Marine Life", href: "/en/i-discover-initiation/" },
+        { label: "SSI Training", href: "/en/ssi_training-course/" },
+        { label: "French Training", href: "/en/french-training/" },
+        { label: "Exploration", href: "/en/i-dive/" },
+        { label: "Crossover", href: "/en/french-to-american-american-to-french/" },
+        { label: "Cetacean Outings", href: "/en/cetacean-excursions/" },
+      ],
+    },
+    { label: "Gift a dive", bookingKey: "gift_dive" },
+    { label: "Book a dive", bookingKey: "agenda" },
     { label: "Rates", href: "/en/rates/" },
     { label: "Events", href: "/en/our-events/" },
+    { label: "Contact", href: "/en/contact/" },
   ],
-} satisfies Record<Locale, Array<{ label: string; href: string }>>;
+} satisfies Record<Locale, NavigationItem[]>;
 
 export const services = [
   {

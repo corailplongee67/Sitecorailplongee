@@ -17,7 +17,7 @@ export function EventsPage({ locale, events, bookingLinks }: {
 
   return (
     <>
-      <Header locale={locale} bookingUrl={bookingLinks.main_booking} accountUrl={bookingLinks.customer_account} />
+      <Header locale={locale} bookingUrl={bookingLinks.agenda} giftUrl={bookingLinks.gift_dive} accountUrl={bookingLinks.customer_account} />
       <main className="events-main">
         <section className="events-hero">
           <Image src="/images/hero/underwater-reunion.jpg" alt={fr ? "Plongée sur les récifs de La Réunion" : "Diving on Reunion Island reefs"} fill priority sizes="100vw" />

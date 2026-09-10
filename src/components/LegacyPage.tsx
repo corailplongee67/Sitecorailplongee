@@ -88,7 +88,7 @@ export function LegacyPage({
 
   return (
     <>
-      <Header locale={locale} bookingUrl={bookingLinks.main_booking} accountUrl={bookingLinks.customer_account} />
+      <Header locale={locale} bookingUrl={bookingLinks.agenda} giftUrl={bookingLinks.gift_dive} accountUrl={bookingLinks.customer_account} />
       <main className="legacy-main">
         <section className="legacy-hero">
           <Image src={localHero(path)} alt="" fill priority sizes="100vw" />

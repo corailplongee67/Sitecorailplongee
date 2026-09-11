@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AboutPage } from "@/components/AboutPage";
+import { DiscoveryPage } from "@/components/DiscoveryPage";
 import { LegacyPage } from "@/components/LegacyPage";
 import { getBookingLinks } from "@/lib/content-data";
 import auditPages from "../../../docs/audit/current-site-pages.json";
@@ -71,6 +72,9 @@ export default async function Page({ params }: PageProps) {
   const bookingLinks = await getBookingLinks();
   if (path === "/qui-sommes-nous/") {
     return <AboutPage bookingLinks={bookingLinks} />;
+  }
+  if (path === "/decouverte/") {
+    return <DiscoveryPage bookingLinks={bookingLinks} />;
   }
 
   return (

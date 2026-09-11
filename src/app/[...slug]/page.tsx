@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AboutPage } from "@/components/AboutPage";
 import { DiscoveryPage } from "@/components/DiscoveryPage";
+import { ExplorationPage } from "@/components/ExplorationPage";
 import { FrenchTrainingPage } from "@/components/FrenchTrainingPage";
 import { InitiationPage } from "@/components/InitiationPage";
 import { LegacyPage } from "@/components/LegacyPage";
 import { SsiTrainingPage } from "@/components/SsiTrainingPage";
-import { getBookingLinks } from "@/lib/content-data";
+import { getBookingLinks, getPriceCatalog } from "@/lib/content-data";
 import auditPages from "../../../docs/audit/current-site-pages.json";
 
 type PageProps = { params: Promise<{ slug: string[] }> };
@@ -87,6 +88,10 @@ export default async function Page({ params }: PageProps) {
   }
   if (path === "/formation-francaise/") {
     return <FrenchTrainingPage bookingLinks={bookingLinks} />;
+  }
+  if (path === "/je-plonge-autonome/") {
+    const catalog = await getPriceCatalog();
+    return <ExplorationPage bookingLinks={bookingLinks} prices={catalog.prices} />;
   }
 
   return (

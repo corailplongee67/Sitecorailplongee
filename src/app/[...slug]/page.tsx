@@ -4,6 +4,7 @@ import { AboutPage } from "@/components/AboutPage";
 import { DiscoveryPage } from "@/components/DiscoveryPage";
 import { InitiationPage } from "@/components/InitiationPage";
 import { LegacyPage } from "@/components/LegacyPage";
+import { SsiTrainingPage } from "@/components/SsiTrainingPage";
 import { getBookingLinks } from "@/lib/content-data";
 import auditPages from "../../../docs/audit/current-site-pages.json";
 
@@ -79,6 +80,9 @@ export default async function Page({ params }: PageProps) {
   }
   if (path === "/je-decouvre-initiation/") {
     return <InitiationPage bookingLinks={bookingLinks} />;
+  }
+  if (path === "/formation_ssi/") {
+    return <SsiTrainingPage bookingLinks={bookingLinks} />;
   }
 
   return (

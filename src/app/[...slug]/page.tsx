@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AboutPage } from "@/components/AboutPage";
 import { DiscoveryPage } from "@/components/DiscoveryPage";
+import { FrenchTrainingPage } from "@/components/FrenchTrainingPage";
 import { InitiationPage } from "@/components/InitiationPage";
 import { LegacyPage } from "@/components/LegacyPage";
 import { SsiTrainingPage } from "@/components/SsiTrainingPage";
@@ -83,6 +84,9 @@ export default async function Page({ params }: PageProps) {
   }
   if (path === "/formation_ssi/") {
     return <SsiTrainingPage bookingLinks={bookingLinks} />;
+  }
+  if (path === "/formation-francaise/") {
+    return <FrenchTrainingPage bookingLinks={bookingLinks} />;
   }
 
   return (

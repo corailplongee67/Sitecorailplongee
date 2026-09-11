@@ -597,6 +597,49 @@ h2 { margin-bottom: 0; font-size: clamp(2.6rem, 5.2vw, 5.4rem); line-height: 0.9
 .ssi-origin-buoyancy-copy p { color: rgba(255,255,255,.82); }
 .ssi-origin-buoyancy-image { min-height: 560px; }
 
+.french-training-origin-main { color: #17242a; background: #f2f0eb; }
+.french-training-origin-hero { position: relative; min-height: 640px; display: flex; align-items: center; overflow: hidden; color: white; background: #062459; }
+.french-training-origin-hero > img { object-position: center 58%; }
+.french-training-origin-hero-shade { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(3,24,35,.74), rgba(3,24,35,.09) 72%), linear-gradient(90deg, rgba(3,24,35,.32), transparent 66%); }
+.french-training-origin-hero-copy { position: relative; z-index: 2; padding-top: 86px; text-align: center; }
+.french-training-origin-hero-copy .eyebrow { margin-bottom: 18px; color: #f3ce79; }
+.french-training-origin-hero-copy h1 { margin: 0 auto 24px; color: white; font-size: clamp(4.2rem, 8vw, 8rem); line-height: .87; text-shadow: 0 14px 42px rgba(0,0,0,.3); }
+.french-training-origin-hero-copy > p:last-child { max-width: 720px; margin: 0 auto; color: rgba(255,255,255,.88); font-size: clamp(1rem, 1.6vw, 1.22rem); line-height: 1.6; }
+.french-training-origin-content { position: relative; padding-bottom: 120px; background: radial-gradient(circle at 0 18%, rgba(10,113,131,.09), transparent 21%), #f2f0eb; }
+.french-training-origin-decoration { position: absolute; right: 0; top: 260px; width: 190px; height: auto; opacity: .1; object-fit: contain; pointer-events: none; }
+.french-training-origin-panel { position: relative; z-index: 2; width: min(1120px, 100%); margin: -72px auto 0; overflow: hidden; background: white; border-radius: 36px; box-shadow: 0 30px 85px rgba(3,24,35,.14); }
+.french-training-origin-panel-heading { padding: 58px clamp(28px, 6vw, 78px) 54px; text-align: center; border-bottom: 1px solid rgba(4,35,48,.1); }
+.french-training-origin-panel-heading .eyebrow { margin-bottom: 12px; color: #b87c17; }
+.french-training-origin-panel-heading h2 { margin: 0 0 14px; color: #0a3475; font-size: clamp(2.8rem, 5.6vw, 5.4rem); line-height: .95; }
+.french-training-origin-panel-heading > p:last-child { max-width: 650px; margin: 0 auto; color: #68777c; font-size: 1.02rem; line-height: 1.7; }
+.french-training-origin-levels { counter-reset: french-level; }
+.french-training-origin-level { padding: clamp(48px, 7vw, 82px) clamp(28px, 7vw, 84px); scroll-margin-top: 30px; }
+.french-training-origin-level + .french-training-origin-level { border-top: 1px solid rgba(4,35,48,.12); }
+.french-training-origin-level:nth-child(even) { background: #f8f5ef; }
+.french-training-origin-level-heading { position: relative; margin-bottom: 46px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 26px; align-items: center; }
+.french-training-origin-level-heading > span { color: rgba(190,135,32,.22); font-family: var(--serif); font-size: clamp(3.5rem, 6vw, 6rem); line-height: .8; }
+.french-training-origin-level-heading p { margin: 0 0 7px; color: #0a7183; font-size: .7rem; font-weight: 760; letter-spacing: .14em; text-transform: uppercase; }
+.french-training-origin-level-heading h2 { margin: 0; color: #bc8520; font-size: clamp(2.25rem, 4.3vw, 4.2rem); line-height: 1; text-transform: uppercase; }
+.french-training-origin-level-heading > strong { padding: 13px 17px; color: white; background: #0a3475; font-family: var(--serif); font-size: clamp(1.45rem, 2.5vw, 2.15rem); font-weight: 400; white-space: nowrap; }
+.french-training-origin-level-grid { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(330px, .92fr); gap: clamp(42px, 7vw, 78px); align-items: start; }
+.french-training-origin-level-story { display: grid; gap: 42px; }
+.french-training-origin-level h3 { margin: 0 0 18px; color: #0a3475; font-family: var(--serif); font-size: clamp(1.55rem, 2.5vw, 2rem); font-weight: 400; }
+.french-training-origin-level-story p { margin: 0 0 15px; color: #3f5258; font-size: 1rem; line-height: 1.78; }
+.french-training-origin-level-story p:last-child { margin-bottom: 0; }
+.french-training-origin-level-details { padding: 34px; color: white; background: radial-gradient(circle at 100% 0, rgba(64,213,208,.17), transparent 36%), #072e70; box-shadow: 0 22px 56px rgba(3,24,35,.15); }
+.french-training-origin-level-details section + section { margin-top: 36px; padding-top: 32px; border-top: 1px solid rgba(255,255,255,.2); }
+.french-training-origin-level-details h3 { color: white; }
+.french-training-origin-level-details p { margin: 0 0 18px; color: rgba(255,255,255,.82); line-height: 1.65; }
+.french-training-origin-level-details p strong { color: #f3ce79; }
+.french-training-origin-level-details ul { margin: 0; padding: 0; display: grid; gap: 12px; list-style: none; }
+.french-training-origin-level-details li { display: flex; align-items: flex-start; gap: 11px; color: rgba(255,255,255,.85); font-size: .93rem; line-height: 1.55; }
+.french-training-origin-level-details li svg { flex: 0 0 auto; width: 19px; height: 19px; margin-top: 2px; padding: 3px; color: #062459; background: #a8e9e6; border-radius: 50%; }
+.french-training-origin-options { margin-top: 24px; display: grid; gap: 8px; }
+.french-training-origin-options p { margin: 0; padding: 12px 14px; display: grid; grid-template-columns: auto 1fr; gap: 10px; color: white; background: rgba(232,184,72,.13); border-left: 2px solid #e8b848; font-size: .88rem; }
+.french-training-origin-options span { color: #f3ce79; font-size: .68rem; font-weight: 760; letter-spacing: .1em; text-transform: uppercase; }
+.french-training-origin-button { width: 100%; margin-top: 34px; color: #17242a; background: #e8b848; }
+.french-training-origin-button:hover { background: #f1c65f; }
+
 .admin-login { min-height: 100svh; display: grid; grid-template-columns: 1.1fr .9fr; background: var(--sand); }
 .admin-login-image { position: relative; min-height: 100svh; }
 .admin-login-image::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(3,24,35,.05), rgba(3,24,35,.3)); }
@@ -710,6 +753,8 @@ h2 { margin-bottom: 0; font-size: clamp(2.6rem, 5.2vw, 5.4rem); line-height: 0.9
   .ssi-origin-myssi-actions { grid-column: 1; }
   .ssi-origin-specialty:nth-child(even) .ssi-origin-specialty-copy { order: initial; }
   .ssi-origin-orientation-image { min-height: 520px; }
+  .french-training-origin-level-grid { grid-template-columns: 1fr; }
+  .french-training-origin-level-details { max-width: 680px; }
   .events-copy { padding: 70px 20px 10px; }
   .about-layout { gap: 55px; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
@@ -886,6 +931,23 @@ h2 { margin-bottom: 0; font-size: clamp(2.6rem, 5.2vw, 5.4rem); line-height: 0.9
   .ssi-origin-orientation-video { width: calc(100% - 28px); margin-bottom: 60px; }
   .ssi-origin-orientation-image, .ssi-origin-buoyancy-image { min-height: 390px; }
   .ssi-origin-buoyancy-copy { order: 2; }
+  .french-training-origin-hero { min-height: 540px; }
+  .french-training-origin-hero-copy { padding-top: 70px; text-align: left; }
+  .french-training-origin-hero-copy h1 { font-size: clamp(3.8rem, 17vw, 5.8rem); }
+  .french-training-origin-hero-copy > p:last-child { margin-left: 0; }
+  .french-training-origin-content { padding-bottom: 78px; }
+  .french-training-origin-decoration { display: none; }
+  .french-training-origin-panel { margin-top: -38px; border-radius: 24px; }
+  .french-training-origin-panel-heading { padding: 38px 23px 36px; text-align: left; }
+  .french-training-origin-panel-heading > p:last-child { margin-left: 0; }
+  .french-training-origin-level { padding: 46px 23px; }
+  .french-training-origin-level-heading { margin-bottom: 34px; grid-template-columns: auto 1fr; gap: 15px; align-items: start; }
+  .french-training-origin-level-heading > span { font-size: 3.5rem; }
+  .french-training-origin-level-heading h2 { font-size: clamp(2.1rem, 11vw, 3.2rem); }
+  .french-training-origin-level-heading > strong { grid-column: 2; justify-self: start; font-size: 1.5rem; }
+  .french-training-origin-level-grid { gap: 34px; }
+  .french-training-origin-level-story { gap: 32px; }
+  .french-training-origin-level-details { padding: 30px 22px; }
   .admin-login { grid-template-columns: 1fr; }
   .admin-login-image { display: none; }
   .admin-login-panel { padding-block: 55px; }

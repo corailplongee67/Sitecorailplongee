@@ -45,6 +45,7 @@ export function InitiationPage({ bookingLinks }: { bookingLinks: BookingLinks })
                     src="/images/initiation/original/plongeur.jpg"
                     alt="Plongeur sous l’eau entouré de bulles"
                     fill
+                    loading="eager"
                     sizes="(max-width: 900px) 100vw, 50vw"
                   />
                   <div className="initiation-origin-price" aria-label="Tarif : 95 euros">

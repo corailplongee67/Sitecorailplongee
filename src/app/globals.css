@@ -842,6 +842,36 @@ h2 { margin-bottom: 0; font-size: clamp(2.6rem, 5.2vw, 5.4rem); line-height: 0.9
 .reunion-origin-pelagics .button { margin-top: 22px; color: #17242a; background: #e8b848; }
 .reunion-origin-pelagics .button:hover { background: #f1c65f; }
 
+.blog-origin-main { color: #17242a; background: #f5f3ee; }
+.blog-origin-hero { position: relative; min-height: 640px; display: flex; align-items: center; overflow: hidden; color: white; background: #062459; }
+.blog-origin-hero > img { object-fit: cover; object-position: center 53%; filter: saturate(.9); }
+.blog-origin-hero-shade { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(3,24,35,.74), rgba(3,24,35,.03) 68%), linear-gradient(90deg, rgba(3,24,35,.32), transparent 70%); }
+.blog-origin-hero-copy { position: relative; z-index: 2; padding-top: 70px; text-align: center; }
+.blog-origin-hero-copy .eyebrow { margin-bottom: 16px; color: #f3ce79; }
+.blog-origin-hero-copy h1 { margin: 0; color: white; font-size: clamp(5rem, 10vw, 9.5rem); line-height: .84; text-shadow: 0 14px 42px rgba(0,0,0,.34); }
+.blog-origin-hero-copy > p:last-child { margin: 22px 0 0; color: rgba(255,255,255,.84); font-size: clamp(1rem, 1.6vw, 1.23rem); }
+.blog-origin-content { position: relative; padding: 0 0 120px; background: radial-gradient(circle at 0 30%, rgba(10,113,131,.11), transparent 25%), radial-gradient(circle at 100% 78%, rgba(232,184,72,.1), transparent 22%), #f5f3ee; }
+.blog-origin-panel { position: relative; z-index: 3; margin-top: -88px; padding: 64px clamp(28px, 5vw, 68px) 74px; background: white; box-shadow: 0 30px 85px rgba(3,24,35,.16); }
+.blog-origin-heading { margin-bottom: 52px; display: grid; grid-template-columns: 1fr .8fr; align-items: end; gap: 60px; }
+.blog-origin-heading .eyebrow { margin-bottom: 12px; color: #0a7183; }
+.blog-origin-heading h2 { margin: 0; color: #0a3475; font-size: clamp(3.5rem, 6vw, 6rem); line-height: .88; }
+.blog-origin-heading > p { max-width: 450px; margin: 0 0 4px auto; color: #566a71; line-height: 1.72; }
+.blog-origin-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px 24px; }
+.blog-origin-card { min-width: 0; display: flex; flex-direction: column; overflow: hidden; background: #fbfaf7; border: 1px solid rgba(4,35,48,.1); box-shadow: 0 16px 40px rgba(3,24,35,.08); transition: transform .28s ease, box-shadow .28s ease; }
+.blog-origin-card:hover { transform: translateY(-6px); box-shadow: 0 26px 54px rgba(3,24,35,.14); }
+.blog-origin-image { position: relative; aspect-ratio: 1.5 / 1; display: block; overflow: hidden; background: #062459; }
+.blog-origin-image > img { object-fit: cover; transition: transform .7s cubic-bezier(.2,.65,.2,1); }
+.blog-origin-card:hover .blog-origin-image > img { transform: scale(1.045); }
+.blog-origin-image-shade { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(3,24,35,.44), transparent 52%); }
+.blog-origin-index { position: absolute; right: 19px; bottom: 15px; color: white; font-family: var(--serif); font-size: 1.25rem; text-shadow: 0 3px 13px rgba(0,0,0,.36); }
+.blog-origin-card-copy { min-height: 365px; padding: 27px 25px 29px; display: flex; flex-direction: column; }
+.blog-origin-date { margin: 0 0 16px; display: flex; align-items: center; gap: 8px; color: #0a7183; font-size: .68rem; font-weight: 750; letter-spacing: .09em; text-transform: uppercase; }
+.blog-origin-card h3 { margin: 0 0 17px; color: #0a3475; font-family: var(--serif); font-size: clamp(1.45rem, 2vw, 1.9rem); font-weight: 400; line-height: 1.12; }
+.blog-origin-card h3 a { color: inherit; }
+.blog-origin-excerpt { margin: 0 0 24px; color: #607178; font-size: .91rem; line-height: 1.67; }
+.blog-origin-read { width: fit-content; margin-top: auto; padding-bottom: 5px; display: inline-flex; align-items: center; gap: 8px; color: #0a7183; border-bottom: 1px solid rgba(10,113,131,.3); font-size: .7rem; font-weight: 760; letter-spacing: .09em; text-transform: uppercase; transition: color .2s ease, border-color .2s ease, gap .2s ease; }
+.blog-origin-read:hover { gap: 12px; color: #b87c17; border-color: #b87c17; }
+
 .contact-origin-main { color: #17242a; background: #f5f3ee; }
 .contact-origin-hero { position: relative; min-height: 520px; display: flex; align-items: center; overflow: hidden; color: white; background: #062459; }
 .contact-origin-hero > img { object-fit: cover; object-position: center 50%; filter: saturate(.92); }
@@ -1000,6 +1030,9 @@ h2 { margin-bottom: 0; font-size: clamp(2.6rem, 5.2vw, 5.4rem); line-height: 0.9
   .reunion-origin-environment.is-reverse .reunion-origin-environment-image, .reunion-origin-environment.is-reverse .reunion-origin-environment-copy { order: initial; }
   .reunion-origin-environment-image { min-height: 540px; }
   .reunion-origin-pelagics-copy { margin-left: 0; }
+  .blog-origin-heading { grid-template-columns: 1fr; gap: 24px; }
+  .blog-origin-heading > p { margin-left: 0; }
+  .blog-origin-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .contact-origin-panel { grid-template-columns: 1fr; }
   .contact-origin-map { min-height: 500px; }
   .events-copy { padding: 70px 20px 10px; }
@@ -1291,6 +1324,19 @@ h2 { margin-bottom: 0; font-size: clamp(2.6rem, 5.2vw, 5.4rem); line-height: 0.9
   .reunion-origin-pelagics-copy { padding: 280px 0 76px; }
   .reunion-origin-pelagics h2 { font-size: clamp(3.8rem, 17vw, 5.8rem); }
   .reunion-origin-pelagics .button { width: 100%; }
+  .blog-origin-hero { min-height: 530px; }
+  .blog-origin-hero-copy { padding-top: 62px; text-align: left; }
+  .blog-origin-hero-copy h1 { font-size: clamp(4.8rem, 23vw, 7rem); }
+  .blog-origin-content { padding-bottom: 78px; }
+  .blog-origin-panel { width: calc(100% - 28px); margin-top: -54px; padding: 40px 21px 46px; }
+  .blog-origin-heading { margin-bottom: 38px; }
+  .blog-origin-heading h2 { font-size: clamp(3.4rem, 16vw, 5rem); }
+  .blog-origin-grid { grid-template-columns: 1fr; gap: 20px; }
+  .blog-origin-card { display: grid; grid-template-columns: 40% 60%; }
+  .blog-origin-image { min-height: 100%; aspect-ratio: auto; }
+  .blog-origin-card-copy { min-height: 320px; padding: 24px 20px 25px; }
+  .blog-origin-card h3 { font-size: clamp(1.38rem, 6.8vw, 1.85rem); }
+  .blog-origin-excerpt { font-size: .88rem; }
   .contact-origin-hero { min-height: 490px; }
   .contact-origin-hero-copy { padding-top: 68px; text-align: left; }
   .contact-origin-hero-copy h1 { font-size: clamp(4rem, 18vw, 6rem); }

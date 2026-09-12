@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AboutPage } from "@/components/AboutPage";
+import { BlogPage } from "@/components/BlogPage";
 import { CetaceanPage } from "@/components/CetaceanPage";
 import { ContactPage } from "@/components/ContactPage";
 import { CrossoverPage } from "@/components/CrossoverPage";
@@ -113,6 +114,9 @@ export default async function Page({ params }: PageProps) {
   }
   if (path === "/plonger-reunion/") {
     return <ReunionDivingPage bookingLinks={bookingLinks} />;
+  }
+  if (path === "/blog/") {
+    return <BlogPage bookingLinks={bookingLinks} />;
   }
 
   return (

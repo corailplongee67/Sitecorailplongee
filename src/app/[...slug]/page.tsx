@@ -9,6 +9,7 @@ import { DiscoveryPage } from "@/components/DiscoveryPage";
 import { ExplorationPage } from "@/components/ExplorationPage";
 import { FrenchTrainingPage } from "@/components/FrenchTrainingPage";
 import { InitiationPage } from "@/components/InitiationPage";
+import { LegalPage } from "@/components/LegalPage";
 import { LegacyPage } from "@/components/LegacyPage";
 import { ReunionDivingPage } from "@/components/ReunionDivingPage";
 import { ServicesPage } from "@/components/ServicesPage";
@@ -117,6 +118,13 @@ export default async function Page({ params }: PageProps) {
   }
   if (path === "/blog/") {
     return <BlogPage bookingLinks={bookingLinks} />;
+  }
+  if (
+    path === "/mention-legal/" ||
+    path === "/confidentialite/" ||
+    path === "/conditions-generales-de-vente/"
+  ) {
+    return <LegalPage page={page} bookingLinks={bookingLinks} />;
   }
 
   return (

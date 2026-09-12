@@ -705,6 +705,59 @@ h2 { margin-bottom: 0; font-size: clamp(2.6rem, 5.2vw, 5.4rem); line-height: 0.9
 .crossover-origin-shop { color: white; background: #0a7183; }
 .crossover-origin-shop:hover { background: #0c899e; }
 
+.cetacean-origin-main { color: #17242a; background: #f5f3ee; }
+.cetacean-origin-hero { position: relative; min-height: 650px; display: flex; align-items: center; overflow: hidden; color: white; background: #062459; }
+.cetacean-origin-hero > img { object-fit: cover; object-position: center; filter: saturate(.9); }
+.cetacean-origin-hero-shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(3,24,35,.7), rgba(3,24,35,.12) 72%), linear-gradient(0deg, rgba(3,24,35,.45), transparent 58%); }
+.cetacean-origin-hero-copy { position: relative; z-index: 2; padding-top: 84px; }
+.cetacean-origin-hero-copy .eyebrow { margin-bottom: 18px; color: #f3ce79; }
+.cetacean-origin-hero-copy h1 { max-width: 1040px; margin: 0 0 18px; color: #e8b848; font-size: clamp(4rem, 7.5vw, 7.4rem); line-height: .9; text-shadow: 0 14px 42px rgba(0,0,0,.3); }
+.cetacean-origin-hero-copy > p:last-child { margin: 0; color: rgba(255,255,255,.88); font-size: 1.05rem; letter-spacing: .08em; text-transform: uppercase; }
+.cetacean-origin-intro { position: relative; padding-bottom: 100px; background: white; }
+.cetacean-origin-intro::after { content: ""; position: absolute; left: 0; bottom: 40px; width: 170px; height: 264px; opacity: .12; background: url('/images/cetaceans/original/floral-corner.png') center / contain no-repeat; }
+.cetacean-origin-intro-title { position: relative; z-index: 3; width: min(980px, 100%); margin: -70px auto 72px; padding: 42px clamp(24px, 6vw, 78px); text-align: center; background: white; box-shadow: 0 25px 70px rgba(3,24,35,.16); }
+.cetacean-origin-intro-title .eyebrow { margin-bottom: 12px; color: #0a7183; }
+.cetacean-origin-intro-title h2 { margin: 0; color: #b87c17; font-size: clamp(2.3rem, 4.4vw, 4.1rem); line-height: 1; }
+.cetacean-origin-intro-grid { position: relative; z-index: 2; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(320px, .75fr); gap: clamp(42px, 7vw, 82px); align-items: start; }
+.cetacean-origin-intro-copy h2 { margin: 0 0 28px; color: #0a3475; font-size: clamp(2.2rem, 4vw, 3.65rem); line-height: 1.02; }
+.cetacean-origin-intro-copy h2 em { display: block; margin-top: 8px; color: #0a7183; font-family: "Avenir Next", Avenir, "Segoe UI", Arial, sans-serif; font-size: .33em; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; }
+.cetacean-origin-intro-copy p, .cetacean-origin-step-copy > p:not(.eyebrow) { margin: 0 0 17px; color: #40545b; font-size: 1rem; line-height: 1.78; }
+.cetacean-origin-requirements { padding: 38px 32px; color: white; background: radial-gradient(circle at 100% 0, rgba(64,213,208,.2), transparent 36%), #072e70; box-shadow: 0 22px 58px rgba(3,24,35,.16); }
+.cetacean-origin-requirements .eyebrow { margin-bottom: 10px; color: #f3ce79; }
+.cetacean-origin-requirements h3 { margin: 0 0 24px; color: white; font-family: var(--serif); font-size: 2.2rem; font-weight: 400; }
+.cetacean-origin-requirements ul { margin: 0 0 28px; padding: 0; display: grid; gap: 18px; list-style: none; }
+.cetacean-origin-requirements li { display: grid; grid-template-columns: 25px 1fr; gap: 12px; align-items: start; color: white; font-size: .98rem; font-weight: 690; line-height: 1.6; text-transform: uppercase; }
+.cetacean-origin-requirements li svg { width: 24px; height: 24px; padding: 5px; color: #062459; background: #e8b848; border-radius: 50%; }
+.cetacean-origin-requirements > p:last-child { margin: 0; padding-top: 26px; color: rgba(255,255,255,.78); border-top: 1px solid rgba(255,255,255,.2); font-size: .94rem; line-height: 1.7; }
+.cetacean-origin-facts { position: relative; z-index: 2; margin-top: 64px; display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid rgba(4,35,48,.11); }
+.cetacean-origin-facts article { min-height: 126px; padding: 25px; display: flex; align-items: center; gap: 18px; background: #f8f5ef; }
+.cetacean-origin-facts article + article { border-left: 1px solid rgba(4,35,48,.11); }
+.cetacean-origin-facts svg { flex: 0 0 auto; width: 28px; height: 28px; color: #0a7183; }
+.cetacean-origin-facts article div { display: grid; gap: 4px; }
+.cetacean-origin-facts strong { color: #0a3475; font-family: var(--serif); font-size: 1.5rem; font-weight: 400; }
+.cetacean-origin-facts span { color: #6d7b80; font-size: .74rem; font-weight: 680; letter-spacing: .06em; text-transform: uppercase; }
+.cetacean-origin-story { padding: 110px 0; background: #f5f3ee; }
+.cetacean-origin-story .shell { display: grid; gap: 90px; }
+.cetacean-origin-step { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: stretch; background: white; box-shadow: 0 28px 72px rgba(3,24,35,.1); }
+.cetacean-origin-step.is-reverse .cetacean-origin-step-image { order: 2; }
+.cetacean-origin-step-image { position: relative; min-height: 580px; overflow: hidden; background: #062459; }
+.cetacean-origin-step-image > img { object-fit: cover; transition: transform .7s ease; }
+.cetacean-origin-step:hover .cetacean-origin-step-image > img { transform: scale(1.025); }
+.cetacean-origin-safari-image > img { object-position: center; }
+.cetacean-origin-step-copy { position: relative; padding: clamp(48px, 7vw, 82px); overflow: hidden; }
+.cetacean-origin-step-copy > span { position: absolute; top: 22px; right: 30px; color: rgba(10,52,117,.08); font-family: var(--serif); font-size: clamp(5rem, 8vw, 8rem); line-height: .8; }
+.cetacean-origin-step-copy .eyebrow { position: relative; margin-bottom: 10px; color: #b87c17; }
+.cetacean-origin-step-copy h2 { position: relative; margin: 0 0 30px; color: #0a3475; font-size: clamp(2.8rem, 5vw, 4.8rem); line-height: .92; }
+.cetacean-origin-video-note { margin-top: 26px !important; padding: 22px 24px; color: #062459 !important; background: #e6f5f4; border-left: 3px solid #0a7183; font-weight: 660; }
+.cetacean-origin-cta { position: relative; overflow: hidden; color: white; background: radial-gradient(circle at 80% 10%, rgba(64,213,208,.18), transparent 28%), #062459; }
+.cetacean-origin-cta > img { position: absolute; right: 3%; bottom: -100px; opacity: .11; filter: brightness(0) invert(1); }
+.cetacean-origin-cta-inner { position: relative; z-index: 2; min-height: 390px; padding-block: 75px; display: flex; align-items: center; justify-content: space-between; gap: 60px; }
+.cetacean-origin-cta .eyebrow { margin-bottom: 14px; color: #f3ce79; }
+.cetacean-origin-cta h2 { max-width: 760px; margin: 0; color: white; font-size: clamp(3rem, 5.8vw, 5.7rem); line-height: .92; }
+.cetacean-origin-cta-inner > div:last-child { display: flex; flex: 0 0 auto; flex-direction: column; gap: 12px; }
+.cetacean-origin-book { color: #17242a; background: #e8b848; }
+.cetacean-origin-book:hover { background: #f1c65f; }
+
 .admin-login { min-height: 100svh; display: grid; grid-template-columns: 1.1fr .9fr; background: var(--sand); }
 .admin-login-image { position: relative; min-height: 100svh; }
 .admin-login-image::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(3,24,35,.05), rgba(3,24,35,.3)); }
@@ -823,6 +876,12 @@ h2 { margin-bottom: 0; font-size: clamp(2.6rem, 5.2vw, 5.4rem); line-height: 0.9
   .exploration-origin-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .crossover-origin-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .crossover-origin-actions { align-items: flex-start; flex-direction: column; }
+  .cetacean-origin-intro-grid { grid-template-columns: 1fr; }
+  .cetacean-origin-requirements { max-width: 680px; }
+  .cetacean-origin-step { grid-template-columns: 1fr; }
+  .cetacean-origin-step.is-reverse .cetacean-origin-step-image { order: initial; }
+  .cetacean-origin-step-image { min-height: 500px; }
+  .cetacean-origin-cta-inner { align-items: flex-start; flex-direction: column; }
   .events-copy { padding: 70px 20px 10px; }
   .about-layout { gap: 55px; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
@@ -1047,6 +1106,32 @@ h2 { margin-bottom: 0; font-size: clamp(2.6rem, 5.2vw, 5.4rem); line-height: 0.9
   .crossover-origin-actions { padding: 38px 23px 42px; }
   .crossover-origin-actions > div:last-child { width: 100%; align-items: stretch; flex-direction: column; }
   .crossover-origin-actions .button { width: 100%; }
+  .cetacean-origin-hero { min-height: 570px; }
+  .cetacean-origin-hero-copy { padding-top: 72px; }
+  .cetacean-origin-hero-copy h1 { font-size: clamp(3.4rem, 15vw, 5.5rem); }
+  .cetacean-origin-hero-copy > p:last-child { font-size: .82rem; }
+  .cetacean-origin-intro { padding-bottom: 76px; }
+  .cetacean-origin-intro::after { display: none; }
+  .cetacean-origin-intro-title { width: calc(100% - 28px); margin: -42px auto 50px; padding: 34px 22px; }
+  .cetacean-origin-intro-title h2 { font-size: clamp(2.2rem, 11vw, 3.4rem); }
+  .cetacean-origin-intro-grid { gap: 34px; }
+  .cetacean-origin-intro-copy h2 { font-size: clamp(2.4rem, 11vw, 3.6rem); }
+  .cetacean-origin-requirements { padding: 32px 24px; }
+  .cetacean-origin-requirements li { font-size: .88rem; }
+  .cetacean-origin-facts { margin-top: 44px; grid-template-columns: 1fr; }
+  .cetacean-origin-facts article { min-height: 104px; }
+  .cetacean-origin-facts article + article { border-top: 1px solid rgba(4,35,48,.11); border-left: 0; }
+  .cetacean-origin-story { padding: 76px 0; }
+  .cetacean-origin-story .shell { gap: 42px; }
+  .cetacean-origin-step { border-radius: 24px; overflow: hidden; }
+  .cetacean-origin-step-image { min-height: 340px; }
+  .cetacean-origin-step-copy { padding: 42px 24px 48px; }
+  .cetacean-origin-step-copy > span { top: 18px; right: 20px; font-size: 5rem; }
+  .cetacean-origin-step-copy h2 { font-size: clamp(2.75rem, 13vw, 4rem); }
+  .cetacean-origin-cta-inner { min-height: 0; padding-block: 68px; gap: 38px; }
+  .cetacean-origin-cta h2 { font-size: clamp(3rem, 14vw, 4.8rem); }
+  .cetacean-origin-cta-inner > div:last-child { width: 100%; }
+  .cetacean-origin-cta .button { width: 100%; }
   .admin-login { grid-template-columns: 1fr; }
   .admin-login-image { display: none; }
   .admin-login-panel { padding-block: 55px; }

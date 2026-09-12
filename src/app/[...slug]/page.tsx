@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AboutPage } from "@/components/AboutPage";
+import { CetaceanPage } from "@/components/CetaceanPage";
 import { CrossoverPage } from "@/components/CrossoverPage";
 import { DiscoveryPage } from "@/components/DiscoveryPage";
 import { ExplorationPage } from "@/components/ExplorationPage";
@@ -97,6 +98,9 @@ export default async function Page({ params }: PageProps) {
   if (path === "/passerelle/") {
     const catalog = await getPriceCatalog();
     return <CrossoverPage bookingLinks={bookingLinks} prices={catalog.prices} />;
+  }
+  if (path === "/sorties-cetaces-2/") {
+    return <CetaceanPage bookingLinks={bookingLinks} />;
   }
 
   return (

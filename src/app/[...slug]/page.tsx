@@ -8,6 +8,7 @@ import { ExplorationPage } from "@/components/ExplorationPage";
 import { FrenchTrainingPage } from "@/components/FrenchTrainingPage";
 import { InitiationPage } from "@/components/InitiationPage";
 import { LegacyPage } from "@/components/LegacyPage";
+import { ServicesPage } from "@/components/ServicesPage";
 import { SsiTrainingPage } from "@/components/SsiTrainingPage";
 import { getBookingLinks, getPriceCatalog } from "@/lib/content-data";
 import auditPages from "../../../docs/audit/current-site-pages.json";
@@ -101,6 +102,9 @@ export default async function Page({ params }: PageProps) {
   }
   if (path === "/sorties-cetaces-2/") {
     return <CetaceanPage bookingLinks={bookingLinks} />;
+  }
+  if (path === "/nos-prestations/") {
+    return <ServicesPage bookingLinks={bookingLinks} />;
   }
 
   return (

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AboutPage } from "@/components/AboutPage";
+import { CrossoverPage } from "@/components/CrossoverPage";
 import { DiscoveryPage } from "@/components/DiscoveryPage";
 import { ExplorationPage } from "@/components/ExplorationPage";
 import { FrenchTrainingPage } from "@/components/FrenchTrainingPage";
@@ -92,6 +93,10 @@ export default async function Page({ params }: PageProps) {
   if (path === "/je-plonge-autonome/") {
     const catalog = await getPriceCatalog();
     return <ExplorationPage bookingLinks={bookingLinks} prices={catalog.prices} />;
+  }
+  if (path === "/passerelle/") {
+    const catalog = await getPriceCatalog();
+    return <CrossoverPage bookingLinks={bookingLinks} prices={catalog.prices} />;
   }
 
   return (

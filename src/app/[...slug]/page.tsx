@@ -9,6 +9,7 @@ import { ExplorationPage } from "@/components/ExplorationPage";
 import { FrenchTrainingPage } from "@/components/FrenchTrainingPage";
 import { InitiationPage } from "@/components/InitiationPage";
 import { LegacyPage } from "@/components/LegacyPage";
+import { ReunionDivingPage } from "@/components/ReunionDivingPage";
 import { ServicesPage } from "@/components/ServicesPage";
 import { SsiTrainingPage } from "@/components/SsiTrainingPage";
 import { getBookingLinks, getPriceCatalog } from "@/lib/content-data";
@@ -109,6 +110,9 @@ export default async function Page({ params }: PageProps) {
   }
   if (path === "/contactez-nous/") {
     return <ContactPage bookingLinks={bookingLinks} />;
+  }
+  if (path === "/plonger-reunion/") {
+    return <ReunionDivingPage bookingLinks={bookingLinks} />;
   }
 
   return (

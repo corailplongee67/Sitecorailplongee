@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AboutPage } from "@/components/AboutPage";
 import { CetaceanPage } from "@/components/CetaceanPage";
+import { ContactPage } from "@/components/ContactPage";
 import { CrossoverPage } from "@/components/CrossoverPage";
 import { DiscoveryPage } from "@/components/DiscoveryPage";
 import { ExplorationPage } from "@/components/ExplorationPage";
@@ -105,6 +106,9 @@ export default async function Page({ params }: PageProps) {
   }
   if (path === "/nos-prestations/") {
     return <ServicesPage bookingLinks={bookingLinks} />;
+  }
+  if (path === "/contactez-nous/") {
+    return <ContactPage bookingLinks={bookingLinks} />;
   }
 
   return (

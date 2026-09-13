@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { AboutPage } from "@/components/AboutPage";
 import { BlogArticlePage, isBlogArticlePath } from "@/components/BlogArticlePage";
 import { BlogPage } from "@/components/BlogPage";
+import { CartPage } from "@/components/CartPage";
 import { CetaceanPage } from "@/components/CetaceanPage";
 import { ContactPage } from "@/components/ContactPage";
 import { CrossoverPage } from "@/components/CrossoverPage";
@@ -13,6 +14,7 @@ import { FrenchTrainingPage } from "@/components/FrenchTrainingPage";
 import { InitiationPage } from "@/components/InitiationPage";
 import { LegalPage } from "@/components/LegalPage";
 import { LegacyPage } from "@/components/LegacyPage";
+import { ProductDetailPage } from "@/components/ProductDetailPage";
 import { ReunionDivingPage } from "@/components/ReunionDivingPage";
 import { ServicesPage } from "@/components/ServicesPage";
 import { SsiTrainingPage } from "@/components/SsiTrainingPage";
@@ -59,6 +61,16 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const path = pathFor(slug);
+  if (path === "/panier/" || path === "/en/cart/") {
+    const isEnglish = path.startsWith("/en/");
+    return {
+      title: isEnglish ? "Cart" : "Panier",
+      description: isEnglish
+        ? "Continue your order in Corail Plongée’s secure shop."
+        : "Poursuivez votre commande dans la boutique sécurisée de Corail Plongée.",
+      alternates: { canonical: path },
+    };
+  }
   const page = findPage(path);
   if (!page) return {};
 
@@ -120,6 +132,17 @@ export default async function Page({ params }: PageProps) {
   }
   if (path === "/blog/") {
     return <BlogPage bookingLinks={bookingLinks} />;
+  }
+  if (path === "/panier/" || path === "/en/cart/") {
+    return (
+      <CartPage
+        locale={path.startsWith("/en/") ? "en" : "fr"}
+        bookingLinks={bookingLinks}
+      />
+    );
+  }
+  if (page.kind === "products") {
+    return <ProductDetailPage page={page} bookingLinks={bookingLinks} />;
   }
   if (isBlogArticlePath(path)) {
     return <BlogArticlePage page={page} bookingLinks={bookingLinks} />;

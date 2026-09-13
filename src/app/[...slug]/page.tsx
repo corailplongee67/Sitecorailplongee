@@ -74,6 +74,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const page = findPage(path);
   if (!page) return {};
 
+  if (path === "/qui-sommes-nous/" || path === "/en/about-us/") {
+    return {
+      title: { absolute: page.title },
+      description: page.metaDescription || undefined,
+      alternates: { canonical: path },
+    };
+  }
+
   const locale = path.startsWith("/en/") ? "en" : "fr";
   return {
     title: page.title || "Corail Plongée",
@@ -95,8 +103,13 @@ export default async function Page({ params }: PageProps) {
   if (!page) notFound();
 
   const bookingLinks = await getBookingLinks();
-  if (path === "/qui-sommes-nous/") {
-    return <AboutPage bookingLinks={bookingLinks} />;
+  if (path === "/qui-sommes-nous/" || path === "/en/about-us/") {
+    return (
+      <AboutPage
+        bookingLinks={bookingLinks}
+        locale={path.startsWith("/en/") ? "en" : "fr"}
+      />
+    );
   }
   if (path === "/decouverte/") {
     return <DiscoveryPage bookingLinks={bookingLinks} />;

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AboutPage } from "@/components/AboutPage";
+import { BlogArticlePage, isBlogArticlePath } from "@/components/BlogArticlePage";
 import { BlogPage } from "@/components/BlogPage";
 import { CetaceanPage } from "@/components/CetaceanPage";
 import { ContactPage } from "@/components/ContactPage";
@@ -118,6 +119,9 @@ export default async function Page({ params }: PageProps) {
   }
   if (path === "/blog/") {
     return <BlogPage bookingLinks={bookingLinks} />;
+  }
+  if (isBlogArticlePath(path)) {
+    return <BlogArticlePage page={page} bookingLinks={bookingLinks} />;
   }
   if (
     path === "/mention-legal/" ||

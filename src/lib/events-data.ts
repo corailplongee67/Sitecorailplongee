@@ -53,10 +53,27 @@ function cleanLegacyDescription(visibleText: string, title: string) {
   return text.replace(/\s+(RESERVER|Réserver)\s*$/i, "").trim();
 }
 
-function legacyDate(title: string, lastmod: string) {
+const frenchMonths: Record<string, number> = {
+  janvier: 0, fevrier: 1, février: 1, mars: 2, avril: 3, mai: 4, juin: 5,
+  juillet: 6, aout: 7, août: 7, septembre: 8, octobre: 9, novembre: 10, decembre: 11, décembre: 11,
+};
+
+function legacyDate(source: string, lastmod: string) {
   const fallback = new Date(lastmod);
   const fallbackYear = fallback.getUTCFullYear();
-  const dates = [...title.matchAll(/(\d{1,2})[/-](\d{1,2})(?:[/-](\d{2,4}))?/g)];
+  const numericDates = [...source.matchAll(/(\d{1,2})[/-](\d{1,2})(?:[/-](\d{2,4}))?/g)].map((match) => ({
+    index: match.index,
+    day: Number(match[1]),
+    month: Number(match[2]) - 1,
+    year: match[3],
+  }));
+  const namedDates = [...source.matchAll(/(\d{1,2})\s+(janvier|f[eé]vrier|mars|avril|mai|juin|juillet|ao[uû]t|septembre|octobre|novembre|d[eé]cembre)\s+(\d{4})/gi)].map((match) => ({
+    index: match.index,
+    day: Number(match[1]),
+    month: frenchMonths[match[2].toLowerCase()],
+    year: match[3],
+  }));
+  const dates = [...numericDates, ...namedDates].sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
   if (!dates.length) return { startsAt: fallback.toISOString(), endsAt: null };
 
   const toYear = (value?: string) => {
@@ -66,11 +83,11 @@ function legacyDate(title: string, lastmod: string) {
   };
   const first = dates[0];
   const last = dates.at(-1) ?? first;
-  const endYear = toYear(last[3] ?? first[3]);
-  const startYear = toYear(first[3] ?? last[3]);
-  const startsAt = new Date(Date.UTC(startYear, Number(first[2]) - 1, Number(first[1]), 3, 30)).toISOString();
+  const endYear = toYear(last.year ?? first.year);
+  const startYear = toYear(first.year ?? last.year);
+  const startsAt = new Date(Date.UTC(startYear, first.month, first.day, 3, 30)).toISOString();
   const endsAt = dates.length > 1
-    ? new Date(Date.UTC(endYear, Number(last[2]) - 1, Number(last[1]), 13, 0)).toISOString()
+    ? new Date(Date.UTC(endYear, last.month, last.day, 13, 0)).toISOString()
     : null;
   return { startsAt, endsAt };
 }
@@ -106,7 +123,7 @@ export const fallbackEvents: PublicEvent[] = auditPages
     const title = decodeEntities(page.headings?.h1?.[0] ?? page.title);
     const description = cleanLegacyDescription(page.visibleText ?? "", title);
     const excerpt = description.length > 190 ? `${description.slice(0, 187).trim()}…` : description;
-    const { startsAt, endsAt } = legacyDate(title, page.lastmod ?? new Date(0).toISOString());
+    const { startsAt, endsAt } = legacyDate(`${title} ${description}`, page.lastmod ?? new Date(0).toISOString());
     const [cardStart, cardEnd] = palettes[index % palettes.length];
 
     return {

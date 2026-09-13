@@ -243,6 +243,32 @@ h2 { margin-bottom: 0; font-size: clamp(2.6rem, 5.2vw, 5.4rem); line-height: 0.9
 .event-dialog-copy p { color: #425b63; line-height: 1.75; white-space: pre-line; }
 .event-dialog-close { position: absolute; z-index: 3; top: 18px; right: 18px; width: 44px; height: 44px; display: grid; place-items: center; color: var(--ink); background: rgba(255,255,255,.92); border: 0; border-radius: 50%; box-shadow: 0 8px 25px rgba(4,35,48,.15); cursor: pointer; }
 .event-dialog-close svg { width: 20px; }
+.event-detail-main { background: var(--sand); }
+.event-detail-hero { position: relative; min-height: 545px; display: flex; align-items: flex-end; overflow: hidden; color: white; background: var(--deep); }
+.event-detail-hero > img { object-fit: cover; object-position: center 52%; }
+.event-detail-hero-shade { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(2,18,27,.92), rgba(2,18,27,.13) 72%), linear-gradient(90deg, rgba(2,18,27,.38), transparent 64%); }
+.event-detail-hero-copy { position: relative; z-index: 2; padding-bottom: 64px; }
+.event-detail-hero-copy > a { margin-bottom: 28px; display: inline-flex; align-items: center; gap: 10px; color: rgba(255,255,255,.78); font-size: .72rem; font-weight: 720; letter-spacing: .08em; text-transform: uppercase; }
+.event-detail-hero-copy > a svg { width: 17px; }
+.event-detail-hero h1 { max-width: 1120px; margin: 0; font-size: clamp(3.2rem, 6.6vw, 7rem); line-height: .94; text-wrap: balance; }
+.event-detail-section { padding: 82px 0 96px; background: radial-gradient(circle at 4% 12%, rgba(64,213,208,.12), transparent 25%), var(--sand); }
+.event-detail-layout { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); align-items: stretch; gap: 24px; }
+.event-detail-poster { position: relative; min-height: 720px; overflow: hidden; background: #061d29; border-radius: 26px 0 0 26px; box-shadow: 0 28px 75px rgba(4,35,48,.16); }
+.event-detail-poster img { object-fit: contain; }
+.event-detail-card { min-width: 0; padding: clamp(44px, 6vw, 82px); color: var(--event-detail-text); background: linear-gradient(145deg, var(--event-detail-start), var(--event-detail-end)); border-radius: 0 26px 26px 0; box-shadow: 0 28px 75px rgba(4,35,48,.16); }
+.event-detail-card .eyebrow { color: color-mix(in srgb, var(--event-detail-text) 70%, transparent); }
+.event-detail-card h2 { margin-bottom: 30px; color: var(--event-detail-title); font-size: clamp(2.7rem, 4.6vw, 5rem); line-height: .98; text-wrap: balance; }
+.event-detail-meta { margin-bottom: 34px; padding: 20px 0; display: grid; gap: 13px; border-block: 1px solid color-mix(in srgb, var(--event-detail-text) 22%, transparent); }
+.event-detail-meta span { display: flex; align-items: center; gap: 11px; color: color-mix(in srgb, var(--event-detail-text) 78%, transparent); font-size: .8rem; line-height: 1.5; }
+.event-detail-meta svg { width: 18px; height: 18px; flex: 0 0 auto; color: var(--event-detail-title); }
+.event-detail-copy { margin-bottom: 38px; display: grid; gap: 12px; }
+.event-detail-copy p { margin: 0; color: color-mix(in srgb, var(--event-detail-text) 88%, transparent); font-size: clamp(.95rem, 1.4vw, 1.05rem); line-height: 1.72; }
+.event-detail-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 20px; }
+.event-detail-actions > a:not(.button) { display: inline-flex; align-items: center; gap: 8px; color: var(--event-detail-text); font-size: .76rem; font-weight: 720; letter-spacing: .05em; }
+.event-detail-actions > a:not(.button) svg { width: 17px; }
+.event-detail-back { margin-top: 52px; display: flex; justify-content: center; }
+.event-detail-back a { display: inline-flex; align-items: center; gap: 10px; color: var(--blue); font-size: .72rem; font-weight: 720; letter-spacing: .08em; text-transform: uppercase; }
+.event-detail-back svg { width: 17px; }
 .event-color-fields { margin-bottom: 18px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
 .event-color-fields label { min-height: 64px; padding: 10px 12px; display: grid !important; grid-template-columns: 1fr 44px !important; align-items: center; gap: 10px !important; color: var(--muted); background: #f6f8f7; border: 1px solid rgba(4,35,48,.1); }
 .event-color-fields input[type="color"] { width: 44px; height: 38px; min-height: 38px; padding: 3px; cursor: pointer; }
@@ -1047,6 +1073,9 @@ h2 { margin-bottom: 0; font-size: clamp(2.6rem, 5.2vw, 5.4rem); line-height: 0.9
   .rates-final-cta .button { grid-column: 2; justify-self: start; }
   .event-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .event-dialog { grid-template-columns: .8fr 1.2fr; }
+  .event-detail-layout { grid-template-columns: 1fr; gap: 0; }
+  .event-detail-poster { border-radius: 24px 24px 0 0; }
+  .event-detail-card { border-radius: 0 0 24px 24px; }
   .event-color-fields { grid-template-columns: 1fr 1fr; }
   .admin-shell { grid-template-columns: 1fr; }
   .admin-sidebar { position: static; width: 100%; height: auto; flex-direction: row; align-items: center; gap: 20px; }
@@ -1101,6 +1130,16 @@ h2 { margin-bottom: 0; font-size: clamp(2.6rem, 5.2vw, 5.4rem); line-height: 0.9
   .event-dialog-image { position: relative; min-height: 260px; }
   .event-dialog-content { padding: 35px 24px 45px; }
   .event-dialog-copy { max-height: none; overflow: visible; }
+  .event-detail-hero { min-height: 480px; }
+  .event-detail-hero-copy { padding-bottom: 45px; }
+  .event-detail-hero h1 { font-size: clamp(3.1rem, 14vw, 5.4rem); }
+  .event-detail-section { padding: 56px 0 72px; }
+  .event-detail-layout { grid-template-columns: 1fr; gap: 0; }
+  .event-detail-poster { min-height: 560px; border-radius: 22px 22px 0 0; }
+  .event-detail-card { padding: 38px 24px 46px; border-radius: 0 0 22px 22px; }
+  .event-detail-card h2 { font-size: clamp(2.5rem, 12vw, 4rem); }
+  .event-detail-actions { align-items: stretch; flex-direction: column; }
+  .event-detail-actions .button { width: 100%; }
   .rates-index .shell { gap: 22px; }
   .rate-card { padding: 30px 20px; border-radius: 20px; }
   .rate-card-heading { margin-bottom: 30px; padding-bottom: 25px; gap: 24px; }

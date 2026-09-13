@@ -119,3 +119,32 @@ export async function getEventsCatalog(): Promise<PublicEvent[]> {
   if (error || !data?.length) return fallbackEvents;
   return data as PublicEvent[];
 }
+
+export async function getEventBySlug(slug: string, legacyLastmod?: string): Promise<PublicEvent | null> {
+  const archivedEvent = fallbackEvents.find(
+    (event) => event.slug_fr === slug || event.slug_en === slug,
+  ) ?? null;
+
+  if (!hasSupabaseEnv()) return archivedEvent;
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("events")
+    .select(eventSelect)
+    .eq("published", true)
+    .or(`slug_fr.eq.${slug},slug_en.eq.${slug}`)
+    .limit(1)
+    .maybeSingle();
+
+  if (error || !data) return archivedEvent;
+
+  const savedEvent = data as PublicEvent;
+  const savedDateIsOldImport = archivedEvent && legacyLastmod
+    ? Math.abs(new Date(savedEvent.starts_at).getTime() - new Date(legacyLastmod).getTime()) < 1000
+    : false;
+
+  if (savedDateIsOldImport && archivedEvent) {
+    return { ...savedEvent, starts_at: archivedEvent.starts_at, ends_at: archivedEvent.ends_at };
+  }
+  return savedEvent;
+}

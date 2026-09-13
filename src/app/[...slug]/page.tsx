@@ -8,6 +8,7 @@ import { ContactPage } from "@/components/ContactPage";
 import { CrossoverPage } from "@/components/CrossoverPage";
 import { DiscoveryPage } from "@/components/DiscoveryPage";
 import { ExplorationPage } from "@/components/ExplorationPage";
+import { EventDetailPage } from "@/components/EventDetailPage";
 import { FrenchTrainingPage } from "@/components/FrenchTrainingPage";
 import { InitiationPage } from "@/components/InitiationPage";
 import { LegalPage } from "@/components/LegalPage";
@@ -15,7 +16,7 @@ import { LegacyPage } from "@/components/LegacyPage";
 import { ReunionDivingPage } from "@/components/ReunionDivingPage";
 import { ServicesPage } from "@/components/ServicesPage";
 import { SsiTrainingPage } from "@/components/SsiTrainingPage";
-import { getBookingLinks, getPriceCatalog } from "@/lib/content-data";
+import { getBookingLinks, getEventBySlug, getPriceCatalog } from "@/lib/content-data";
 import auditPages from "../../../docs/audit/current-site-pages.json";
 
 type PageProps = { params: Promise<{ slug: string[] }> };
@@ -122,6 +123,10 @@ export default async function Page({ params }: PageProps) {
   }
   if (isBlogArticlePath(path)) {
     return <BlogArticlePage page={page} bookingLinks={bookingLinks} />;
+  }
+  if (page.kind === "posts") {
+    const event = await getEventBySlug(slug.at(-1) ?? "", page.lastmod);
+    if (event) return <EventDetailPage page={page} event={event} bookingLinks={bookingLinks} />;
   }
   if (
     path === "/mention-legal/" ||

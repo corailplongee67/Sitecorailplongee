@@ -81,6 +81,43 @@ export const nav = {
   ],
 } satisfies Record<Locale, NavigationItem[]>;
 
+const localePathPairs = [
+  ["/", "/en/home/"],
+  ["/qui-sommes-nous/", "/en/about-us/"],
+  ["/nos-prestations/", "/en/our-services/"],
+  ["/decouverte/", "/en/discover/"],
+  ["/je-decouvre-bapteme/", "/en/i-discover-baptism/"],
+  ["/je-decouvre-initiation/", "/en/i-discover-initiation/"],
+  ["/formation_ssi/", "/en/ssi_training-course/"],
+  ["/formation-francaise/", "/en/french-training/"],
+  ["/je-plonge-autonome/", "/en/i-dive/"],
+  ["/passerelle/", "/en/french-to-american-american-to-french/"],
+  ["/sorties-cetaces-2/", "/en/cetacean-excursions/"],
+  ["/nos-tarifs/", "/en/rates/"],
+  ["/evenements/", "/en/our-events/"],
+  ["/contactez-nous/", "/en/contact/"],
+  ["/plonger-reunion/", "/en/to-dive-in-reunion/"],
+  ["/blog/", "/en/blog-about-diving-in-reunion-island/"],
+  ["/panier/", "/en/cart/"],
+  ["/boutique/", "/en/shop/"],
+  ["/confidentialite/", "/en/privacy-policies/"],
+  ["/mention-legal/", "/en/terms-and-conditions/"],
+] as const;
+
+const alternateLocalePaths = new Map<string, string>(
+  localePathPairs.flatMap(([frPath, enPath]) => [[frPath, enPath], [enPath, frPath]]),
+);
+
+export function alternateLocalePath(pathname: string, locale: Locale) {
+  const normalizedPath = pathname.endsWith("/") ? pathname : `${pathname}/`;
+  const exactPath = alternateLocalePaths.get(normalizedPath);
+  if (exactPath) return exactPath;
+
+  if (normalizedPath.startsWith("/en/boutique/")) return "/boutique/";
+  if (locale === "fr" && normalizedPath !== "/") return "/en/home/";
+  return "/";
+}
+
 export const services = [
   {
     key: "discovery",

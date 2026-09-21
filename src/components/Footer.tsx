@@ -13,9 +13,9 @@ const partners = [
   ["/images/partners/nitrox.png", "Nitrox"],
 ] as const;
 
-export function PartnerStrip() {
+export function PartnerStrip({ locale = "fr" }: { locale?: Locale }) {
   return (
-    <section className="partner-strip" aria-label="Partenaires et certifications">
+    <section className="partner-strip" aria-label={locale === "fr" ? "Partenaires et certifications" : "Partners and certifications"}>
       <div className="shell partner-row">
         {partners.map(([src, alt]) => (
           <div className="partner-logo" key={src}>

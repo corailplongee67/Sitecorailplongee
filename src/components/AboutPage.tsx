@@ -324,7 +324,7 @@ export function AboutPage({
           </div>
         </section>
       </main>
-      <PartnerStrip />
+      <PartnerStrip locale={locale} />
       <Footer locale={locale} />
     </>
   );

@@ -17,6 +17,20 @@ function formatPrice(amount: number, locale: Locale) {
   }).format(amount / 100);
 }
 
+const englishPriceCategories: Record<string, string> = {
+  "Découverte": "Discovery",
+  "Découverte & sorties": "Discovery & excursions",
+  "Formation internationale SSI": "International SSI training",
+  "SSI": "International SSI training",
+  "Formation française ANMP & FFESSM": "French ANMP & FFESSM training",
+  "Français": "French training",
+  "Passerelles": "Crossovers",
+  "Les forfaits d’exploration": "Exploration packages",
+  "Exploration": "Exploration",
+  "Suppléments": "Extras",
+  "Cétacés": "Cetacean excursions",
+};
+
 export function HomePage({
   locale,
   bookingLinks,
@@ -194,7 +208,7 @@ export function HomePage({
           <div className="shell price-list">
             {prices.slice(0, 7).map((price) => (
               <a href={bookingLinks[price.booking_link_key as BookingKey] ?? bookingLinks.main_booking} target="_blank" rel="noreferrer" key={price.id}>
-                <span className="price-category">{price.category}</span>
+                <span className="price-category">{fr ? price.category : (englishPriceCategories[price.category] ?? price.category)}</span>
                 <strong>{fr ? price.label_fr : price.label_en}</strong>
                 <span className="price-amount">{formatPrice(price.amount_cents, locale)} <ArrowRight /></span>
               </a>
@@ -238,7 +252,7 @@ export function HomePage({
           <div className="center-button"><BookingCta href={bookingLinks.main_booking}>{fr ? "Je réserve" : "Book now"}</BookingCta></div>
         </section>
 
-        <PartnerStrip />
+        <PartnerStrip locale={locale} />
 
         <section className="newsletter-section section-shell">
           <div className="shell newsletter-card">
@@ -248,7 +262,7 @@ export function HomePage({
             </div>
             <div className="newsletter-placeholder">
               <label htmlFor="newsletter-email">Email</label>
-              <div><input id="newsletter-email" type="email" placeholder="vous@exemple.fr" disabled /><button disabled>{fr ? "Bientôt disponible" : "Coming soon"}</button></div>
+              <div><input id="newsletter-email" type="email" placeholder={fr ? "vous@exemple.fr" : "you@example.com"} disabled /><button disabled>{fr ? "Bientôt disponible" : "Coming soon"}</button></div>
               <small>{fr ? "L’inscription sera activée après validation de l’outil newsletter actuel." : "Subscriptions will open once the current newsletter tool is confirmed."}</small>
             </div>
           </div>

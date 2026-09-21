@@ -3,8 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronDown, LockKeyhole, Menu, UserRound, X } from "lucide-react";
-import { useState } from "react";
-import { nav, type Locale } from "@/lib/site-data";
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { alternateLocalePath, nav, type Locale } from "@/lib/site-data";
 
 export function Header({
   locale,
@@ -22,6 +23,12 @@ export function Header({
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const isFr = locale === "fr";
   const items = nav[locale];
+  const pathname = usePathname();
+  const languageHref = alternateLocalePath(pathname, locale);
+
+  useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
 
   function itemHref(item: (typeof items)[number]) {
     if (item.bookingKey === "gift_dive") return giftUrl;
@@ -88,7 +95,11 @@ export function Header({
         </nav>
 
         <div className="header-actions">
-          <Link className="language-switch" href={isFr ? "/en/home/" : "/"}>
+          <Link
+            className="language-switch"
+            href={languageHref}
+            aria-label={isFr ? "Afficher cette page en anglais" : "View this page in French"}
+          >
             {isFr ? "EN" : "FR"}
           </Link>
           <a className="account-link" href={accountUrl} target="_blank" rel="noreferrer" aria-label={isFr ? "Mon compte" : "My account"}>
@@ -99,7 +110,9 @@ export function Header({
             type="button"
             aria-expanded={open}
             aria-controls="mobile-navigation"
-            aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
+            aria-label={open
+              ? (isFr ? "Fermer le menu" : "Close menu")
+              : (isFr ? "Ouvrir le menu" : "Open menu")}
             onClick={() => setOpen((value) => !value)}
           >
             {open ? <X /> : <Menu />}
@@ -108,7 +121,7 @@ export function Header({
       </div>
 
       {open ? (
-        <nav id="mobile-navigation" className="mobile-nav" aria-label="Navigation mobile">
+        <nav id="mobile-navigation" className="mobile-nav" aria-label={isFr ? "Navigation mobile" : "Mobile navigation"}>
           {items.map((item) => item.children ? (
             <div className="mobile-nav-group" key={item.href}>
               <div className="mobile-nav-parent">

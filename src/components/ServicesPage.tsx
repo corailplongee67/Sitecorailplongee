@@ -7,7 +7,7 @@ import type { BookingKey } from "@/lib/site-data";
 
 type BookingLinks = Record<BookingKey, string>;
 
-const offers = [
+const frenchOffers = [
   {
     title: "Découverte",
     description:
@@ -53,11 +53,65 @@ const offers = [
   },
 ] as const;
 
-export function ServicesPage({ bookingLinks }: { bookingLinks: BookingLinks }) {
+const englishOffers = [
+  {
+    title: "Baptisms",
+    description:
+      "Corail Plongée Reunion makes you discover the Indian Ocean and its richness all year long. First dives and training courses for all levels…",
+    image: "/images/services/original/discovery.jpg",
+    href: "/en/discover/",
+    alt: "Colorful tropical fish in Reunion Island waters",
+  },
+  {
+    title: "SSI training courses",
+    description: "Specialized training courses",
+    image: "/images/services/original/ssi-training.jpg",
+    href: "/en/ssi_training-course/",
+    alt: "Clownfish gathered in an anemone",
+  },
+  {
+    title: "French training",
+    description: "Specialized training",
+    image: "/images/services/original/french-training.jpg",
+    href: "/en/french-training/",
+    alt: "Clownfish among the tentacles of an anemone",
+  },
+  {
+    title: "Exploration packages",
+    description: "Guided exploration",
+    image: "/images/services/original/exploration.jpg",
+    href: "/en/i-dive/",
+    alt: "Butterflyfish above a coral reef",
+  },
+  {
+    title: "Continual courses",
+    description: "Bridge from SSI International diploma to French diploma",
+    image: "/images/services/original/crossover.jpg",
+    href: "/en/continual-course/",
+    alt: "Tropical fish and colorful coral",
+  },
+  {
+    title: "Cetacean excursion",
+    description: "An exceptional experience with cetaceans.",
+    image: "/images/services/original/cetaceans.jpg",
+    href: "/en/cetacean-excursions/",
+    alt: "Pink starfish in the Indian Ocean",
+  },
+] as const;
+
+export function ServicesPage({
+  bookingLinks,
+  locale = "fr",
+}: {
+  bookingLinks: BookingLinks;
+  locale?: "fr" | "en";
+}) {
+  const isEnglish = locale === "en";
+  const offers = isEnglish ? englishOffers : frenchOffers;
   return (
     <>
       <Header
-        locale="fr"
+        locale={locale}
         bookingUrl={bookingLinks.agenda}
         giftUrl={bookingLinks.gift_dive}
         accountUrl={bookingLinks.customer_account}
@@ -67,15 +121,17 @@ export function ServicesPage({ bookingLinks }: { bookingLinks: BookingLinks }) {
         <section className="services-origin-hero">
           <Image
             src="/images/services/original/hero.jpg"
-            alt="Récif corallien et poissons tropicaux dans l’océan Indien"
+            alt={isEnglish
+              ? "Coral reef and tropical fish in the Indian Ocean"
+              : "Récif corallien et poissons tropicaux dans l’océan Indien"}
             fill
             priority
             sizes="100vw"
           />
           <div className="services-origin-hero-shade" />
           <div className="shell services-origin-hero-copy">
-            <p className="eyebrow light">Corail Plongée · La Réunion</p>
-            <h1>Nos prestations</h1>
+            <p className="eyebrow light">Corail Plongée · {isEnglish ? "Reunion Island" : "La Réunion"}</p>
+            <h1>{isEnglish ? "Our services" : "Nos prestations"}</h1>
           </div>
         </section>
 
@@ -83,12 +139,11 @@ export function ServicesPage({ bookingLinks }: { bookingLinks: BookingLinks }) {
           <div className="shell">
             <header className="services-origin-intro">
               <p className="eyebrow">Corail Plongée La Réunion</p>
-              <h2>Découvrez notre activité</h2>
+              <h2>{isEnglish ? "Discover activities" : "Découvrez notre activité"}</h2>
               <p>
-                Corail Plongée Réunion vous fait découvrir l’océan Indien et ses richesses tout au
-                long de l’année. Baptêmes de plongée, formations tous niveaux… Profitez du cadre
-                exceptionnel de La Réunion et offrez-vous une expérience hors du commun. Formations
-                FFESSM et SSI possibles.
+                {isEnglish
+                  ? "Corail Plongée Reunion makes you discover the Indian Ocean and its richness all year long. First dives, training courses for all levels… Take advantage of the exceptional setting of Reunion Island and offer yourself an extraordinary experience. FFESSM and SSI training courses are also available."
+                  : "Corail Plongée Réunion vous fait découvrir l’océan Indien et ses richesses tout au long de l’année. Baptêmes de plongée, formations tous niveaux… Profitez du cadre exceptionnel de La Réunion et offrez-vous une expérience hors du commun. Formations FFESSM et SSI possibles."}
               </p>
             </header>
 
@@ -110,7 +165,7 @@ export function ServicesPage({ bookingLinks }: { bookingLinks: BookingLinks }) {
                     <h3>{offer.title}</h3>
                     <p>{offer.description}</p>
                     <Link href={offer.href}>
-                      En savoir plus <ArrowRight aria-hidden="true" size={17} />
+                      {isEnglish ? "Learn more" : "En savoir plus"} <ArrowRight aria-hidden="true" size={17} />
                     </Link>
                   </div>
                 </article>
@@ -120,7 +175,7 @@ export function ServicesPage({ bookingLinks }: { bookingLinks: BookingLinks }) {
         </section>
       </main>
 
-      <Footer locale="fr" />
+      <Footer locale={locale} />
     </>
   );
 }

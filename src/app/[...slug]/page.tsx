@@ -134,8 +134,13 @@ export default async function Page({ params }: PageProps) {
   if (path === "/sorties-cetaces-2/") {
     return <CetaceanPage bookingLinks={bookingLinks} />;
   }
-  if (path === "/nos-prestations/") {
-    return <ServicesPage bookingLinks={bookingLinks} />;
+  if (path === "/nos-prestations/" || path === "/en/our-services/") {
+    return (
+      <ServicesPage
+        bookingLinks={bookingLinks}
+        locale={path.startsWith("/en/") ? "en" : "fr"}
+      />
+    );
   }
   if (path === "/contactez-nous/") {
     return <ContactPage bookingLinks={bookingLinks} />;

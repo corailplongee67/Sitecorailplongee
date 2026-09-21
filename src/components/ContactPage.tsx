@@ -6,11 +6,18 @@ import type { BookingKey } from "@/lib/site-data";
 
 type BookingLinks = Record<BookingKey, string>;
 
-export function ContactPage({ bookingLinks }: { bookingLinks: BookingLinks }) {
+export function ContactPage({
+  bookingLinks,
+  locale = "fr",
+}: {
+  bookingLinks: BookingLinks;
+  locale?: "fr" | "en";
+}) {
+  const en = locale === "en";
   return (
     <>
       <Header
-        locale="fr"
+        locale={locale}
         bookingUrl={bookingLinks.agenda}
         giftUrl={bookingLinks.gift_dive}
         accountUrl={bookingLinks.customer_account}
@@ -20,14 +27,14 @@ export function ContactPage({ bookingLinks }: { bookingLinks: BookingLinks }) {
         <section className="contact-origin-hero">
           <Image
             src="/images/contact/original/hero.jpg"
-            alt="Corail rose dans les eaux de La Réunion"
+            alt={en ? "Pink coral in the waters of Reunion Island" : "Corail rose dans les eaux de La Réunion"}
             fill
             priority
             sizes="100vw"
           />
           <div className="contact-origin-hero-shade" />
           <div className="shell contact-origin-hero-copy">
-            <p className="eyebrow light">Saint-Gilles-les-Bains · La Réunion</p>
+            <p className="eyebrow light">Saint-Gilles-les-Bains · {en ? "Reunion Island" : "La Réunion"}</p>
             <h1>Contact</h1>
           </div>
         </section>
@@ -53,7 +60,7 @@ export function ContactPage({ bookingLinks }: { bookingLinks: BookingLinks }) {
           <div className="shell contact-origin-panel">
             <div className="contact-origin-details">
               <p className="eyebrow">Corail Plongée</p>
-              <h2>Contactez-nous</h2>
+              <h2>{en ? "Contact us" : "Contactez-nous"}</h2>
 
               <div className="contact-origin-list">
                 <a
@@ -63,17 +70,17 @@ export function ContactPage({ bookingLinks }: { bookingLinks: BookingLinks }) {
                 >
                   <MapPin aria-hidden="true" />
                   <span>
-                    <strong>Adresse</strong>
+                    <strong>{en ? "Address" : "Adresse"}</strong>
                     Port de plaisance,<br />
                     Saint-Gilles les Bains 97434,<br />
-                    La Réunion
+                    {en ? "Reunion Island" : "La Réunion"}
                   </span>
                 </a>
 
                 <a href="tel:+262262243725">
                   <Phone aria-hidden="true" />
                   <span>
-                    <strong>Téléphone</strong>
+                    <strong>{en ? "Phone" : "Téléphone"}</strong>
                     02.62.24.37.25
                   </span>
                 </a>
@@ -89,9 +96,9 @@ export function ContactPage({ bookingLinks }: { bookingLinks: BookingLinks }) {
                 <div>
                   <Clock3 aria-hidden="true" />
                   <span>
-                    <strong>Heures d’ouverture</strong>
-                    Lundi au samedi de 7h30 à 17h<br />
-                    Dimanche de 7h30 à 11h30
+                    <strong>{en ? "Opening hours" : "Heures d’ouverture"}</strong>
+                    {en ? "Monday to Saturday, 7.30am to 5pm" : "Lundi au samedi de 7h30 à 17h"}<br />
+                    {en ? "Sunday, 7.30am to 11.30am" : "Dimanche de 7h30 à 11h30"}
                   </span>
                 </div>
               </div>
@@ -102,13 +109,13 @@ export function ContactPage({ bookingLinks }: { bookingLinks: BookingLinks }) {
                 target="_blank"
                 rel="noreferrer"
               >
-                Je réserve <ArrowUpRight aria-hidden="true" size={18} />
+                {en ? "I book" : "Je réserve"} <ArrowUpRight aria-hidden="true" size={18} />
               </a>
             </div>
 
             <div className="contact-origin-map">
               <iframe
-                title="Localisation de Corail Plongée au port de Saint-Gilles-les-Bains"
+                title={en ? "Corail Plongée location at Saint-Gilles-les-Bains marina" : "Localisation de Corail Plongée au port de Saint-Gilles-les-Bains"}
                 src="https://www.google.com/maps?q=Corail+Plong%C3%A9e+Saint-Gilles-les-Bains+La+R%C3%A9union&output=embed"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
@@ -122,7 +129,7 @@ export function ContactPage({ bookingLinks }: { bookingLinks: BookingLinks }) {
         </section>
       </main>
 
-      <Footer locale="fr" />
+      <Footer locale={locale} />
     </>
   );
 }

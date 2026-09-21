@@ -80,11 +80,18 @@ const articles = [
   },
 ] as const;
 
-export function BlogPage({ bookingLinks }: { bookingLinks: BookingLinks }) {
+export function BlogPage({
+  bookingLinks,
+  locale = "fr",
+}: {
+  bookingLinks: BookingLinks;
+  locale?: "fr" | "en";
+}) {
+  const en = locale === "en";
   return (
     <>
       <Header
-        locale="fr"
+        locale={locale}
         bookingUrl={bookingLinks.agenda}
         giftUrl={bookingLinks.gift_dive}
         accountUrl={bookingLinks.customer_account}
@@ -94,16 +101,16 @@ export function BlogPage({ bookingLinks }: { bookingLinks: BookingLinks }) {
         <section className="blog-origin-hero">
           <Image
             src="/images/blog/original/hero.jpg"
-            alt="Plongeur au-dessus des fonds marins de La Réunion"
+            alt={en ? "Diver above the seabed of Reunion Island" : "Plongeur au-dessus des fonds marins de La Réunion"}
             fill
             priority
             sizes="100vw"
           />
           <div className="blog-origin-hero-shade" />
           <div className="shell blog-origin-hero-copy">
-            <p className="eyebrow light">Conseils · Découvertes · Océan</p>
+            <p className="eyebrow light">{en ? "Advice · Discoveries · Ocean" : "Conseils · Découvertes · Océan"}</p>
             <h1>Blog</h1>
-            <p>Blog sur la Plongée à la Réunion</p>
+            <p>{en ? "Blog about diving in Reunion Island" : "Blog sur la Plongée à la Réunion"}</p>
           </div>
         </section>
 
@@ -111,16 +118,17 @@ export function BlogPage({ bookingLinks }: { bookingLinks: BookingLinks }) {
           <div className="shell blog-origin-panel">
             <header className="blog-origin-heading">
               <div>
-                <p className="eyebrow">Le journal de Corail Plongée</p>
+                <p className="eyebrow">{en ? "The Corail Plongée journal" : "Le journal de Corail Plongée"}</p>
                 <h2>Blog</h2>
               </div>
               <p>
-                Conseils pratiques, biodiversité marine et récits d’exploration pour préparer et
-                enrichir vos plongées à La Réunion.
+                {en
+                  ? "Practical advice, marine biodiversity and exploration stories to prepare for and enrich your dives in Reunion Island."
+                  : "Conseils pratiques, biodiversité marine et récits d’exploration pour préparer et enrichir vos plongées à La Réunion."}
               </p>
             </header>
 
-            <div className="blog-origin-grid">
+            {!en && <div className="blog-origin-grid">
               {articles.map((article, index) => (
                 <article className="blog-origin-card" key={article.href}>
                   <Link className="blog-origin-image" href={article.href} aria-label={article.title}>
@@ -146,12 +154,12 @@ export function BlogPage({ bookingLinks }: { bookingLinks: BookingLinks }) {
                   </div>
                 </article>
               ))}
-            </div>
+            </div>}
           </div>
         </section>
       </main>
 
-      <Footer locale="fr" />
+      <Footer locale={locale} />
     </>
   );
 }

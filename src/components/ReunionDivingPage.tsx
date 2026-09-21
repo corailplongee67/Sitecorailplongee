@@ -53,11 +53,41 @@ const diveEnvironments = [
   },
 ] as const;
 
-export function ReunionDivingPage({ bookingLinks }: { bookingLinks: BookingLinks }) {
+const environmentCopyEn: Record<string, { title: string; alt: string; paragraphs: string[] }> = {
+  "recifs-coralliens": {
+    title: "Coral reefs",
+    alt: "Colourful coral reef with tropical fish in blue water",
+    paragraphs: ["From beginners to qualified divers, the leeward coast from Saint-Paul to Saint-Leu offers colourful dives teeming with life.", "On the outer face of the coral reef, you can admire the complex web of life.", "Black coral, fire coral and yellow, red and orange gorgonians create a festival of colour, alongside moray eels, groupers, angelfish, clams and lobsters."],
+  },
+  tombants: {
+    title: "The underwater cliffs",
+    alt: "Freediver near a coral reef with red fish",
+    paragraphs: ["Along the leeward coast, the underwater cliffs are numerous and varied. Between 15 and 40 metres, there is something for every diver, with exceptionally clear and bright water.", "During your dives, you may encounter unicornfish, snappers, surgeonfish, batfish and many more species.", "The diversity and quality of diving in Reunion Island will win you over."],
+  },
+  grottes: {
+    title: "The underwater caves",
+    alt: "Divers exploring an underwater cave lit by sunlight",
+    paragraphs: ["Le Pain de Sucre, La Cheminée, Les Trois Failles and many other sites offer exceptional dives with spectacular plays of light.", "Glide between cracks and caves of every size and let the beauty of the scenery carry you away.", "The rich, ever-changing underwater relief leads from one surprise to the next."],
+  },
+  epaves: {
+    title: "The wrecks",
+    alt: "Underwater shipwreck surrounded by fish with a diver in the distance",
+    paragraphs: ["The Hïa Sïang, the Navarra and the Barge complete the picture. These peaceful sites, rich in underwater flora and fauna, have become thriving artificial reefs."],
+  },
+};
+
+export function ReunionDivingPage({
+  bookingLinks,
+  locale = "fr",
+}: {
+  bookingLinks: BookingLinks;
+  locale?: "fr" | "en";
+}) {
+  const en = locale === "en";
   return (
     <>
       <Header
-        locale="fr"
+        locale={locale}
         bookingUrl={bookingLinks.agenda}
         giftUrl={bookingLinks.gift_dive}
         accountUrl={bookingLinks.customer_account}
@@ -67,16 +97,16 @@ export function ReunionDivingPage({ bookingLinks }: { bookingLinks: BookingLinks
         <section className="reunion-origin-hero">
           <Image
             src="/images/reunion/original/hero.jpg"
-            alt="Fonds marins de La Réunion"
+            alt={en ? "Seabed of Reunion Island" : "Fonds marins de La Réunion"}
             fill
             priority
             sizes="100vw"
           />
           <div className="reunion-origin-hero-shade" />
           <div className="shell reunion-origin-hero-copy">
-            <p className="eyebrow light">Corail Plongée Réunion</p>
-            <h1>Plonger Réunion</h1>
-            <p>Centre de plongée sous-marine sur l’île de la Réunion</p>
+            <p className="eyebrow light">Corail Plongée {en ? "Reunion Island" : "Réunion"}</p>
+            <h1>{en ? "Diving in Reunion Island" : "Plonger Réunion"}</h1>
+            <p>{en ? "Scuba diving centre on Reunion Island" : "Centre de plongée sous-marine sur l’île de la Réunion"}</p>
           </div>
         </section>
 
@@ -90,47 +120,41 @@ export function ReunionDivingPage({ bookingLinks }: { bookingLinks: BookingLinks
           />
           <div className="shell reunion-origin-conditions-grid">
             <header>
-              <p className="eyebrow coral">365 jours de plongée</p>
-              <h2>Les conditions</h2>
-              <p className="reunion-origin-conditions-lead">Deux types de plongées sont proposés :</p>
+              <p className="eyebrow coral">{en ? "365 days of diving" : "365 jours de plongée"}</p>
+              <h2>{en ? "Geographic diversity" : "Les conditions"}</h2>
+              <p className="reunion-origin-conditions-lead">{en ? "Two types of diving are available:" : "Deux types de plongées sont proposés :"}</p>
             </header>
             <div className="reunion-origin-coasts">
               <article>
                 <span>01</span>
-                <h3>La côte sous le vent</h3>
-                <p>
-                  À l’ouest, sur la côte sous le vent, le lagon corallien a fait surgir des flots
-                  un récif barrière. Au large, la plongée se pratique sur la pente externe de celui-ci.
-                </p>
+                <h3>{en ? "The leeward coast" : "La côte sous le vent"}</h3>
+                <p>{en ? "On the west coast, the coral lagoon has formed a natural barrier reef. Offshore diving takes place along its outer slope, where you can discover an extraordinary variety of flora and fauna." : "À l’ouest, sur la côte sous le vent, le lagon corallien a fait surgir des flots un récif barrière. Au large, la plongée se pratique sur la pente externe de celui-ci."}</p>
               </article>
               <article>
                 <span>02</span>
-                <h3>La côte au vent</h3>
-                <p>
-                  À l’est, sur la côte au vent, les plongées seront plus sportives qu’ailleurs,
-                  mais non dénuées de charmes.
-                </p>
+                <h3>{en ? "The windward coast" : "La côte au vent"}</h3>
+                <p>{en ? "On the east coast, beautiful ancient lava flows create more athletic but equally rewarding dives. Wind and rain make access less regular than on the west coast." : "À l’est, sur la côte au vent, les plongées seront plus sportives qu’ailleurs, mais non dénuées de charmes."}</p>
               </article>
             </div>
             <div className="reunion-origin-facts">
-              <div><CalendarDays aria-hidden="true" /><strong>365</strong><span>jours par an</span></div>
-              <div><ThermometerSun aria-hidden="true" /><strong>24–30°</strong><span>température de l’eau</span></div>
-              <div><Eye aria-hidden="true" /><strong>Excellente</strong><span>visibilité</span></div>
+              <div><CalendarDays aria-hidden="true" /><strong>365</strong><span>{en ? "days a year" : "jours par an"}</span></div>
+              <div><ThermometerSun aria-hidden="true" /><strong>24–30°</strong><span>{en ? "water temperature" : "température de l’eau"}</span></div>
+              <div><Eye aria-hidden="true" /><strong>{en ? "Excellent" : "Excellente"}</strong><span>{en ? "visibility" : "visibilité"}</span></div>
             </div>
             <p className="reunion-origin-condition-note">
-              Sur la côte sous le vent, les conditions de plongées sont idéales, possibles 365
-              jours par an, avec une température de l’eau qui évolue entre 24 et 30°, et une
-              visibilité excellente.
+              {en ? "On the leeward coast, diving conditions are ideal 365 days a year, with water temperatures between 24 and 30°C and exceptional visibility." : "Sur la côte sous le vent, les conditions de plongées sont idéales, possibles 365 jours par an, avec une température de l’eau qui évolue entre 24 et 30°, et une visibilité excellente."}
             </p>
           </div>
         </section>
 
         <section className="reunion-origin-environments">
           <div className="shell reunion-origin-environments-heading">
-            <p className="eyebrow light">Un relief sous-marin d’exception</p>
-            <h2>Quatre univers à explorer</h2>
+            <p className="eyebrow light">{en ? "Exceptional underwater landscapes" : "Un relief sous-marin d’exception"}</p>
+            <h2>{en ? "Four worlds to explore" : "Quatre univers à explorer"}</h2>
           </div>
-          {diveEnvironments.map((environment, index) => (
+          {diveEnvironments.map((environment, index) => {
+            const copy = en ? environmentCopyEn[environment.id] : environment;
+            return (
             <article
               className={`reunion-origin-environment${"reverse" in environment && environment.reverse ? " is-reverse" : ""}`}
               id={environment.id}
@@ -140,7 +164,7 @@ export function ReunionDivingPage({ bookingLinks }: { bookingLinks: BookingLinks
                 <div className="reunion-origin-environment-image">
                   <Image
                     src={environment.image}
-                    alt={environment.alt}
+                    alt={copy.alt}
                     fill
                     sizes="(max-width: 900px) 100vw, 50vw"
                     priority={index === 0}
@@ -150,19 +174,20 @@ export function ReunionDivingPage({ bookingLinks }: { bookingLinks: BookingLinks
                   <p className="reunion-origin-number" aria-hidden="true">
                     {String(index + 1).padStart(2, "0")}
                   </p>
-                  <h3>{environment.title}</h3>
+                  <h3>{copy.title}</h3>
                   <span className="reunion-origin-rule" aria-hidden="true" />
-                  {environment.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+                  {copy.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
                 </div>
               </div>
             </article>
-          ))}
+            );
+          })}
         </section>
 
         <section className="reunion-origin-pelagics">
           <Image
             src="/images/reunion/original/pelagiques.webp"
-            alt="Requin entouré de poissons dans l’océan bleu"
+            alt={en ? "Shark surrounded by fish in the blue ocean" : "Requin entouré de poissons dans l’océan bleu"}
             fill
             sizes="100vw"
           />
@@ -176,28 +201,19 @@ export function ReunionDivingPage({ bookingLinks }: { bookingLinks: BookingLinks
           />
           <div className="shell reunion-origin-pelagics-copy">
             <div className="reunion-origin-pelagics-icon"><Droplets aria-hidden="true" /></div>
-            <p className="eyebrow light">Le grand cinéma de l’océan Indien</p>
-            <h2>Les pélagiques</h2>
-            <p>
-              Enfin et pour finir, le grand cinéma vous offre la possibilité de plonger avec les
-              baleines et les dauphins à certaines périodes de l’année.
-            </p>
-            <p>
-              En effet, dès le mois de juillet, ces mammifères se donnent rendez-vous au large de
-              St-Gilles pour notre plus grand bonheur.
-            </p>
-            <p>
-              Néanmoins, tout au long de l’année, vous pourrez admirer les pélagiques, thons,
-              barracudas, carrangues…
-            </p>
+            <p className="eyebrow light">{en ? "The Indian Ocean’s great spectacle" : "Le grand cinéma de l’océan Indien"}</p>
+            <h2>{en ? "The pelagic species" : "Les pélagiques"}</h2>
+            <p>{en ? "At certain times of the year, the ocean offers the possibility of diving with whales and dolphins." : "Enfin et pour finir, le grand cinéma vous offre la possibilité de plonger avec les baleines et les dauphins à certaines périodes de l’année."}</p>
+            <p>{en ? "From July onwards, these mammals gather off Saint-Gilles to our greatest delight." : "En effet, dès le mois de juillet, ces mammifères se donnent rendez-vous au large de St-Gilles pour notre plus grand bonheur."}</p>
+            <p>{en ? "Throughout the year, you may also encounter tuna, barracuda, trevally and perhaps even a shark." : "Néanmoins, tout au long de l’année, vous pourrez admirer les pélagiques, thons, barracudas, carrangues…"}</p>
             <a className="button button-coral" href={bookingLinks.shop} target="_blank" rel="noreferrer">
-              Je réserve <ArrowUpRight aria-hidden="true" size={18} />
+              {en ? "I book" : "Je réserve"} <ArrowUpRight aria-hidden="true" size={18} />
             </a>
           </div>
         </section>
       </main>
 
-      <Footer locale="fr" />
+      <Footer locale={locale} />
     </>
   );
 }

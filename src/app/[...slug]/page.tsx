@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { AboutPage } from "@/components/AboutPage";
 import { BlogArticlePage, isBlogArticlePath } from "@/components/BlogArticlePage";
 import { BlogPage } from "@/components/BlogPage";
@@ -111,7 +111,7 @@ export default async function Page({ params }: PageProps) {
       />
     );
   }
-  if (path === "/decouverte/" || path === "/en/discover/") {
+  if (path === "/decouverte/" || path === "/en/discover/" || path === "/en/i-discover-baptism/") {
     return (
       <DiscoveryPage
         bookingLinks={bookingLinks}
@@ -119,25 +119,70 @@ export default async function Page({ params }: PageProps) {
       />
     );
   }
-  if (path === "/je-decouvre-initiation/") {
-    return <InitiationPage bookingLinks={bookingLinks} />;
+  if (path === "/je-decouvre-initiation/" || path === "/en/i-discover-initiation/") {
+    return (
+      <InitiationPage
+        bookingLinks={bookingLinks}
+        locale={path.startsWith("/en/") ? "en" : "fr"}
+      />
+    );
   }
-  if (path === "/formation_ssi/") {
-    return <SsiTrainingPage bookingLinks={bookingLinks} />;
+  if (path === "/formation_ssi/" || path === "/en/ssi_training-course/") {
+    return (
+      <SsiTrainingPage
+        bookingLinks={bookingLinks}
+        locale={path.startsWith("/en/") ? "en" : "fr"}
+      />
+    );
   }
-  if (path === "/formation-francaise/") {
-    return <FrenchTrainingPage bookingLinks={bookingLinks} />;
+  if (path === "/formation-francaise/" || path === "/en/french-training/") {
+    return (
+      <FrenchTrainingPage
+        bookingLinks={bookingLinks}
+        locale={path.startsWith("/en/") ? "en" : "fr"}
+      />
+    );
   }
-  if (path === "/je-plonge-autonome/") {
+  if (path === "/je-plonge-autonome/" || path === "/en/i-dive/") {
     const catalog = await getPriceCatalog();
-    return <ExplorationPage bookingLinks={bookingLinks} prices={catalog.prices} />;
+    return (
+      <ExplorationPage
+        bookingLinks={bookingLinks}
+        prices={catalog.prices}
+        locale={path.startsWith("/en/") ? "en" : "fr"}
+      />
+    );
   }
-  if (path === "/passerelle/") {
+  if (
+    path === "/passerelle/" ||
+    path === "/en/continual-course/" ||
+    path === "/en/continual-courses/" ||
+    path === "/en/french-to-american-american-to-french/" ||
+    path === "/en/gateway-adv-ssi-to-pa40/" ||
+    path === "/en/ssii-adv-training-course-to-ffessm-pad-40/" ||
+    path === "/en/ssii-training-course-to-ffessm-level-3/" ||
+    path === "/en/ssii-training-course-to-ffessm-level-2/"
+  ) {
     const catalog = await getPriceCatalog();
-    return <CrossoverPage bookingLinks={bookingLinks} prices={catalog.prices} />;
+    return (
+      <CrossoverPage
+        bookingLinks={bookingLinks}
+        prices={catalog.prices}
+        locale={path.startsWith("/en/") ? "en" : "fr"}
+      />
+    );
   }
-  if (path === "/sorties-cetaces-2/") {
-    return <CetaceanPage bookingLinks={bookingLinks} />;
+  if (
+    path === "/sorties-cetaces-2/" ||
+    path === "/en/cetacean-excursions/" ||
+    path === "/en/dive-cetacean-excursions/"
+  ) {
+    return (
+      <CetaceanPage
+        bookingLinks={bookingLinks}
+        locale={path.startsWith("/en/") ? "en" : "fr"}
+      />
+    );
   }
   if (path === "/nos-prestations/" || path === "/en/our-services/") {
     return (
@@ -147,14 +192,33 @@ export default async function Page({ params }: PageProps) {
       />
     );
   }
-  if (path === "/contactez-nous/") {
-    return <ContactPage bookingLinks={bookingLinks} />;
+  if (path === "/contactez-nous/" || path === "/en/contact/") {
+    return (
+      <ContactPage
+        bookingLinks={bookingLinks}
+        locale={path.startsWith("/en/") ? "en" : "fr"}
+      />
+    );
   }
-  if (path === "/plonger-reunion/") {
-    return <ReunionDivingPage bookingLinks={bookingLinks} />;
+  if (path === "/plonger-reunion/" || path === "/en/to-dive-in-reunion/") {
+    return (
+      <ReunionDivingPage
+        bookingLinks={bookingLinks}
+        locale={path.startsWith("/en/") ? "en" : "fr"}
+      />
+    );
   }
-  if (path === "/blog/") {
-    return <BlogPage bookingLinks={bookingLinks} />;
+  if (
+    path === "/blog/" ||
+    path === "/en/our-blog/" ||
+    path === "/en/blog-about-diving-in-reunion-island/"
+  ) {
+    return (
+      <BlogPage
+        bookingLinks={bookingLinks}
+        locale={path.startsWith("/en/") ? "en" : "fr"}
+      />
+    );
   }
   if (path === "/panier/" || path === "/en/cart/") {
     return (
@@ -164,6 +228,9 @@ export default async function Page({ params }: PageProps) {
       />
     );
   }
+  if (path === "/en/event-calendar/") redirect("/en/our-events/");
+  if (path === "/en/my-account/") redirect(bookingLinks.customer_account);
+  if (path === "/en/order-validation/") redirect("/en/cart/");
   if (page.kind === "products") {
     return <ProductDetailPage page={page} bookingLinks={bookingLinks} />;
   }
@@ -177,9 +244,17 @@ export default async function Page({ params }: PageProps) {
   if (
     path === "/mention-legal/" ||
     path === "/confidentialite/" ||
-    path === "/conditions-generales-de-vente/"
+    path === "/conditions-generales-de-vente/" ||
+    path === "/en/privacy-policies/" ||
+    path === "/en/terms-and-conditions/"
   ) {
-    return <LegalPage page={page} bookingLinks={bookingLinks} />;
+    return (
+      <LegalPage
+        page={page}
+        bookingLinks={bookingLinks}
+        locale={path.startsWith("/en/") ? "en" : "fr"}
+      />
+    );
   }
 
   return (

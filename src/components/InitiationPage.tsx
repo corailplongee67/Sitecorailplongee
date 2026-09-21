@@ -6,11 +6,18 @@ import type { BookingKey } from "@/lib/site-data";
 
 type BookingLinks = Record<BookingKey, string>;
 
-export function InitiationPage({ bookingLinks }: { bookingLinks: BookingLinks }) {
+export function InitiationPage({
+  bookingLinks,
+  locale = "fr",
+}: {
+  bookingLinks: BookingLinks;
+  locale?: "fr" | "en";
+}) {
+  const en = locale === "en";
   return (
     <>
       <Header
-        locale="fr"
+        locale={locale}
         bookingUrl={bookingLinks.agenda}
         giftUrl={bookingLinks.gift_dive}
         accountUrl={bookingLinks.customer_account}
@@ -20,14 +27,14 @@ export function InitiationPage({ bookingLinks }: { bookingLinks: BookingLinks })
         <section className="initiation-origin-hero">
           <Image
             src="/images/initiation/original/hero.jpg"
-            alt="Plongeuse observant des poissons-clowns dans leur anémone"
+            alt={en ? "Diver observing clownfish in their anemone" : "Plongeuse observant des poissons-clowns dans leur anémone"}
             fill
             priority
             sizes="100vw"
           />
           <div className="initiation-origin-hero-shade" />
           <div className="shell initiation-origin-hero-copy">
-            <h1>Je découvre - Initiation</h1>
+            <h1>{en ? "I discover – Initiation" : "Je découvre - Initiation"}</h1>
           </div>
         </section>
 
@@ -35,15 +42,15 @@ export function InitiationPage({ bookingLinks }: { bookingLinks: BookingLinks })
           <div className="shell">
             <article className="initiation-origin-card">
               <header className="initiation-origin-card-heading">
-                <p className="eyebrow">Premières bulles</p>
-                <h2>Initiation</h2>
+                <p className="eyebrow">{en ? "First bubbles" : "Premières bulles"}</p>
+                <h2>{en ? "Initiation" : "Initiation"}</h2>
               </header>
 
               <div className="initiation-origin-card-grid">
                 <div className="initiation-origin-visual">
                   <Image
                     src="/images/initiation/original/plongeur.jpg"
-                    alt="Plongeur sous l’eau entouré de bulles"
+                    alt={en ? "Diver underwater surrounded by bubbles" : "Plongeur sous l’eau entouré de bulles"}
                     fill
                     loading="eager"
                     sizes="(max-width: 900px) 100vw, 50vw"
@@ -62,13 +69,13 @@ export function InitiationPage({ bookingLinks }: { bookingLinks: BookingLinks })
 
                 <div className="initiation-origin-copy">
                   <div>
-                    <p className="initiation-origin-label">À propos de cet événement</p>
+                    <p className="initiation-origin-label">{en ? "About this experience" : "À propos de cet événement"}</p>
                     <p>
-                      Vous désirez découvrir les fabuleux fond de la réunion encadré
-                      par un moniteur jusqu’a une profondeur de 6 mètres, n’hésitez
-                      plus…
+                      {en
+                        ? "Would you like to discover Reunion Island’s fabulous seabed, accompanied by an instructor to a depth of 6 metres? Take the plunge…"
+                        : "Vous désirez découvrir les fabuleux fond de la réunion encadré par un moniteur jusqu’a une profondeur de 6 mètres, n’hésitez plus…"}
                     </p>
-                    <p>Minimum 2 personnes et 40 minutes sous l’eau.</p>
+                    <p>{en ? "Minimum 2 people and 40 minutes underwater." : "Minimum 2 personnes et 40 minutes sous l’eau."}</p>
                   </div>
 
                   <a
@@ -77,7 +84,7 @@ export function InitiationPage({ bookingLinks }: { bookingLinks: BookingLinks })
                     target="_blank"
                     rel="noreferrer"
                   >
-                    Je réserve
+                    {en ? "I book" : "Je réserve"}
                     <ArrowUpRight aria-hidden="true" size={18} />
                   </a>
                 </div>
@@ -86,7 +93,7 @@ export function InitiationPage({ bookingLinks }: { bookingLinks: BookingLinks })
               <div className="initiation-origin-location">
                 <span aria-hidden="true"><MapPin size={21} /></span>
                 <div>
-                  <small>Lieu de l’initiation</small>
+                  <small>{en ? "Initiation location" : "Lieu de l’initiation"}</small>
                   <strong>Saint Gilles Les Bains</strong>
                 </div>
               </div>
@@ -95,7 +102,7 @@ export function InitiationPage({ bookingLinks }: { bookingLinks: BookingLinks })
         </section>
       </main>
 
-      <Footer locale="fr" />
+      <Footer locale={locale} />
     </>
   );
 }

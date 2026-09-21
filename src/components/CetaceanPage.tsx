@@ -12,7 +12,110 @@ const keyFacts = [
   { icon: Waves, value: "9 personnes", label: "maximum par groupe dans l’eau" },
 ];
 
-export function CetaceanPage({ bookingLinks }: { bookingLinks: BookingLinks }) {
+function EnglishCetaceanPage({ bookingLinks }: { bookingLinks: BookingLinks }) {
+  const facts = [
+    { icon: Clock3, value: "3 hours", label: "at sea" },
+    { icon: UsersRound, value: "2 instructors", label: "to accompany you" },
+    { icon: Waves, value: "9 people", label: "maximum per group in the water" },
+  ];
+
+  return (
+    <>
+      <Header
+        locale="en"
+        bookingUrl={bookingLinks.agenda}
+        giftUrl={bookingLinks.gift_dive}
+        accountUrl={bookingLinks.customer_account}
+      />
+      <main className="cetacean-origin-main">
+        <section className="cetacean-origin-hero">
+          <Image src="/images/cetaceans/original/hero.jpg" alt="Two humpback whales swimming together underwater" fill priority sizes="100vw" />
+          <div className="cetacean-origin-hero-shade" />
+          <div className="shell cetacean-origin-hero-copy">
+            <p className="eyebrow light">Whale season · Reunion Island</p>
+            <h1>An exceptional experience with cetaceans</h1>
+            <p>Excursions resume in July</p>
+          </div>
+        </section>
+
+        <section className="cetacean-origin-intro">
+          <div className="shell">
+            <div className="cetacean-origin-intro-title">
+              <p className="eyebrow">A wildlife experience</p>
+              <h2>Your dream of swimming with whales or dolphins can come true!</h2>
+            </div>
+            <div className="cetacean-origin-intro-grid">
+              <div className="cetacean-origin-intro-copy">
+                <h2>Humpback whales or <em>Megaptera novaeangliae</em></h2>
+                <p>These marine mammals can be seen in Reunion Island from June to October. They measure an average of 15 metres and can weigh up to 40 tonnes. Humpback whales come to the coast to give birth to their calves and/or to mate, travelling from Antarctica where they spend the rest of the year.</p>
+                <p>We offer a three-hour trip accompanied by two diving instructors to observe these majestic animals in the wild, along with the island’s resident dolphins.</p>
+                <p>We enter the water with fins, masks, snorkels and wetsuits when visibility, swell, animal behaviour and surrounding boat traffic allow. We approach calmly and respectfully, then let the animals decide the rest.</p>
+              </div>
+              <aside className="cetacean-origin-requirements">
+                <p className="eyebrow light">To participate</p>
+                <h3>You must:</h3>
+                <ul>
+                  <li><Check aria-hidden="true" /><span>Be comfortable swimming at least 200 metres with fins, a mask and a snorkel.</span></li>
+                  <li><Check aria-hidden="true" /><span>Be at least 12 years old.</span></li>
+                </ul>
+                <p>Swimming with cetaceans is possible through specific approaches that protect the animals and keep the group safe.</p>
+              </aside>
+            </div>
+            <div className="cetacean-origin-facts">
+              {facts.map(({ icon: Icon, value, label }) => (
+                <article key={value}><Icon aria-hidden="true" /><div><strong>{value}</strong><span>{label}</span></div></article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="cetacean-origin-story">
+          <div className="shell">
+            <article className="cetacean-origin-step">
+              <div className="cetacean-origin-step-image"><Image src="/images/cetaceans/original/whale.webp" alt="Humpback whale swimming underwater" fill sizes="(max-width: 900px) 100vw, 50vw" /></div>
+              <div className="cetacean-origin-step-copy">
+                <span>01</span><p className="eyebrow">The encounter</p><h2>How?</h2>
+                <p>First, we have to find the animals. We look for signs that they are curious and open to meeting us. We never force an interaction on an animal that shows no interest.</p>
+                <p>By law, boats must remain at least 100 metres away. Participants therefore need to swim this distance in the open ocean, outside the Natural Reserve zone, where the seabed is not visible.</p>
+                <p>An instructor remains in the water with a group of no more than nine people. Everyone stays together, holding hands. The animals may approach, simply pass by or dive away. After the observation, the group swims back to the boat.</p>
+              </div>
+            </article>
+            <article className="cetacean-origin-step is-reverse">
+              <div className="cetacean-origin-step-image"><Image src="/images/cetaceans/original/dolphins.webp" alt="Dolphins swimming underwater" fill sizes="(max-width: 900px) 100vw, 50vw" /></div>
+              <div className="cetacean-origin-step-copy">
+                <span>02</span><p className="eyebrow">Respect and wonder</p><h2>An extraordinary experience</h2>
+                <p>Seeing these animals, meeting their gaze and interacting with them can change the way you see the world and our oceans. This is why we love sharing these excursions while strictly respecting the approach rules.</p>
+                <p className="cetacean-origin-video-note">“In the end, we will conserve only what we love; we will love only what we understand; and we will understand only what we are taught.” — Baba Dioum</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section className="cetacean-origin-cta">
+          <Image src="/images/cetaceans/original/cetacean-decoration.png" alt="" width={197} height={314} aria-hidden="true" />
+          <div className="shell cetacean-origin-cta-inner">
+            <div><p className="eyebrow light">Season from June to October</p><h2>Experience this encounter with us.</h2></div>
+            <div>
+              <a className="button cetacean-origin-book" href={bookingLinks.cetacean_booking} target="_blank" rel="noreferrer">Book the excursion <ArrowUpRight aria-hidden="true" size={18} /></a>
+              <a className="button button-outline-light" href="mailto:info@corail-plongee.com">Contact us</a>
+            </div>
+          </div>
+        </section>
+      </main>
+      <Footer locale="en" />
+    </>
+  );
+}
+
+export function CetaceanPage({
+  bookingLinks,
+  locale = "fr",
+}: {
+  bookingLinks: BookingLinks;
+  locale?: "fr" | "en";
+}) {
+  if (locale === "en") return <EnglishCetaceanPage bookingLinks={bookingLinks} />;
+
   return (
     <>
       <Header

@@ -22,6 +22,38 @@ type LegalSection = {
 };
 
 const legalHeadingOrder: Record<string, string[]> = {
+  "/en/privacy-policies/": [
+    "Who we are ?",
+    "Comments",
+    "Media",
+    "Cookies",
+    "Embedded content from other websites",
+    "Who we share your data with?",
+    "How long we retain your data?",
+    "What rights you have over your data ?",
+    "Where we send your data?",
+  ],
+  "/en/terms-and-conditions/": [
+    "Definitions",
+    "1. Presentation of the website.",
+    "2. General conditions of use of the site and the services offered.",
+    "3. Description of the services provided.",
+    "4. Contractual limitations on technical data.",
+    "5. Intellectual property and counterfeits.",
+    "6. Limitations of Liability.",
+    "7. Management of personal data.",
+    "7.1 Responsible for collecting personal data",
+    "7.2 Purpose of the data collected",
+    "7.3 Right of access, rectification and opposition",
+    "7.4 Non-communication of personal data",
+    "7.5 Types of data collected",
+    "8. Incident notification",
+    "Security",
+    "9. Internet “cookies” and “tags” hypertext links",
+    "9.1. \" COOKIES \"",
+    "Article 9.2. INTERNET TAGS",
+    "10. Applicable law and attribution of jurisdiction.",
+  ],
   "/confidentialite/": [
     "Qui sommes-nous ?",
     "Commentaires",
@@ -100,7 +132,11 @@ function extractSections(page: AuditPage, path: string): LegalSection[] {
   let text = decodeEntities(page.visibleText);
   text = text.replace(/^Aller au contenu\s+(English|Français)?\s*/i, "");
   const footerStart = text.indexOf("Centre de plongée sous-marine sur l’île de la Réunion");
-  if (footerStart > 0) text = text.slice(0, footerStart).trim();
+  const englishFooterStart = text.indexOf("Scuba diving centre on Reunion Island");
+  const firstFooterStart = [footerStart, englishFooterStart]
+    .filter((index) => index > 0)
+    .sort((a, b) => a - b)[0];
+  if (firstFooterStart) text = text.slice(0, firstFooterStart).trim();
 
   const h3 = new Set((page.headings?.h3 ?? []).map((heading) => decodeEntities(heading)));
   const headings = legalHeadingOrder[path] ?? (page.headings?.h2 ?? []).map((heading) => decodeEntities(heading));
@@ -128,10 +164,13 @@ function extractSections(page: AuditPage, path: string): LegalSection[] {
 export function LegalPage({
   page,
   bookingLinks,
+  locale = "fr",
 }: {
   page: AuditPage;
   bookingLinks: Record<BookingKey, string>;
+  locale?: "fr" | "en";
 }) {
+  const en = locale === "en";
   const path = new URL(page.url).pathname;
   const sourceTitles = page.headings?.h1 ?? [];
   const title = decodeEntities(
@@ -144,14 +183,14 @@ export function LegalPage({
   return (
     <>
       <Header
-        locale="fr"
+        locale={locale}
         bookingUrl={bookingLinks.agenda}
         giftUrl={bookingLinks.gift_dive}
         accountUrl={bookingLinks.customer_account}
       />
       <main className="legal-origin-main">
         <section className={`legal-origin-hero${path === "/conditions-generales-de-vente/" ? " is-terms" : ""}`}>
-          <Image src="/images/hero/corail-reef.jpg" alt="Récif corallien de La Réunion" fill priority sizes="100vw" />
+          <Image src="/images/hero/corail-reef.jpg" alt={en ? "Coral reef in Reunion Island" : "Récif corallien de La Réunion"} fill priority sizes="100vw" />
           <div className="legal-origin-hero-shade" />
           <div className="shell legal-origin-hero-copy">
             <p className="eyebrow light">Corail Plongée</p>
@@ -161,11 +200,11 @@ export function LegalPage({
 
         <section className="legal-origin-content">
           <div className="shell legal-origin-layout">
-            <aside className="legal-origin-summary" aria-label="Sommaire de la page">
+            <aside className="legal-origin-summary" aria-label={en ? "Page contents" : "Sommaire de la page"}>
               <div>
                 <FileText aria-hidden="true" />
-                <p className="eyebrow">Dans cette page</p>
-                <h2>Sommaire</h2>
+                <p className="eyebrow">{en ? "On this page" : "Dans cette page"}</p>
+                <h2>{en ? "Contents" : "Sommaire"}</h2>
               </div>
               <nav>
                 {sections.filter((section) => section.level === 2).map((section, index) => (
@@ -179,8 +218,8 @@ export function LegalPage({
 
             <article className="legal-origin-document">
               <header>
-                <p className="eyebrow">Document d’information</p>
-                <p>{decodeEntities(page.metaDescription ?? "Informations légales de Corail Plongée.")}</p>
+                <p className="eyebrow">{en ? "Information document" : "Document d’information"}</p>
+                <p>{decodeEntities(page.metaDescription ?? (en ? "Legal information from Corail Plongée." : "Informations légales de Corail Plongée."))}</p>
               </header>
               {sections.map((section, index) => (
                 <section
@@ -197,14 +236,14 @@ export function LegalPage({
                   ))}
                 </section>
               ))}
-              <Link className="legal-origin-back" href="/">
-                <ArrowLeft aria-hidden="true" /> Retour à l’accueil
+              <Link className="legal-origin-back" href={en ? "/en/home/" : "/"}>
+                <ArrowLeft aria-hidden="true" /> {en ? "Back home" : "Retour à l’accueil"}
               </Link>
             </article>
           </div>
         </section>
       </main>
-      <Footer locale="fr" />
+      <Footer locale={locale} />
     </>
   );
 }

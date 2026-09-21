@@ -111,8 +111,13 @@ export default async function Page({ params }: PageProps) {
       />
     );
   }
-  if (path === "/decouverte/") {
-    return <DiscoveryPage bookingLinks={bookingLinks} />;
+  if (path === "/decouverte/" || path === "/en/discover/") {
+    return (
+      <DiscoveryPage
+        bookingLinks={bookingLinks}
+        locale={path.startsWith("/en/") ? "en" : "fr"}
+      />
+    );
   }
   if (path === "/je-decouvre-initiation/") {
     return <InitiationPage bookingLinks={bookingLinks} />;

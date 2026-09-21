@@ -247,7 +247,11 @@ export async function saveBookingLink(formData: FormData) {
   const id = value(formData, "id");
   const url = new URL(value(formData, "url"));
   if (url.protocol !== "https:") throw new Error("Le lien de réservation doit utiliser HTTPS.");
-  await supabase.from("booking_links").update({ url: url.toString() }).eq("id", id);
+  const { error } = await supabase
+    .from("booking_links")
+    .update({ url: url.toString() })
+    .eq("id", id);
+  if (error) throw error;
   revalidatePath("/", "layout");
   revalidatePath("/admin/");
 }

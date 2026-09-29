@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import "./design-v2.css";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.corail-plongee.com";
 

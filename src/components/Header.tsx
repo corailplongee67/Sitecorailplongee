@@ -21,6 +21,7 @@ export function Header({
   const [open, setOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const isFr = locale === "fr";
   const items = nav[locale];
   const pathname = usePathname();
@@ -29,6 +30,13 @@ export function Header({
   useEffect(() => {
     document.documentElement.lang = locale;
   }, [locale]);
+
+  useEffect(() => {
+    const updateHeader = () => setScrolled(window.scrollY > 28);
+    updateHeader();
+    window.addEventListener("scroll", updateHeader, { passive: true });
+    return () => window.removeEventListener("scroll", updateHeader);
+  }, []);
 
   function itemHref(item: (typeof items)[number]) {
     if (item.bookingKey === "gift_dive") return giftUrl;
@@ -42,7 +50,7 @@ export function Header({
   }
 
   return (
-    <header className="site-header">
+    <header className={`site-header${scrolled ? " is-scrolled" : ""}${open ? " has-open-menu" : ""}`}>
       <div className="header-inner shell">
         <Link className="admin-lock-link" href="/admin/" aria-label={isFr ? "Accéder à l’administration" : "Open administration"} title={isFr ? "Administration" : "Administration"}>
           <LockKeyhole size={16} />

@@ -88,8 +88,8 @@ export function FrenchHomePage({
       <main className="home-origin-main">
         <section className="home-origin-hero">
           <Image
-            src="/images/hero/corail-reef.jpg"
-            alt="Fonds marins de La Réunion"
+            src="/images/hero/turtle-rays-corail-plongee.png"
+            alt="Tortue marine nageant sous les rayons du soleil au-dessus d’un récif corallien"
             fill
             priority
             sizes="100vw"

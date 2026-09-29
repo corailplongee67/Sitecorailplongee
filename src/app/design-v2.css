@@ -817,6 +817,256 @@ p { line-height: 1.68; }
 .social-links a { transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease; }
 .social-links a:hover { color: var(--ink); background: var(--aqua-light); border-color: var(--aqua-light); }
 
+/* V2.1 — finition premium, densité et contraste. */
+.desktop-nav-action[href*="/agenda"],
+.button-coral,
+.ssi-origin-gold-button,
+.french-training-origin-button,
+.exploration-origin-book,
+.crossover-origin-book,
+.cetacean-origin-book,
+.initiation-origin-book,
+.contact-origin-book,
+.reunion-origin-pelagics .button {
+  color: var(--ink);
+  background: linear-gradient(135deg, rgba(255, 182, 168, 0.9), rgba(243, 151, 138, 0.72));
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.52), 0 10px 28px rgba(7, 55, 68, 0.1);
+  -webkit-backdrop-filter: blur(10px) saturate(130%);
+  backdrop-filter: blur(10px) saturate(130%);
+}
+
+.desktop-nav-action[href*="/agenda"]:hover,
+.button-coral:hover,
+.ssi-origin-gold-button:hover,
+.french-training-origin-button:hover,
+.exploration-origin-book:hover,
+.crossover-origin-book:hover,
+.cetacean-origin-book:hover,
+.initiation-origin-book:hover,
+.contact-origin-book:hover,
+.reunion-origin-pelagics .button:hover {
+  color: var(--ink);
+  background: linear-gradient(135deg, rgba(255, 194, 181, 0.96), rgba(243, 151, 138, 0.82));
+}
+
+.home-origin-events,
+.home-origin-services,
+.home-origin-journey,
+.home-origin-newsletter,
+.about-origin-section,
+.ssi-origin-open-water,
+.ssi-origin-programs,
+.ssi-origin-orientation,
+.french-training-origin-content,
+.exploration-origin-offers,
+.cetacean-origin-story,
+.events-explorer,
+.contact-origin-content {
+  background-image:
+    radial-gradient(ellipse at 12% 8%, rgba(54, 198, 200, 0.1), transparent 30%),
+    radial-gradient(ellipse at 90% 78%, rgba(22, 143, 162, 0.065), transparent 28%),
+    linear-gradient(135deg, #ffffff 0%, #f8fcfc 52%, #f2fafb 100%);
+}
+
+/* Accueil : moins de vide et blocs mieux cadrés. */
+.home-origin-events,
+.home-origin-services,
+.home-origin-journey,
+.home-origin-newsletter { padding-block: clamp(76px, 7vw, 108px); }
+
+.home-origin-hero > img { object-position: center 48%; }
+.home-origin-hero-shade {
+  background:
+    linear-gradient(90deg, rgba(3, 34, 45, 0.72) 0%, rgba(3, 34, 45, 0.3) 43%, rgba(3, 34, 45, 0.04) 73%),
+    linear-gradient(0deg, rgba(3, 34, 45, 0.36), transparent 48%);
+}
+
+.home-origin-event-empty {
+  padding: 30px 34px;
+  background: rgba(255, 255, 255, 0.72);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 14px 42px rgba(7, 55, 68, 0.06);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.home-origin-event-actions { margin-top: 30px; }
+.home-origin-services-intro { margin-bottom: 44px; }
+.home-origin-services-action { margin-top: 32px; }
+
+.home-origin-discovery { padding-block: clamp(72px, 7vw, 104px); background: linear-gradient(145deg, #073744, #0b6270); }
+.home-origin-discovery-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: stretch;
+  gap: 0;
+  background: var(--deep);
+}
+.home-origin-discovery-image { min-height: 520px; box-shadow: none; }
+.home-origin-discovery-image img { object-fit: cover; object-position: center 58%; }
+.home-origin-discovery-copy {
+  min-width: 0;
+  padding: clamp(46px, 6vw, 78px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: linear-gradient(145deg, rgba(7, 55, 68, 0.96), rgba(11, 96, 112, 0.94));
+}
+.home-origin-discovery-copy h2 {
+  max-width: 100%;
+  margin-bottom: 22px;
+  font-size: clamp(3.1rem, 5.2vw, 5.1rem);
+  line-height: 0.95;
+  overflow-wrap: anywhere;
+}
+.home-origin-discovery-copy > p:not(.eyebrow) { margin-bottom: 28px; }
+.home-origin-steps article { min-height: 220px; }
+.home-origin-journey-action { margin-top: 28px; }
+.home-origin-newsletter-card { padding: clamp(38px, 5vw, 62px); }
+.home-origin-partners-heading { padding-top: 68px; }
+
+/* Qui sommes-nous : titres lisibles, rythme plus compact. */
+.about-origin-section { padding-block: clamp(62px, 6.5vw, 96px); }
+.about-origin-grid { gap: clamp(42px, 6vw, 82px); }
+.about-origin-copy h2 { color: var(--ink); text-shadow: none; }
+.about-origin-number { color: rgba(138, 98, 72, 0.5); }
+.about-origin-paragraphs p { color: #516a72; }
+.about-origin-paragraphs strong { color: var(--ink); }
+
+/* Initiation : une carte unique, douce et généreusement arrondie. */
+.initiation-origin-offer {
+  padding-bottom: 84px;
+  background: linear-gradient(145deg, #ffffff, rgba(54, 198, 200, 0.07));
+}
+.initiation-origin-card {
+  border: 1px solid rgba(7, 55, 68, 0.08);
+  border-radius: 34px;
+  box-shadow: 0 30px 80px rgba(7, 55, 68, 0.13);
+}
+.initiation-origin-card-heading { padding: 42px 40px 36px; }
+.initiation-origin-visual > img { object-fit: cover; }
+.initiation-origin-copy { background: linear-gradient(145deg, #073744, #0b6270); }
+.initiation-origin-location { background: linear-gradient(100deg, #ffffff, #f2fafb); }
+
+/* Formation SSI : compacité, vidéos intégrées et contraste sûr. */
+.ssi-origin-open-water { padding-bottom: 80px; }
+.ssi-origin-opening-card { margin-bottom: 64px; }
+.ssi-origin-programs,
+.ssi-origin-specialties,
+.ssi-origin-orientation,
+.ssi-origin-buoyancy { padding-block: clamp(74px, 7vw, 104px); }
+.ssi-origin-program-grid { gap: 22px; }
+.ssi-origin-specialties { background: linear-gradient(145deg, #073744, #0a5361); }
+.ssi-origin-specialties-intro { margin-bottom: 52px; }
+.ssi-origin-specialty-list { gap: 18px; background: transparent; }
+.ssi-origin-specialty {
+  min-height: 0;
+  overflow: hidden;
+  background: linear-gradient(145deg, #073744, #0b6070);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-md);
+  box-shadow: 0 22px 55px rgba(3, 32, 44, 0.2);
+}
+.ssi-origin-specialty-copy { padding: clamp(36px, 4.5vw, 58px); }
+.ssi-origin-specialty-copy h3 { color: white; font-size: clamp(2.15rem, 3.5vw, 3.45rem); }
+.ssi-origin-specialty-copy h4 { color: var(--aqua-light); }
+.ssi-origin-specialty-copy p { color: rgba(255, 255, 255, 0.82); }
+.ssi-origin-video { min-height: 350px; }
+.ssi-origin-video iframe { min-height: 350px; }
+.ssi-origin-orientation { color: white; background: linear-gradient(145deg, #073744, #0a5260); }
+.ssi-origin-orientation-video { margin-bottom: 48px; border-radius: var(--radius-md); overflow: hidden; }
+.ssi-origin-orientation-image { min-height: 560px; border-radius: var(--radius-md); }
+.ssi-origin-orientation-copy .eyebrow { color: var(--aqua-light); }
+.ssi-origin-orientation-copy h2 { color: white; }
+.ssi-origin-orientation-copy > p { color: rgba(255, 255, 255, 0.82); }
+.ssi-origin-practical { background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.12); }
+
+/* Formation française : chaque niveau devient un ensemble équilibré. */
+.french-training-origin-level { padding: clamp(44px, 5.5vw, 68px); }
+.french-training-origin-level-grid { gap: clamp(24px, 4vw, 44px); align-items: stretch; }
+.french-training-origin-level-story {
+  padding: clamp(28px, 4vw, 42px);
+  align-content: start;
+  background: linear-gradient(145deg, rgba(54, 198, 200, 0.08), rgba(255, 255, 255, 0.9));
+  border: 1px solid rgba(7, 55, 68, 0.08);
+  border-radius: var(--radius-md);
+}
+.french-training-origin-level-details {
+  height: 100%;
+  padding: clamp(28px, 4vw, 40px);
+  background: linear-gradient(145deg, #073744, #0b6070);
+}
+.french-training-origin-level-details h3 { color: white; }
+.french-training-origin-level-heading > strong { box-shadow: 0 10px 28px rgba(7, 55, 68, 0.14); }
+
+/* Exploration et passerelles : lisibilité des visuels et CTA moins carrés. */
+.exploration-origin-panel { border-radius: 32px; }
+.exploration-origin-grid { gap: 20px; }
+.exploration-origin-card { background: linear-gradient(145deg, #ffffff, #f2fafb); }
+.exploration-origin-card-image::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(0deg, rgba(3, 32, 44, 0.45), transparent 58%);
+}
+.exploration-origin-card-image > strong { z-index: 2; }
+.exploration-origin-card-copy { min-height: 132px; }
+.exploration-origin-card-copy h3 { color: var(--ink); }
+.crossover-origin-panel { border-radius: 32px; }
+.crossover-origin-actions {
+  margin: 20px;
+  padding: clamp(36px, 5vw, 54px);
+  background: linear-gradient(135deg, #073744, #0b6070);
+  border-radius: var(--radius-lg);
+}
+
+/* Cétacés : l'image du safari est recadrée sans étirement. */
+.cetacean-origin-story { padding-block: clamp(74px, 7vw, 104px); }
+.cetacean-origin-story .shell { gap: 56px; }
+.cetacean-origin-step { align-items: start; }
+.cetacean-origin-step-image {
+  width: 100%;
+  height: clamp(430px, 42vw, 600px);
+  min-height: 0;
+}
+.cetacean-origin-safari-image > img { object-position: 44% center; }
+
+/* Événements : palette marine unique, le corail reste l'accent. */
+.event-card {
+  --event-title: #ffffff !important;
+  --event-text: #ffffff !important;
+  --event-start: #073744 !important;
+  --event-end: #0b6070 !important;
+}
+.event-card-body { background: linear-gradient(145deg, #073744, #0b6070); }
+.event-card-body > strong { color: white; }
+.event-card-location { color: var(--aqua-light); }
+.event-card-excerpt { color: rgba(255, 255, 255, 0.74); }
+.event-card-link { color: var(--coral); }
+.event-card-date {
+  inset: auto auto 17px 18px;
+  max-width: calc(100% - 36px);
+  padding: 8px 12px;
+  color: var(--ink);
+  background: rgba(243, 151, 138, 0.88);
+  border-radius: 999px;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+
+/* Contact : la fiche se fond dans le héros et la carte reste contenue. */
+.contact-origin-content { padding-bottom: 90px; }
+.contact-origin-panel {
+  margin-top: -82px;
+  border-radius: 34px;
+  box-shadow: 0 32px 85px rgba(7, 55, 68, 0.16);
+}
+.contact-origin-details { background: linear-gradient(145deg, #073744, #0b6070); }
+.contact-origin-map { min-height: 650px; }
+.contact-origin-map-label { border-radius: 14px; }
+
 @media (max-width: 1160px) {
   .desktop-nav { gap: 8px; font-size: 0.6rem; }
   .header-inner { gap: 12px; }
@@ -853,7 +1103,7 @@ p { line-height: 1.68; }
   .brand { width: 92px; height: 62px; }
   .brand img { width: 88px; }
   .home-origin-hero { min-height: 690px; height: 100svh; }
-  .home-origin-hero > img { object-position: 58% center; }
+  .home-origin-hero > img { object-position: 64% center; }
   .home-origin-hero-shade { background: linear-gradient(0deg, rgba(3, 34, 45, 0.88), rgba(3, 34, 45, 0.12) 85%); }
   .home-origin-hero-copy { align-self: end; padding: 0 0 105px; }
   .home-origin-hero-copy h1 { max-width: 330px; font-size: clamp(3.35rem, 16vw, 4.7rem); line-height: 0.96; }
@@ -869,7 +1119,10 @@ p { line-height: 1.68; }
   .home-origin-event-copy p { font-size: 0.84rem; -webkit-line-clamp: 3; }
   .home-origin-dream { min-height: 520px; }
   .home-origin-services-intro { gap: 24px; }
-  .home-origin-discovery-grid { border-radius: var(--radius-md); }
+  .home-origin-discovery-grid { grid-template-columns: 1fr; border-radius: var(--radius-md); }
+  .home-origin-discovery-image { min-height: 340px; }
+  .home-origin-discovery-copy { padding: 38px 24px 42px; }
+  .home-origin-discovery-copy h2 { font-size: clamp(3.15rem, 15vw, 4.35rem); overflow-wrap: normal; }
   .home-origin-steps { display: grid; gap: 0; }
   .home-origin-steps article { min-height: 0; padding: 34px 20px; border-right: 0; border-bottom: 1px solid var(--line); }
   .home-origin-steps article:last-child { border-bottom: 0; }
@@ -922,6 +1175,24 @@ p { line-height: 1.68; }
   .home-origin-event-card { border-radius: var(--radius-sm); }
   .rates-index { top: 70px; }
   .footer-bottom { align-items: flex-start; flex-direction: column; }
+
+  .initiation-origin-card { border-radius: 24px; }
+  .ssi-origin-programs,
+  .ssi-origin-specialties,
+  .ssi-origin-orientation,
+  .ssi-origin-buoyancy { padding-block: 68px; }
+  .ssi-origin-specialty-list { gap: 14px; }
+  .ssi-origin-specialty { border-radius: 20px; }
+  .ssi-origin-orientation-video { margin-bottom: 38px; }
+  .ssi-origin-orientation-image { min-height: 360px; }
+  .french-training-origin-level-story { padding: 26px 22px; }
+  .exploration-origin-panel,
+  .crossover-origin-panel,
+  .contact-origin-panel { border-radius: 24px; }
+  .cetacean-origin-step-image { height: 360px; min-height: 0; }
+  .crossover-origin-actions { margin: 14px; padding: 34px 22px; }
+  .contact-origin-panel { margin-top: -48px; }
+  .contact-origin-map { min-height: 390px; }
 }
 
 @media (max-width: 520px) {

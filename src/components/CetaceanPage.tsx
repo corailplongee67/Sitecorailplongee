@@ -277,8 +277,8 @@ export function CetaceanPage({
             <article className="cetacean-origin-step">
               <div className="cetacean-origin-step-image cetacean-origin-safari-image">
                 <Image
-                  src="/images/cetaceans/original/hero.jpg"
-                  alt="Deux baleines à bosse évoluant dans leur milieu naturel"
+                  src="/images/cetaceans/original/whale.webp"
+                  alt="Baleine à bosse évoluant dans son milieu naturel"
                   fill
                   sizes="(max-width: 900px) 100vw, 50vw"
                 />

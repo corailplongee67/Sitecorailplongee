@@ -226,14 +226,16 @@ p { line-height: 1.68; }
   content: "";
   position: absolute;
   z-index: 1;
-  inset: -10% 0 35% 0;
+  inset: -16% -7% 36%;
   pointer-events: none;
   background:
-    linear-gradient(110deg, transparent 15%, rgba(255, 255, 255, 0.10) 34%, transparent 47%),
-    linear-gradient(74deg, transparent 43%, rgba(114, 220, 218, 0.08) 55%, transparent 67%);
-  filter: blur(9px);
+    radial-gradient(circle at 51% 5%, rgba(255, 255, 255, 0.72) 0 2%, rgba(194, 244, 247, 0.28) 8%, transparent 28%),
+    linear-gradient(106deg, transparent 28%, rgba(229, 255, 255, 0.18) 39%, transparent 50%),
+    linear-gradient(78deg, transparent 42%, rgba(133, 229, 230, 0.14) 52%, transparent 63%);
+  filter: blur(12px);
+  mix-blend-mode: screen;
   transform-origin: top center;
-  animation: v2-rays 14s ease-in-out infinite alternate;
+  animation: v2-rays 12s ease-in-out infinite alternate;
 }
 
 .home-origin-hero::after,
@@ -241,23 +243,27 @@ p { line-height: 1.68; }
   content: "";
   position: absolute;
   z-index: 1;
-  inset: 0;
+  inset: -5% -8% 44%;
   pointer-events: none;
-  opacity: 0.34;
-  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.55) 0 1px, transparent 1.5px);
-  background-size: 137px 173px;
-  mask-image: linear-gradient(to bottom, transparent 12%, black 38%, transparent 84%);
-  animation: v2-particles 20s linear infinite;
+  opacity: 0.42;
+  background-image:
+    repeating-radial-gradient(ellipse at 50% -22%, transparent 0 18px, rgba(210, 252, 255, 0.17) 21px 23px, transparent 27px 42px),
+    radial-gradient(ellipse at 33% 0%, rgba(255, 255, 255, 0.18), transparent 42%);
+  background-size: 118% 126%, 100% 100%;
+  mask-image: linear-gradient(to bottom, black 0%, rgba(0, 0, 0, 0.72) 46%, transparent 100%);
+  mix-blend-mode: screen;
+  filter: blur(0.7px);
+  animation: v2-caustics 16s ease-in-out infinite alternate;
 }
 
 @keyframes v2-rays {
-  from { transform: translate3d(-2%, -2%, 0) skewX(-2deg); opacity: 0.55; }
-  to { transform: translate3d(2%, 1%, 0) skewX(2deg); opacity: 0.85; }
+  from { transform: translate3d(-1.5%, -1%, 0) scaleX(0.98) skewX(-1deg); opacity: 0.48; }
+  to { transform: translate3d(1.5%, 1.2%, 0) scaleX(1.025) skewX(1.5deg); opacity: 0.76; }
 }
 
-@keyframes v2-particles {
-  from { background-position: 0 0; }
-  to { background-position: 30px -80px; }
+@keyframes v2-caustics {
+  from { transform: translate3d(-1.2%, -1%, 0) scale(1.01); background-position: 50% 0%, 50% 0%; }
+  to { transform: translate3d(1.2%, 1.2%, 0) scale(1.035); background-position: 54% 18px, 48% 5px; }
 }
 
 /* Accueil */
@@ -1104,6 +1110,8 @@ p { line-height: 1.68; }
   .brand img { width: 88px; }
   .home-origin-hero { min-height: 690px; height: 100svh; }
   .home-origin-hero > img { object-position: 64% center; }
+  .home-origin-hero::before { inset: -12% -28% 39% -18%; opacity: 0.72; }
+  .home-origin-hero::after { inset: -3% -22% 49%; opacity: 0.3; }
   .home-origin-hero-shade { background: linear-gradient(0deg, rgba(3, 34, 45, 0.88), rgba(3, 34, 45, 0.12) 85%); }
   .home-origin-hero-copy { align-self: end; padding: 0 0 105px; }
   .home-origin-hero-copy h1 { max-width: 330px; font-size: clamp(3.35rem, 16vw, 4.7rem); line-height: 0.96; }

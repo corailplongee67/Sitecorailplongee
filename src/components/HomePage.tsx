@@ -53,48 +53,26 @@ export function HomePage({
         accountUrl={bookingLinks.customer_account}
       />
       <main>
-        <section className="hero">
+        <section className="home-origin-hero">
           <Image
-            className="hero-image"
-            src="/images/hero/corail-reef.jpg"
-            alt={fr ? "Récif corallien baigné de lumière à La Réunion" : "Sunlit coral reef in Reunion Island"}
+            src="/images/hero/turtle-rays-corail-plongee.png"
+            alt={fr
+              ? "Tortue marine nageant sous les rayons du soleil au-dessus d’un récif corallien"
+              : "Sea turtle swimming through sunbeams above a coral reef in Reunion Island"}
             fill
             priority
             sizes="100vw"
           />
-          <div className="hero-scrim" />
-          <div className="shell hero-content">
-            <div className="hero-copy">
-              <p className="eyebrow light">Saint-Gilles-les-Bains · La Réunion</p>
-              <h1>
-                {fr ? (
-                  <>Plongez dans<br /><em>l’île intense.</em></>
-                ) : (
-                  <>Dive into<br /><em>the intense island.</em></>
-                )}
-              </h1>
-              <p className="hero-lead">
-                {fr
-                  ? "Baptêmes, explorations, formations et rencontres avec les cétacés sur la côte ouest de La Réunion."
-                  : "Try dives, explorations, training and cetacean encounters on Reunion Island’s west coast."}
-              </p>
-              <div className="hero-buttons">
-                <BookingCta href={bookingLinks.main_booking}>
-                  {fr ? "Réserver ma plongée" : "Book my dive"}
-                </BookingCta>
-                <Link className="button button-ghost" href={fr ? "/nos-prestations/" : "/en/our-services/"}>
-                  {fr ? "Choisir mon expérience" : "Choose my experience"}
-                </Link>
-              </div>
-            </div>
-            <a className="hero-scroll" href="#experiences">
-              <span>{fr ? "Descendre sous la surface" : "Below the surface"}</span>
-              <ArrowDown />
-            </a>
+          <div className="home-origin-hero-shade" />
+          <div className="shell home-origin-hero-copy">
+            <p className="eyebrow light">Saint-Gilles-les-Bains · Reunion Island</p>
+            <h1>Corail Plongée</h1>
+            <p>Come and discover Reunion Island’s underwater world.</p>
+            <BookingCta href={bookingLinks.main_booking}>Book a dive</BookingCta>
           </div>
-          <div className="depth-marker" aria-hidden="true">
-            <span>00 m</span><i /><span>20 m</span><i /><span>40 m</span>
-          </div>
+          <a className="home-origin-scroll" href="#experiences" aria-label="Discover our diving experiences">
+            <ArrowDown aria-hidden="true" />
+          </a>
         </section>
 
         <section className="intro-section section-shell">

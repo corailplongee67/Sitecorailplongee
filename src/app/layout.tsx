@@ -1,8 +1,36 @@
 import type { Metadata, Viewport } from "next";
+import type { CSSProperties } from "react";
+import { SiteImageProvider } from "@/components/SiteImage";
+import { getSiteImages } from "@/lib/site-images-data";
+import { contact } from "@/lib/site-data";
 import "./globals.css";
 import "./design-v2.css";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.corail-plongee.com";
+
+const localBusinessJsonLd = {
+  "@context": "https://schema.org",
+  "@type": ["LocalBusiness", "SportsActivityLocation"],
+  "@id": `${siteUrl}/#corail-plongee`,
+  name: "Corail Plongée",
+  url: siteUrl,
+  logo: new URL("/images/brand/logo.png", siteUrl).toString(),
+  image: new URL("/images/hero/turtle-rays-corail-plongee.png", siteUrl).toString(),
+  telephone: contact.phoneHref,
+  email: contact.email,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Port de plaisance",
+    postalCode: "97434",
+    addressLocality: "Saint-Gilles-les-Bains",
+    addressRegion: "La Réunion",
+    addressCountry: "FR",
+  },
+  sameAs: [
+    "https://web.facebook.com/corailplongeereunion/",
+    "https://www.instagram.com/corail.plongee/",
+  ],
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -27,10 +55,24 @@ export const viewport: Viewport = {
   colorScheme: "light",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const siteImages = await getSiteImages();
+  const managedBackgrounds = {
+    "--site-image-ssi-video": `url("${siteImages["/images/ssi/original/video-deep.jpg"] ?? "/images/ssi/original/video-deep.jpg"}")`,
+    "--site-image-cetacean-floral": `url("${siteImages["/images/cetaceans/original/floral-corner.png"] ?? "/images/cetaceans/original/floral-corner.png"}")`,
+  } as CSSProperties;
+
   return (
     <html lang="fr">
-      <body>{children}</body>
+      <body style={managedBackgrounds}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(localBusinessJsonLd).replace(/</g, "\\u003c"),
+          }}
+        />
+        <SiteImageProvider images={siteImages}>{children}</SiteImageProvider>
+      </body>
     </html>
   );
 }

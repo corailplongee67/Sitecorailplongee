@@ -181,6 +181,52 @@ export type Database = {
         Update: Partial<Database["public"]["Tables"]["prices"]["Insert"]>;
         Relationships: [];
       };
+      site_images: {
+        Row: {
+          slot_key: string;
+          image_path: string;
+          updated_at: string;
+        };
+        Insert: {
+          slot_key: string;
+          image_path: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["site_images"]["Insert"]>;
+        Relationships: [];
+      };
+      weather_history: {
+        Row: {
+          observation_date: string;
+          observed_at: string;
+          temperature_c: number;
+          apparent_temperature_c: number;
+          relative_humidity_percent: number;
+          precipitation_mm: number;
+          cloud_cover_percent: number;
+          wind_speed_kmh: number;
+          wind_direction_degrees: number;
+          weather_code: number;
+          source: string;
+          created_at: string;
+        };
+        Insert: {
+          observation_date: string;
+          observed_at: string;
+          temperature_c: number;
+          apparent_temperature_c: number;
+          relative_humidity_percent: number;
+          precipitation_mm?: number;
+          cloud_cover_percent: number;
+          wind_speed_kmh?: number;
+          wind_direction_degrees: number;
+          weather_code: number;
+          source?: string;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["weather_history"]["Insert"]>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

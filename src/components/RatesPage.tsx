@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SiteImage as Image } from "./SiteImage";
 import Link from "next/link";
 import { ArrowRight, Check, Info } from "lucide-react";
 import { BookingCta } from "./BookingCta";
@@ -67,7 +67,7 @@ function ListSection({ prices, locale }: { prices: PublicCatalogPrice[]; locale:
   );
 }
 
-function ComparisonSection({
+function ExplorationRateSection({
   section,
   prices,
   locale,
@@ -77,29 +77,36 @@ function ComparisonSection({
   locale: Locale;
 }) {
   const fr = locale === "fr";
-  const rows = new Map<string, { label: string; guided?: PublicCatalogPrice; autonomous?: PublicCatalogPrice }>();
-
-  for (const price of prices) {
-    const key = price.comparison_key ?? price.content_key;
-    const row = rows.get(key) ?? { label: fr ? price.label_fr : price.label_en };
-    if (price.price_column === "guided") row.guided = price;
-    if (price.price_column === "autonomous") row.autonomous = price;
-    rows.set(key, row);
-  }
+  const columns = [
+    {
+      key: "guided",
+      title: fr ? "Forfaits explorations encadrées" : "Guided exploration packages",
+      prices: prices.filter((price) => price.price_column === "guided"),
+    },
+    {
+      key: "autonomous",
+      title: fr ? "Forfaits plongées autonomes" : "Autonomous diving packages",
+      prices: prices.filter((price) => price.price_column === "autonomous"),
+    },
+  ] as const;
 
   return (
-    <div className="rate-comparison" role="table" aria-label={fr ? section.title_fr : section.title_en}>
-      <div className="rate-comparison-head" role="row">
-        <span role="columnheader">{fr ? "Forfait" : "Package"}</span>
-        <strong role="columnheader">{fr ? section.guided_label_fr : section.guided_label_en}</strong>
-        <strong role="columnheader">{fr ? section.autonomous_label_fr : section.autonomous_label_en}</strong>
-      </div>
-      {[...rows.entries()].map(([key, row]) => (
-        <div className="rate-comparison-row" role="row" key={key}>
-          <strong role="rowheader">{row.label}</strong>
-          <span role="cell">{row.guided ? amount(row.guided, locale) : "—"}</span>
-          <span role="cell">{row.autonomous ? amount(row.autonomous, locale) : "—"}</span>
-        </div>
+    <div className="exploration-rate-columns" aria-label={fr ? section.title_fr : section.title_en}>
+      {columns.map((column) => (
+        <section className="exploration-rate-column" key={column.key}>
+          <h3>{column.title}</h3>
+          <div className="exploration-rate-list">
+            {column.prices.map((price) => (
+              <div className="exploration-rate-row" key={price.id}>
+                <div>
+                  <strong>{fr ? price.label_fr : price.label_en}</strong>
+                  {(fr ? price.description_fr : price.description_en) ? <small>{fr ? price.description_fr : price.description_en}</small> : null}
+                </div>
+                <b>{amount(price, locale)}</b>
+              </div>
+            ))}
+          </div>
+        </section>
       ))}
     </div>
   );
@@ -155,7 +162,7 @@ export function RatesPage({
                   </header>
 
                   {section.layout === "comparison" ? (
-                    <ComparisonSection section={section} prices={sectionPrices} locale={locale} />
+                    <ExplorationRateSection section={section} prices={sectionPrices} locale={locale} />
                   ) : (
                     <ListSection prices={sectionPrices} locale={locale} />
                   )}

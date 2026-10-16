@@ -1,9 +1,11 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { fallbackEvents } from "@/lib/events-data";
 import { nextAvailableEventSlug } from "@/lib/event-slugs";
+import { getSiteImageSlot } from "@/lib/site-image-slots";
+import { SITE_IMAGE_BUCKET } from "@/lib/site-images-data";
 import { createClient } from "@/lib/supabase/server";
 
 function value(formData: FormData, key: string) {
@@ -40,6 +42,12 @@ function revalidatePrices() {
   revalidatePath("/admin/");
 }
 
+function revalidateSiteImages() {
+  updateTag("site-images");
+  revalidatePath("/", "layout");
+  revalidatePath("/admin/");
+}
+
 async function requireAdmin() {
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
@@ -67,6 +75,83 @@ export async function signOut() {
   redirect("/admin/login/");
 }
 
+export async function saveSiteImage(formData: FormData) {
+  const supabase = await requireAdmin();
+  const slotKey = value(formData, "slot_key");
+  const slot = getSiteImageSlot(slotKey);
+  const image = formData.get("image");
+
+  if (!slot) throw new Error("Cette image ne fait pas partie de la médiathèque du site.");
+  if (!(image instanceof File) || image.size === 0) throw new Error("Sélectionnez une image à envoyer.");
+  if (image.size > 3 * 1024 * 1024) throw new Error("L’image optimisée dépasse la limite de 3 Mo.");
+  if (!["image/jpeg", "image/png", "image/webp"].includes(image.type)) {
+    throw new Error("Le fichier doit être une image JPG, PNG ou WebP.");
+  }
+
+  const extensionByType: Record<string, string> = {
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/webp": "webp",
+  };
+  const folder = slugify(slot.key.replace(/^\/images\//, "")).slice(0, 90);
+  const imagePath = `${folder}/${crypto.randomUUID()}.${extensionByType[image.type]}`;
+  const { data: existingImage, error: existingError } = await supabase
+    .from("site_images")
+    .select("image_path")
+    .eq("slot_key", slotKey)
+    .maybeSingle();
+  if (existingError) throw existingError;
+
+  const { error: uploadError } = await supabase.storage.from(SITE_IMAGE_BUCKET).upload(imagePath, image, {
+    contentType: image.type,
+    cacheControl: "31536000",
+    upsert: false,
+  });
+  if (uploadError) throw uploadError;
+
+  const { error: saveError } = await supabase
+    .from("site_images")
+    .upsert({ slot_key: slotKey, image_path: imagePath });
+  if (saveError) {
+    await supabase.storage.from(SITE_IMAGE_BUCKET).remove([imagePath]);
+    throw saveError;
+  }
+
+  if (existingImage?.image_path && existingImage.image_path !== imagePath) {
+    const { error: removalError } = await supabase.storage
+      .from(SITE_IMAGE_BUCKET)
+      .remove([existingImage.image_path]);
+    if (removalError) throw removalError;
+  }
+
+  revalidateSiteImages();
+}
+
+export async function resetSiteImage(formData: FormData) {
+  const supabase = await requireAdmin();
+  const slotKey = value(formData, "slot_key");
+  if (!getSiteImageSlot(slotKey)) throw new Error("Cette image ne fait pas partie de la médiathèque du site.");
+
+  const { data: existingImage, error: existingError } = await supabase
+    .from("site_images")
+    .select("image_path")
+    .eq("slot_key", slotKey)
+    .maybeSingle();
+  if (existingError) throw existingError;
+
+  const { error: deleteError } = await supabase.from("site_images").delete().eq("slot_key", slotKey);
+  if (deleteError) throw deleteError;
+
+  if (existingImage?.image_path) {
+    const { error: removalError } = await supabase.storage
+      .from(SITE_IMAGE_BUCKET)
+      .remove([existingImage.image_path]);
+    if (removalError) throw removalError;
+  }
+
+  revalidateSiteImages();
+}
+
 export async function saveEvent(formData: FormData) {
   const supabase = await requireAdmin();
   const existingId = value(formData, "id");
@@ -86,6 +171,7 @@ export async function saveEvent(formData: FormData) {
     const path = `${id}/${crypto.randomUUID()}.${extension}`;
     const { error } = await supabase.storage.from("event-images").upload(path, entry, {
       contentType: entry.type,
+      cacheControl: "31536000",
       upsert: false,
     });
     if (error) throw error;

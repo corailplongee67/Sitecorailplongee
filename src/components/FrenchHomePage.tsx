@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SiteImage as Image } from "./SiteImage";
 import Link from "next/link";
 import { ArrowDown, ArrowRight, CalendarDays, Check, Clock3, Waves } from "lucide-react";
 import type { PublicEvent } from "@/lib/content-data";
@@ -10,13 +10,6 @@ import { Header } from "./Header";
 type BookingLinks = Record<BookingKey, string>;
 
 const homeServices = [
-  {
-    title: "Sorties cétacés",
-    image: "/images/services/cetaceans.webp",
-    alt: "Baleine à bosse sautant hors de l’eau",
-    href: "/sorties-cetaces-2/",
-    bookingKey: "cetacean_booking" as BookingKey,
-  },
   {
     title: "Découverte",
     image: "/images/services/discovery.webp",
@@ -44,6 +37,13 @@ const homeServices = [
     alt: "Plongeuse équipée dans l’océan",
     href: "/formation-francaise/",
     bookingKey: "french_training_booking" as BookingKey,
+  },
+  {
+    title: "Sorties cétacés",
+    image: "/images/services/cetaceans.webp",
+    alt: "Baleine à bosse sautant hors de l’eau",
+    href: "/sorties-cetaces-2/",
+    bookingKey: "cetacean_booking" as BookingKey,
   },
 ] as const;
 
@@ -219,6 +219,16 @@ export function FrenchHomePage({
             <article><span>03</span><Waves aria-hidden="true" /><h3>Plongez</h3><p>Notre équipe prépare le reste au port.</p></article>
           </div>
           <div className="home-origin-journey-action"><BookingCta href={bookingLinks.main_booking}>Je réserve</BookingCta></div>
+        </section>
+
+        <section className="home-origin-seo section-shell" aria-labelledby="home-seo-title">
+          <div className="shell home-origin-seo-card">
+            <p className="eyebrow">Plonger à Saint-Gilles-les-Bains</p>
+            <h2 id="home-seo-title">Votre centre de plongée à La Réunion</h2>
+            <p>
+              Installé sur le port de Saint-Gilles-les-Bains, Corail Plongée vous accueille toute l’année pour découvrir les fonds marins de La Réunion. Le centre propose des baptêmes de plongée pour une première immersion, des plongées d’exploration sur les récifs de la côte ouest, ainsi que des formations SSI internationales et des formations françaises adaptées à votre parcours. Débutants, plongeurs encadrés ou autonomes profitent d’une équipe expérimentée, de bateaux équipés et d’un accès privilégié aux sites sous-marins de l’océan Indien. Corail Plongée organise également des sorties et activités en mer, dont les rencontres avec les cétacés en saison. Depuis la réservation jusqu’au retour au port, chaque expérience est préparée avec attention pour vous faire vivre une plongée conviviale à Saint-Gilles-les-Bains.
+            </p>
+          </div>
         </section>
 
         <section className="home-origin-newsletter section-shell">

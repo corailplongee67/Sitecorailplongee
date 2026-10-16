@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SiteImage as Image } from "./SiteImage";
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { ArrowLeft, CalendarDays, Clock3, MapPin, Phone } from "lucide-react";

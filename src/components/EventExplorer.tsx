@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { SiteImage as Image } from "./SiteImage";
 import { ArrowRight, CalendarDays, ChevronDown, Clock3, MapPin, Search, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState, type CSSProperties } from "react";
 import type { PublicEvent } from "@/lib/events-data";

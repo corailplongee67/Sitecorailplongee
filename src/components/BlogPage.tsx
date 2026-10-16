@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SiteImage as Image } from "./SiteImage";
 import Link from "next/link";
 import { ArrowUpRight, CalendarDays } from "lucide-react";
 import { Footer } from "@/components/Footer";

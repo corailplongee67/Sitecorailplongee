@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SiteImage as Image } from "./SiteImage";
 import Link from "next/link";
 import { ArrowDown, ArrowRight, CalendarDays, Check, Clock3, Compass, ShieldCheck, UsersRound, Waves } from "lucide-react";
 import type { PublicEvent, PublicPrice } from "@/lib/content-data";

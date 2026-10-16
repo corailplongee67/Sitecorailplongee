@@ -3,9 +3,9 @@ import { FrenchHomePage } from "@/components/FrenchHomePage";
 import { getBookingLinks, getUpcomingEvents } from "@/lib/content-data";
 
 export const metadata: Metadata = {
-  title: "Plongée sous-marine à La Réunion – Réservez maintenant",
+  title: { absolute: "Corail Plongée | Centre de plongée à Saint-Gilles, La Réunion" },
   description:
-    "Plongée sous-marine à La Réunion : baptêmes, explorations, formations tous niveaux et sorties cétacés depuis Saint-Gilles-les-Bains.",
+    "Centre de plongée à Saint-Gilles-les-Bains, La Réunion : baptêmes, formations SSI et françaises, plongées d’exploration et sorties en mer toute l’année.",
   alternates: {
     canonical: "/",
     languages: { fr: "/", en: "/en/home/", "x-default": "/" },

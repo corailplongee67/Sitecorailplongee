@@ -1,92 +1,12 @@
-import Image from "next/image";
-import { ArrowUpRight } from "lucide-react";
+import { SiteImage as Image } from "./SiteImage";
+import Link from "next/link";
+import { ArrowRight, ArrowUpRight, Compass, MapPin, Waves } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import type { PublicCatalogPrice } from "@/lib/pricing-data";
 import type { BookingKey } from "@/lib/site-data";
 
 type BookingLinks = Record<BookingKey, string>;
-
-const packages = [
-  {
-    key: "unit",
-    contentKey: "exploration-unit-autonomous",
-    label: "Exploration de plongée niveau 2 autonomes et plus / Rescue Diver",
-    shortLabel: "Plongée à l’unité",
-    labelEn: "Exploration dive for autonomous level 2 divers and above / Rescue Divers",
-    shortLabelEn: "Single dive",
-    image: "/images/exploration/original/unit.jpg",
-    fallbackAmount: 4500,
-  },
-  {
-    key: "4",
-    contentKey: "exploration-4-autonomous",
-    label: "Forfait 4 plongées niveau 2 autonomes et plus ou Rescue Diver",
-    shortLabel: "Forfait 4 plongées",
-    labelEn: "4-dive package for autonomous level 2 divers and above or Rescue Divers",
-    shortLabelEn: "4-dive package",
-    image: "/images/exploration/original/package-4.jpg",
-    fallbackAmount: 17200,
-  },
-  {
-    key: "6",
-    contentKey: "exploration-6-autonomous",
-    label: "Forfait 6 plongées niveau 2 autonomes et plus ou Rescue Diver",
-    shortLabel: "Forfait 6 plongées",
-    labelEn: "6-dive package for autonomous level 2 divers and above or Rescue Divers",
-    shortLabelEn: "6-dive package",
-    image: "/images/exploration/original/package-6.jpg",
-    fallbackAmount: 24900,
-  },
-  {
-    key: "10",
-    contentKey: "exploration-10-autonomous",
-    label: "Forfait 10 plongées niveau 2 autonomes et plus ou Rescue Diver",
-    shortLabel: "Forfait 10 plongées",
-    labelEn: "10-dive package for autonomous level 2 divers and above or Rescue Divers",
-    shortLabelEn: "10-dive package",
-    image: "/images/exploration/original/package-10.jpg",
-    fallbackAmount: 40000,
-  },
-  {
-    key: "20",
-    contentKey: "exploration-20-autonomous",
-    label: "Forfait 20 plongées niveau 2 autonomes et plus ou Rescue Diver",
-    shortLabel: "Forfait 20 plongées",
-    labelEn: "20-dive package for autonomous level 2 divers and above or Rescue Divers",
-    shortLabelEn: "20-dive package",
-    image: "/images/exploration/original/package-20.jpg",
-    fallbackAmount: 70000,
-  },
-  {
-    key: "32",
-    contentKey: "exploration-32-autonomous",
-    label: "Forfait 32 plongées niveau 2 autonomes et plus ou Rescue Diver",
-    shortLabel: "Forfait 32 plongées",
-    labelEn: "32-dive package for autonomous level 2 divers and above or Rescue Divers",
-    shortLabelEn: "32-dive package",
-    image: "/images/exploration/original/package-32.jpg",
-    fallbackAmount: 95000,
-  },
-  {
-    key: "65",
-    contentKey: "exploration-65-autonomous",
-    label: "Forfait 65 plongées niveau 2 autonomes et plus ou Rescue Diver",
-    shortLabel: "Forfait 65 plongées",
-    labelEn: "65-dive package for autonomous level 2 divers and above or Rescue Divers",
-    shortLabelEn: "65-dive package",
-    image: "/images/exploration/original/package-65.jpg",
-    fallbackAmount: 156000,
-  },
-] as const;
-
-function formatAmount(amountCents: number, locale: "fr" | "en") {
-  return new Intl.NumberFormat(locale === "en" ? "en-GB" : "fr-FR", {
-    style: "currency",
-    currency: "EUR",
-    maximumFractionDigits: 0,
-  }).format(amountCents / 100);
-}
 
 export function ExplorationPage({
   bookingLinks,
@@ -98,11 +18,9 @@ export function ExplorationPage({
   locale?: "fr" | "en";
 }) {
   const en = locale === "en";
-  const autonomousPrices = new Map(
-    prices
-      .filter((price) => price.section_code === "exploration" && price.price_column === "autonomous")
-      .map((price) => [price.content_key, price]),
-  );
+  const explorationPrices = prices.filter((price) => price.section_code === "exploration");
+  const guidedCount = explorationPrices.filter((price) => price.price_column === "guided").length;
+  const autonomousCount = explorationPrices.filter((price) => price.price_column === "autonomous").length;
 
   return (
     <>
@@ -117,72 +35,108 @@ export function ExplorationPage({
         <section className="exploration-origin-hero">
           <Image
             src="/images/exploration/original/hero.jpg"
-            alt={en ? "Autonomous diver accompanied by a school of fish" : "Plongeur autonome accompagné d’un banc de poissons"}
+            alt={en ? "Divers exploring a reef with a school of fish" : "Plongeurs explorant un récif au milieu d’un banc de poissons"}
             fill
             priority
             sizes="100vw"
           />
           <div className="exploration-origin-hero-shade" />
           <div className="shell exploration-origin-hero-copy">
-            <p className="eyebrow light">{en ? "Level 2 and above · Rescue Diver" : "Niveau 2 et plus · Rescue Diver"}</p>
-            <h1>{en ? "I dive independently" : "Je plonge autonome"}</h1>
+            <p className="eyebrow light">{en ? "Guided or autonomous" : "Encadrée ou autonome"}</p>
+            <h1>{en ? "Exploration diving" : "Plongée exploration"}</h1>
+            <p>{en ? "Discover the underwater landscapes of Reunion Island from Saint-Gilles-les-Bains." : "Découvrez les paysages sous-marins de La Réunion depuis Saint-Gilles-les-Bains."}</p>
           </div>
         </section>
 
-        <section className="exploration-origin-offers">
+        <section className="exploration-story section-shell">
+          <div className="shell exploration-story-intro">
+            <div>
+              <p className="eyebrow">{en ? "The Indian Ocean, in all its variety" : "L’océan Indien dans toute sa diversité"}</p>
+              <h2>{en ? "A new site with every dive." : "À chaque plongée, un nouveau site."}</h2>
+            </div>
+            <p>
+              {en
+                ? "Corail Plongée organises exploration dives from Saint-Gilles-les-Bains for guided and autonomous divers. The outings reveal the reefs and reliefs of the west coast, with particular emphasis on the outer slope and its marine life."
+                : "Corail Plongée organise des plongées d’exploration au départ de Saint-Gilles-les-Bains, pour les plongeurs encadrés comme autonomes. Les sorties dévoilent les récifs et les reliefs de la côte ouest, avec une place particulière accordée à la pente externe et à sa vie marine."}
+            </p>
+          </div>
+
+          <div className="shell exploration-story-visual">
+            <Image
+              src="/images/about/original/materiel.jpg"
+              alt={en ? "Diver above the coral reef of Reunion Island" : "Plongeur au-dessus du récif corallien de La Réunion"}
+              fill
+              sizes="(max-width: 760px) 100vw, 1280px"
+            />
+            <div className="exploration-story-visual-label">
+              <Waves aria-hidden="true" />
+              <span>{en ? "Reefs · outer slope · open water" : "Récifs · pente externe · pleine eau"}</span>
+            </div>
+          </div>
+        </section>
+
+        <section className="exploration-principle section-shell">
+          <div className="shell exploration-principle-grid">
+            <div className="exploration-principle-heading">
+              <p className="eyebrow">{en ? "The principle" : "Le principe"}</p>
+              <h2>{en ? "Dive according to your experience." : "Plongez selon votre expérience."}</h2>
+              <p>
+                {en
+                  ? "Choose a guided exploration with an instructor or dive autonomously within the scope of your certification. The team guides you towards the suitable formula and presents the selected site before departure."
+                  : "Choisissez une exploration encadrée avec un moniteur ou plongez en autonomie dans le cadre de votre certification. L’équipe vous oriente vers la formule adaptée et vous présente le site retenu avant le départ."}
+              </p>
+            </div>
+
+            <div className="exploration-principle-options">
+              <article>
+                <span>01</span>
+                <h3>{en ? "Guided exploration" : "Exploration encadrée"}</h3>
+                <p>{en ? "Discover the site accompanied by a Corail Plongée instructor." : "Découvrez le site accompagné par un moniteur de Corail Plongée."}</p>
+              </article>
+              <article>
+                <span>02</span>
+                <h3>{en ? "Autonomous exploration" : "Exploration autonome"}</h3>
+                <p>{en ? "Explore as a buddy team within the scope of your diving certification." : "Explorez en palanquée dans le cadre de votre certification de plongée."}</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section className="exploration-flow section-shell">
           <div className="shell">
-            <div className="exploration-origin-panel">
-              <header className="exploration-origin-heading">
-                <p className="eyebrow">{en ? "Diving in Saint-Gilles" : "Plonger à Saint-Gilles"}</p>
-                <h2>{en ? "Autonomous exploration" : "Exploration autonome"}</h2>
-              </header>
+            <header className="exploration-flow-heading">
+              <p className="eyebrow">{en ? "Your outing" : "Votre sortie"}</p>
+              <h2>{en ? "From the marina to the reef." : "Du port au récif."}</h2>
+            </header>
+            <div className="exploration-flow-steps">
+              <article><span>01</span><h3>{en ? "Welcome" : "Accueil"}</h3><p>{en ? "Meet the team at Saint-Gilles-les-Bains marina." : "Retrouvez l’équipe au port de Saint-Gilles-les-Bains."}</p></article>
+              <article><span>02</span><h3>{en ? "Preparation" : "Préparation"}</h3><p>{en ? "The site and the organisation of the dive are presented before departure." : "Le site et l’organisation de la plongée sont présentés avant le départ."}</p></article>
+              <article><span>03</span><h3>{en ? "Exploration" : "Exploration"}</h3><p>{en ? "Enjoy the reliefs and marine life of Reunion Island’s west coast." : "Profitez des reliefs et de la vie marine de la côte ouest de La Réunion."}</p></article>
+            </div>
+          </div>
+        </section>
 
-              <div className="exploration-origin-grid">
-                {packages.map((item, index) => {
-                  const price = autonomousPrices.get(item.contentKey);
-                  const amount = price?.amount_cents ?? item.fallbackAmount;
-                  const shortLabel = en ? item.shortLabelEn : item.shortLabel;
-                  const label = en ? (price?.label_en || item.labelEn) : (price?.label_fr || item.label);
-
-                  return (
-                    <article className="exploration-origin-card" key={item.key}>
-                      <div className="exploration-origin-card-image">
-                        <Image
-                          src={item.image}
-                          alt={en ? `${shortLabel} for autonomous divers` : `Présentation ${shortLabel.toLowerCase()} pour plongeur autonome`}
-                          fill
-                          sizes="(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 33vw"
-                          priority={index < 3}
-                        />
-                        <strong>{formatAmount(amount, locale)}</strong>
-                      </div>
-                      <div className="exploration-origin-card-copy">
-                        <p>{shortLabel}</p>
-                        <h3>{label}</h3>
-                      </div>
-                    </article>
-                  );
-                })}
-              </div>
-
-              <div className="exploration-origin-actions">
-                <a
-                  className="button exploration-origin-book"
-                  href={bookingLinks.exploration_booking}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {en ? "I book" : "Je réserve"} <ArrowUpRight aria-hidden="true" size={18} />
+        <section className="exploration-practical section-shell">
+          <div className="shell exploration-practical-grid">
+            <div className="exploration-practical-copy">
+              <p className="eyebrow">{en ? "Practical information" : "Informations pratiques"}</p>
+              <h2>{en ? "Choose your next exploration." : "Choisissez votre prochaine exploration."}</h2>
+              <p>{en ? "All available packages and exact prices are listed on the rates page and remain updated from the centre’s catalogue." : "Toutes les formules disponibles et leurs tarifs exacts sont regroupés sur la page Tarifs et restent mis à jour depuis le catalogue du centre."}</p>
+              <div className="exploration-practical-actions">
+                <a className="button exploration-origin-book" href={bookingLinks.exploration_booking} target="_blank" rel="noreferrer">
+                  {en ? "Book an exploration" : "Réserver une exploration"} <ArrowUpRight aria-hidden="true" size={18} />
                 </a>
-                <a
-                  className="button exploration-origin-shop"
-                  href={bookingLinks.shop}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {en ? "Shop" : "Boutique"} <ArrowUpRight aria-hidden="true" size={18} />
-                </a>
+                <Link className="button button-outline" href={en ? "/en/rates/#exploration" : "/nos-tarifs/#exploration"}>
+                  {en ? "View all rates" : "Voir tous les tarifs"} <ArrowRight aria-hidden="true" size={18} />
+                </Link>
               </div>
+            </div>
+
+            <div className="exploration-practical-facts">
+              <article><MapPin aria-hidden="true" /><div><strong>{en ? "Departure" : "Départ"}</strong><span>Saint-Gilles-les-Bains</span></div></article>
+              <article><Compass aria-hidden="true" /><div><strong>{en ? "Environment" : "Environnement"}</strong><span>{en ? "West-coast reefs and outer slope" : "Récifs de la côte ouest et pente externe"}</span></div></article>
+              <article><Waves aria-hidden="true" /><div><strong>{en ? "Relevant formula" : "Formule concernée"}</strong><span>{en ? "Exploration from 0 to 20 metres" : "Exploration de 0 à 20 mètres"}</span></div></article>
+              <article className="exploration-practical-catalog"><div><strong>{en ? "Available packages" : "Formules disponibles"}</strong><span>{en ? `${guidedCount} guided · ${autonomousCount} autonomous` : `${guidedCount} encadrées · ${autonomousCount} autonomes`}</span></div></article>
             </div>
           </div>
         </section>

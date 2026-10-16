@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SiteImage as Image } from "./SiteImage";
 import { ArrowUpRight, Check, Clock3, UsersRound, Waves } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";

@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SiteImage as Image } from "./SiteImage";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, CalendarDays, Clock3, Mail, Share2 } from "lucide-react";
 import { BookingCta } from "./BookingCta";

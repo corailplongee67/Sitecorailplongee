@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { SiteImage as Image } from "./SiteImage";
 import { EventExplorer } from "./EventExplorer";
 import { Footer } from "./Footer";
 import { Header } from "./Header";

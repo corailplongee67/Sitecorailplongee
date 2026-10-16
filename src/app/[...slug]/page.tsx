@@ -82,6 +82,27 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
+  if (path === "/je-plonge-autonome/" || path === "/en/i-dive/") {
+    const isEnglish = path.startsWith("/en/");
+    const title = isEnglish
+      ? "Exploration Diving in Reunion Island – Guided or Autonomous"
+      : "Plongée exploration à La Réunion – Encadrée ou autonome";
+    const description = isEnglish
+      ? "Explore Reunion Island’s west-coast reefs and outer slope from Saint-Gilles-les-Bains, with guided and autonomous diving options."
+      : "Explorez les récifs et la pente externe de la côte ouest de La Réunion depuis Saint-Gilles-les-Bains, en plongée encadrée ou autonome.";
+    return {
+      title,
+      description,
+      alternates: { canonical: path },
+      openGraph: {
+        title,
+        description,
+        locale: isEnglish ? "en_GB" : "fr_FR",
+        type: "website",
+      },
+    };
+  }
+
   const locale = path.startsWith("/en/") ? "en" : "fr";
   return {
     title: page.title || "Corail Plongée",

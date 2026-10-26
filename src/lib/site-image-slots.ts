@@ -6,6 +6,15 @@ export type SiteImageSlot = {
   height: number;
   usedOn?: string;
   transparent?: boolean;
+  previews: SiteImagePreview[];
+};
+
+export type SiteImagePreview = {
+  label: string;
+  width: number;
+  height: number;
+  positionX?: number;
+  positionY?: number;
 };
 
 export type SiteImageGroup = {
@@ -21,8 +30,28 @@ const slot = (
   kind: SiteImageSlot["kind"],
   width: number,
   height: number,
-  options: Pick<SiteImageSlot, "usedOn" | "transparent"> = {},
-): SiteImageSlot => ({ key, label, kind, width, height, ...options });
+  options: Pick<SiteImageSlot, "usedOn" | "transparent"> & { previews?: SiteImagePreview[] } = {},
+): SiteImageSlot => {
+  const { previews, ...rest } = options;
+  const defaultPreviews: SiteImagePreview[] = kind === "Bannière"
+    ? [
+        { label: "Ordinateur", width: 1600, height: 700 },
+        { label: "Mobile", width: 750, height: 1000 },
+      ]
+    : [{ label: "Cadre principal", width, height }];
+
+  return { key, label, kind, width, height, previews: previews ?? defaultPreviews, ...rest };
+};
+
+const homeCardPreviews = (desktopWidth: number): SiteImagePreview[] => [
+  { label: "Carte d’accueil · ordinateur", width: desktopWidth, height: 1000 },
+  { label: "Carte d’accueil · mobile", width: 826, height: 1000 },
+];
+
+const serviceCardPreviews: SiteImagePreview[] = [
+  { label: "Carte prestations · ordinateur", width: 1500, height: 1000 },
+  { label: "Carte prestations · mobile", width: 583, height: 1000 },
+];
 
 export const siteImageGroups: SiteImageGroup[] = [
   {
@@ -32,11 +61,24 @@ export const siteImageGroups: SiteImageGroup[] = [
     slots: [
       slot("/images/hero/turtle-rays-corail-plongee.png", "Héros avec la tortue", "Bannière", 1920, 1080, { usedOn: "Accueil français et anglais" }),
       slot("/images/hero/diving-reunion.jpg", "Bandeau « Trouvez votre plongée »", "Bannière", 1600, 900, { usedOn: "Accueil, boutique et pages génériques" }),
-      slot("/images/services/discovery.webp", "Carte Découverte", "Carte", 1000, 667, { usedOn: "Accueil et pages génériques" }),
-      slot("/images/services/exploration.webp", "Carte Exploration", "Carte", 1000, 667),
-      slot("/images/services/ssi.jpg", "Carte Formation SSI", "Carte", 1000, 667, { usedOn: "Accueil et pages génériques" }),
-      slot("/images/services/french-training.webp", "Carte Formation française", "Carte", 1000, 667),
-      slot("/images/services/cetaceans.webp", "Carte Sorties cétacés", "Carte", 1000, 667, { usedOn: "Accueil et pages génériques" }),
+      slot("/images/services/discovery.webp", "Carte Découverte", "Carte", 1000, 667, {
+        usedOn: "Accueil et pages génériques",
+        previews: [
+          ...homeCardPreviews(1240),
+          { label: "Bloc Découverte · ordinateur", width: 1230, height: 1000, positionY: 58 },
+          { label: "Bloc Découverte · mobile", width: 1020, height: 1000, positionY: 58 },
+        ],
+      }),
+      slot("/images/services/exploration.webp", "Carte Exploration", "Carte", 1000, 667, { previews: homeCardPreviews(1240) }),
+      slot("/images/services/ssi.jpg", "Carte Formation SSI", "Carte", 1000, 667, {
+        usedOn: "Accueil et pages génériques",
+        previews: homeCardPreviews(945),
+      }),
+      slot("/images/services/french-training.webp", "Carte Formation française", "Carte", 1000, 667, { previews: homeCardPreviews(945) }),
+      slot("/images/services/cetaceans.webp", "Carte Sorties cétacés", "Carte", 1000, 667, {
+        usedOn: "Accueil et pages génériques",
+        previews: homeCardPreviews(945),
+      }),
       slot("/images/hero/underwater-reunion.jpg", "Visuel marin secondaire", "Photo large", 1440, 960, { usedOn: "Accueil anglais et événements" }),
       slot("/images/about/team-center.jpg", "Photo du centre secondaire", "Photo large", 1024, 620, { usedOn: "Accueil anglais et pages génériques" }),
     ],
@@ -69,12 +111,12 @@ export const siteImageGroups: SiteImageGroup[] = [
     description: "Bannière et six cartes de la page catalogue.",
     slots: [
       slot("/images/services/original/hero.jpg", "Bannière des prestations", "Bannière", 1600, 900),
-      slot("/images/services/original/discovery.jpg", "Carte Découverte", "Carte", 900, 600),
-      slot("/images/services/original/ssi-training.jpg", "Carte Formation SSI", "Carte", 900, 600),
-      slot("/images/services/original/french-training.jpg", "Carte Formation française", "Carte", 900, 600),
-      slot("/images/services/original/exploration.jpg", "Carte Exploration", "Carte", 900, 600),
-      slot("/images/services/original/crossover.jpg", "Carte Passerelles", "Carte", 900, 600),
-      slot("/images/services/original/cetaceans.jpg", "Carte Sorties cétacés", "Carte", 900, 600),
+      slot("/images/services/original/discovery.jpg", "Carte Découverte", "Carte", 900, 600, { previews: serviceCardPreviews }),
+      slot("/images/services/original/ssi-training.jpg", "Carte Formation SSI", "Carte", 900, 600, { previews: serviceCardPreviews }),
+      slot("/images/services/original/french-training.jpg", "Carte Formation française", "Carte", 900, 600, { previews: serviceCardPreviews }),
+      slot("/images/services/original/exploration.jpg", "Carte Exploration", "Carte", 900, 600, { previews: serviceCardPreviews }),
+      slot("/images/services/original/crossover.jpg", "Carte Passerelles", "Carte", 900, 600, { previews: serviceCardPreviews }),
+      slot("/images/services/original/cetaceans.jpg", "Carte Sorties cétacés", "Carte", 900, 600, { previews: serviceCardPreviews }),
     ],
   },
   {

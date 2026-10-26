@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { Check, Crop, ImagePlus, LoaderCircle, Minus, Plus, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { saveSiteImage } from "@/app/admin/actions";
+import type { SiteImagePreview } from "@/lib/site-image-slots";
 
 type EditorImage = {
   file: File;
@@ -26,6 +27,24 @@ function formatBytes(bytes: number) {
 
 function canvasBlob(canvas: HTMLCanvasElement, quality: number) {
   return new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/webp", quality));
+}
+
+function previewOutputStyle(
+  output: { width: number; height: number },
+  preview: SiteImagePreview,
+) {
+  const outputRatio = output.width / output.height;
+  const previewRatio = preview.width / preview.height;
+  const positionX = (preview.positionX ?? 50) / 100;
+  const positionY = (preview.positionY ?? 50) / 100;
+
+  if (outputRatio > previewRatio) {
+    const width = (outputRatio / previewRatio) * 100;
+    return { width: `${width}%`, height: "100%", left: `${(100 - width) * positionX}%`, top: 0 };
+  }
+
+  const height = (previewRatio / outputRatio) * 100;
+  return { width: "100%", height: `${height}%`, left: 0, top: `${(100 - height) * positionY}%` };
 }
 
 async function optimizedCrop(
@@ -76,6 +95,7 @@ export function AdminImageCropper({
   label,
   width,
   height,
+  previews,
   circular = false,
   hasOverride,
 }: {
@@ -83,6 +103,7 @@ export function AdminImageCropper({
   label: string;
   width: number;
   height: number;
+  previews: SiteImagePreview[];
   circular?: boolean;
   hasOverride: boolean;
 }) {
@@ -119,6 +140,15 @@ export function AdminImageCropper({
       height: editor.height * baseScale * zoom,
     };
   }, [editor, frame, zoom]);
+
+  const normalizedImageStyle = displayed && frame.width && frame.height
+    ? {
+        width: `${(displayed.width / frame.width) * 100}%`,
+        height: `${(displayed.height / frame.height) * 100}%`,
+        left: `${50 - (displayed.width / frame.width) * 50 + (offset.x / frame.width) * 100}%`,
+        top: `${50 - (displayed.height / frame.height) * 50 + (offset.y / frame.height) * 100}%`,
+      }
+    : null;
 
   function clamp(next: Point, dimensions = displayed) {
     if (!dimensions) return next;
@@ -219,7 +249,7 @@ export function AdminImageCropper({
         <div className="crop-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby={`crop-title-${width}-${height}`}>
           <div className="crop-modal">
             <div className="crop-modal-heading">
-              <div><small>APERÇU EXACT SUR LE SITE</small><h3 id={`crop-title-${width}-${height}`}>{label}</h3></div>
+              <div><small>RECADRAGE ET APERÇUS DU SITE</small><h3 id={`crop-title-${width}-${height}`}>{label}</h3></div>
               <button type="button" onClick={closeEditor} aria-label="Fermer"><X /></button>
             </div>
 
@@ -227,7 +257,10 @@ export function AdminImageCropper({
               <div
                 ref={frameRef}
                 className={`crop-frame${circular ? " is-circular" : ""}`}
-                style={{ aspectRatio: `${width} / ${height}` }}
+                style={{
+                  aspectRatio: `${width} / ${height}`,
+                  width: `min(100%, ${circular ? 480 : 720}px, ${(56 * width) / height}svh)`,
+                }}
                 onPointerDown={(event) => {
                   event.currentTarget.setPointerCapture(event.pointerId);
                   dragRef.current = { pointerId: event.pointerId, start: { x: event.clientX, y: event.clientY }, origin: offset };
@@ -258,6 +291,31 @@ export function AdminImageCropper({
               </div>
               <p><Crop size={15} /> Faites glisser la photo pour choisir le cadrage.</p>
             </div>
+
+            {normalizedImageStyle ? (
+              <div className="crop-site-preview-section">
+                <div className="crop-site-preview-heading">
+                  <strong>Résultat visible sur le site</strong>
+                  <span>Ces cadres reproduisent le recadrage appliqué sur ordinateur et mobile.</span>
+                </div>
+                <div className="crop-site-previews">
+                  {previews.map((preview) => (
+                    <figure className="crop-site-preview" key={`${preview.label}-${preview.width}-${preview.height}`}>
+                      <div className="crop-site-preview-frame" style={{ aspectRatio: `${preview.width} / ${preview.height}` }}>
+                        <div
+                          className="crop-site-preview-output"
+                          style={previewOutputStyle({ width, height }, preview)}
+                        >
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={editor.url} alt="" draggable={false} style={normalizedImageStyle} />
+                        </div>
+                      </div>
+                      <figcaption>{preview.label}</figcaption>
+                    </figure>
+                  ))}
+                </div>
+              </div>
+            ) : null}
 
             <div className="crop-controls">
               <div className="crop-zoom">

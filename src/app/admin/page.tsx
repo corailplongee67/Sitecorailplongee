@@ -135,8 +135,17 @@ export default async function AdminPage() {
                     const currentSrc = override ? publicSiteImageUrl(override.image_path) : slot.key;
                     return (
                       <article className="admin-media-card" key={slot.key}>
-                        <div className="admin-media-preview">
-                          <Image src={currentSrc} alt="" fill sizes="(max-width: 700px) 100vw, 320px" />
+                        <div
+                          className="admin-media-preview"
+                          style={{ aspectRatio: `${slot.previews[0].width} / ${slot.previews[0].height}` }}
+                        >
+                          <Image
+                            src={currentSrc}
+                            alt=""
+                            fill
+                            sizes="(max-width: 700px) 100vw, 320px"
+                            style={{ objectPosition: `${slot.previews[0].positionX ?? 50}% ${slot.previews[0].positionY ?? 50}%` }}
+                          />
                           <span>{override ? "Photo personnalisée" : "Photo d’origine"}</span>
                         </div>
                         <div className="admin-media-copy">
@@ -149,6 +158,7 @@ export default async function AdminPage() {
                             label={slot.label}
                             width={slot.width}
                             height={slot.height}
+                            previews={slot.previews}
                             circular={slot.kind === "Portrait"}
                             hasOverride={Boolean(override)}
                           />

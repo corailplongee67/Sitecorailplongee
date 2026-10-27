@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import type { CSSProperties } from "react";
+import { Suspense } from "react";
+import { BackgroundMusicPlayer } from "@/components/BackgroundMusicPlayer";
 import { SiteImageProvider } from "@/components/SiteImage";
+import { getSiteAudioSettings } from "@/lib/site-audio-data";
 import { getSiteImages } from "@/lib/site-images-data";
 import { contact } from "@/lib/site-data";
 import "./globals.css";
@@ -56,7 +59,7 @@ export const viewport: Viewport = {
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const siteImages = await getSiteImages();
+  const [siteImages, siteAudio] = await Promise.all([getSiteImages(), getSiteAudioSettings()]);
   const managedBackgrounds = {
     "--site-image-ssi-video": `url("${siteImages["/images/ssi/original/video-deep.jpg"] ?? "/images/ssi/original/video-deep.jpg"}")`,
     "--site-image-cetacean-floral": `url("${siteImages["/images/cetaceans/original/floral-corner.png"] ?? "/images/cetaceans/original/floral-corner.png"}")`,
@@ -72,6 +75,11 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           }}
         />
         <SiteImageProvider images={siteImages}>{children}</SiteImageProvider>
+        {siteAudio ? (
+          <Suspense fallback={null}>
+            <BackgroundMusicPlayer src={siteAudio.url} volume={siteAudio.volume} />
+          </Suspense>
+        ) : null}
       </body>
     </html>
   );

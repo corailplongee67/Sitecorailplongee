@@ -1,5 +1,7 @@
 const VARIANT_SEPARATOR = "::variant::";
 
+export const SITE_IMAGE_SOURCE_VARIANT = "source";
+
 export function siteImageVariantKey(slotKey: string, variantId: string) {
   return `${slotKey}${VARIANT_SEPARATOR}${variantId}`;
 }

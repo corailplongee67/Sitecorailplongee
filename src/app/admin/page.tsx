@@ -1,12 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { CalendarDays, CloudSun, ExternalLink, Images, Link2, LogOut, Plus, RotateCcw, Save, Tags, Trash2 } from "lucide-react";
+import { CalendarDays, CloudSun, ExternalLink, Images, Link2, LogOut, Music2, Plus, RotateCcw, Save, Tags, Trash2 } from "lucide-react";
+import { AdminBackgroundMusic } from "@/components/AdminBackgroundMusic";
 import { AdminImageCropper } from "@/components/AdminImageCropper";
 import { OptimizedEventImageInput } from "@/components/OptimizedEventImageInput";
 import { createClient, hasSupabaseEnv } from "@/lib/supabase/server";
 import type { PublicCatalogPrice, PublicPriceSection } from "@/lib/pricing-data";
 import { siteImageGroups, siteImageSlots } from "@/lib/site-image-slots";
+import { SITE_IMAGE_SOURCE_VARIANT, siteImageVariantKey } from "@/lib/site-image-variants";
+import { publicSiteAudioUrl } from "@/lib/site-audio-data";
 import { publicSiteImageUrl } from "@/lib/site-images-data";
 import { deleteEvent, deletePrice, importLegacyEvents, resetSiteImage, saveBookingLink, saveEvent, savePrice, savePriceSection, signOut } from "./actions";
 
@@ -95,12 +98,13 @@ export default async function AdminPage() {
     return <main className="admin-setup shell"><h1>Accès non autorisé</h1><p>Ce compte ne possède pas le rôle administrateur.</p><form action={signOut}><button className="button button-navy">Se déconnecter</button></form></main>;
   }
 
-  const [{ data: events }, { data: priceSections }, { data: prices }, { data: bookingLinks }, { data: siteImages }, { data: weatherHistory }] = await Promise.all([
+  const [{ data: events }, { data: priceSections }, { data: prices }, { data: bookingLinks }, { data: siteImages }, { data: siteAudio }, { data: weatherHistory }] = await Promise.all([
     supabase.from("events").select("*").order("starts_at", { ascending: false }),
     supabase.from("price_sections").select("*").order("display_order"),
     supabase.from("prices").select("*").order("display_order"),
     supabase.from("booking_links").select("*").order("key"),
     supabase.from("site_images").select("slot_key,image_path,updated_at"),
+    supabase.from("site_audio_settings").select("audio_path,volume").eq("id", "background").maybeSingle(),
     supabase.from("weather_history").select("*").order("observation_date", { ascending: false }).limit(14),
   ]);
   const bookingKeys = (bookingLinks ?? []).map((link) => link.key);
@@ -112,7 +116,7 @@ export default async function AdminPage() {
     <main className="admin-shell">
       <aside className="admin-sidebar">
         <Link href="/"><Image src="/images/brand/logo.png" alt="Corail Plongée" width={165} height={78} /></Link>
-        <nav><a href="#photos"><Images /> Photos</a><a href="#events"><CalendarDays /> Évènements</a><a href="#prices"><Tags /> Tarifs</a><a href="#links"><Link2 /> Réservations</a><a className="admin-weather-link" href="#weather"><CloudSun /> Météo</a></nav>
+        <nav><a href="#photos"><Images /> Photos</a><a href="#music"><Music2 /> Musique</a><a href="#events"><CalendarDays /> Évènements</a><a href="#prices"><Tags /> Tarifs</a><a href="#links"><Link2 /> Réservations</a><a className="admin-weather-link" href="#weather"><CloudSun /> Météo</a></nav>
         <div className="admin-sidebar-bottom"><Link href="/" target="_blank">Voir le site <ExternalLink /></Link><form action={signOut}><button><LogOut /> Déconnexion</button></form></div>
       </aside>
 
@@ -133,6 +137,8 @@ export default async function AdminPage() {
                   {group.slots.map((slot) => {
                     const override = siteImageOverrides.get(slot.key);
                     const currentSrc = override ? publicSiteImageUrl(override.image_path) : slot.key;
+                    const sourceOverride = siteImageOverrides.get(siteImageVariantKey(slot.key, SITE_IMAGE_SOURCE_VARIANT));
+                    const editorSrc = sourceOverride ? publicSiteImageUrl(sourceOverride.image_path) : currentSrc;
                     return (
                       <article className="admin-media-card" key={slot.key}>
                         <div
@@ -161,6 +167,8 @@ export default async function AdminPage() {
                             previews={slot.previews}
                             circular={slot.kind === "Portrait"}
                             hasOverride={Boolean(override)}
+                            existingSrc={editorSrc}
+                            hasStoredSource={Boolean(sourceOverride)}
                           />
                           {override ? (
                             <form className="admin-media-reset" action={resetSiteImage}>
@@ -176,6 +184,19 @@ export default async function AdminPage() {
               </details>
             ))}
           </div>
+        </section>
+
+        <section id="music" className="admin-section">
+          <div className="admin-section-title"><div><Music2 /><div><h2>Musique de fond</h2><p>Un morceau continu sur le site, avec un volume doux et réglable.</p></div></div><span>{siteAudio ? "1" : "0"}</span></div>
+          <div className="admin-media-notice">
+            <strong>La musique tente de démarrer automatiquement et joue en boucle.</strong>
+            <span>Certains navigateurs bloquent le son automatique : dans ce cas, il démarre à la première interaction. Le visiteur garde toujours un bouton pause/lecture en bas à droite.</span>
+          </div>
+          <AdminBackgroundMusic
+            currentPath={siteAudio?.audio_path ?? null}
+            currentUrl={siteAudio?.audio_path ? publicSiteAudioUrl(siteAudio.audio_path) : null}
+            currentVolume={Number(siteAudio?.volume ?? 0.25)}
+          />
         </section>
 
         <section id="events" className="admin-section">

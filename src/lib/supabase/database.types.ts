@@ -195,6 +195,22 @@ export type Database = {
         Update: Partial<Database["public"]["Tables"]["site_images"]["Insert"]>;
         Relationships: [];
       };
+      site_audio_settings: {
+        Row: {
+          id: string;
+          audio_path: string;
+          volume: number;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          audio_path: string;
+          volume?: number;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["site_audio_settings"]["Insert"]>;
+        Relationships: [];
+      };
       weather_history: {
         Row: {
           observation_date: string;

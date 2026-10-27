@@ -1098,6 +1098,7 @@ h2 { margin-bottom: 0; font-size: clamp(2.6rem, 5.2vw, 5.4rem); line-height: 0.9
 .admin-crop-upload { margin-top: 16px; display: grid; gap: 8px; }
 .admin-crop-file { position: fixed; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 .admin-crop-upload .button { min-height: 42px; justify-content: center; }
+.admin-crop-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .admin-upload-message, .optimized-upload-status { margin: 0; color: #087f91; font-size: .68rem; font-weight: 650; line-height: 1.4; text-transform: none; letter-spacing: 0; }
 .optimized-upload-status { margin-top: 6px; display: block; }
 .is-spinning { animation: admin-spin .85s linear infinite; }
@@ -1141,6 +1142,29 @@ h2 { margin-bottom: 0; font-size: clamp(2.6rem, 5.2vw, 5.4rem); line-height: 0.9
 .crop-details strong { width: 100%; color: #9a5d11; font-weight: 680; }
 .crop-actions { padding: 18px 22px; display: flex; justify-content: flex-end; gap: 10px; background: white; }
 .crop-actions .button { min-height: 42px; }
+
+.admin-audio-card { padding: 22px; display: grid; gap: 22px; background: white; border: 1px solid rgba(4,35,48,.1); border-radius: 14px; }
+.admin-audio-preview { display: grid; grid-template-columns: 58px minmax(180px, 1fr) minmax(260px, .9fr); align-items: center; gap: 16px; }
+.admin-audio-icon { width: 58px; height: 58px; display: grid; place-items: center; color: white; background: linear-gradient(145deg, var(--blue), var(--deep)); border-radius: 50%; }
+.admin-audio-icon svg { width: 24px; }
+.admin-audio-preview > div:nth-child(2) { display: grid; gap: 4px; }
+.admin-audio-preview strong { font-size: .88rem; }
+.admin-audio-preview span { color: var(--muted); font-size: .7rem; line-height: 1.45; }
+.admin-audio-preview audio { width: 100%; height: 42px; }
+.admin-audio-controls { padding-top: 20px; display: grid; grid-template-columns: minmax(260px, 1fr) auto; align-items: end; gap: 24px; border-top: 1px solid rgba(4,35,48,.09); }
+.admin-audio-controls > label { display: grid; gap: 10px; color: var(--muted); font-size: .67rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+.admin-audio-controls > label > div { display: grid; grid-template-columns: auto minmax(140px, 1fr) 52px; align-items: center; gap: 12px; color: var(--blue); }
+.admin-audio-controls input { width: 100%; accent-color: var(--blue); }
+.admin-audio-controls label strong { color: var(--deep); font-size: .76rem; text-align: right; }
+.admin-audio-actions { display: flex; align-items: center; gap: 8px; }
+.admin-audio-actions .button { min-height: 42px; justify-content: center; }
+.admin-audio-delete { min-height: 42px; padding: 0 8px; display: inline-flex; align-items: center; gap: 6px; color: #9a4338; background: transparent; border: 0; font-size: .68rem; cursor: pointer; }
+
+.background-music-player { position: fixed; right: max(18px, env(safe-area-inset-right)); bottom: max(18px, env(safe-area-inset-bottom)); z-index: 90; }
+.background-music-player button { position: relative; width: 52px; height: 52px; display: grid; place-items: center; color: white; background: rgba(3, 34, 47, .92); border: 1px solid rgba(255,255,255,.3); border-radius: 50%; box-shadow: 0 12px 32px rgba(2,20,29,.28); backdrop-filter: blur(12px); cursor: pointer; transition: transform .2s ease, background .2s ease; }
+.background-music-player button:hover { transform: translateY(-2px); background: var(--blue); }
+.background-music-note { width: 21px; height: 21px; }
+.background-music-state { position: absolute; right: -2px; bottom: -2px; width: 18px; height: 18px; padding: 4px; color: var(--deep); background: #f3ce79; border: 2px solid white; border-radius: 50%; }
 
 .admin-weather-link { margin-top: 18px; opacity: .62; border-top: 1px solid rgba(255,255,255,.08) !important; }
 .admin-weather-panel { margin-top: 90px; scroll-margin-top: 40px; color: #5d7076; background: rgba(255,255,255,.5); border: 1px solid rgba(4,35,48,.07); border-radius: 12px; }
@@ -1581,6 +1605,13 @@ h2 { margin-bottom: 0; font-size: clamp(2.6rem, 5.2vw, 5.4rem); line-height: 0.9
   .admin-link-list label { grid-column: 1 / -1; }
   .admin-media-grid { grid-template-columns: 1fr; padding: 14px; }
   .admin-media-group > summary { align-items: flex-start; }
+  .admin-crop-buttons { grid-template-columns: 1fr; }
+  .admin-audio-preview { grid-template-columns: 50px 1fr; }
+  .admin-audio-icon { width: 50px; height: 50px; }
+  .admin-audio-preview audio { grid-column: 1 / -1; }
+  .admin-audio-controls { grid-template-columns: 1fr; }
+  .admin-audio-actions { align-items: stretch; flex-direction: column; }
+  .admin-audio-actions .button { width: 100%; }
   .crop-modal-backdrop { padding: 0; align-items: end; }
   .crop-modal { max-height: 96svh; border-radius: 22px 22px 0 0; }
   .crop-workspace { padding: 18px 14px; }

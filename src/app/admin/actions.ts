@@ -5,8 +5,9 @@ import { redirect } from "next/navigation";
 import { fallbackEvents } from "@/lib/events-data";
 import { nextAvailableEventSlug } from "@/lib/event-slugs";
 import { getSiteImageSlot } from "@/lib/site-image-slots";
-import { siteImageRowKeys, siteImageVariantKey } from "@/lib/site-image-variants";
+import { SITE_IMAGE_SOURCE_VARIANT, siteImageRowKeys, siteImageVariantKey } from "@/lib/site-image-variants";
 import { SITE_IMAGE_BUCKET } from "@/lib/site-images-data";
+import { SITE_AUDIO_BUCKET } from "@/lib/site-audio-data";
 import { createClient } from "@/lib/supabase/server";
 
 function value(formData: FormData, key: string) {
@@ -45,6 +46,12 @@ function revalidatePrices() {
 
 function revalidateSiteImages() {
   updateTag("site-images");
+  revalidatePath("/", "layout");
+  revalidatePath("/admin/");
+}
+
+function revalidateSiteAudio() {
+  updateTag("site-audio");
   revalidatePath("/", "layout");
   revalidatePath("/admin/");
 }
@@ -89,9 +96,13 @@ export async function saveSiteImage(formData: FormData) {
   }));
   const hasVariantImages = variantImages.some(({ image }) => image instanceof File && image.size > 0);
   const legacyImage = formData.get("image");
-  const uploads = hasVariantImages
+  const sourceImage = formData.get("source");
+  const uploads: Array<{ variantId: string | null; image: FormDataEntryValue | null }> = hasVariantImages
     ? variantImages.map(({ preview, image }) => ({ variantId: preview.id, image }))
     : [{ variantId: null, image: legacyImage }];
+  if (sourceImage instanceof File && sourceImage.size > 0) {
+    uploads.push({ variantId: SITE_IMAGE_SOURCE_VARIANT, image: sourceImage });
+  }
 
   if (uploads.some(({ image }) => !(image instanceof File) || image.size === 0)) {
     throw new Error("Tous les cadrages doivent être générés avant l’enregistrement.");
@@ -114,7 +125,10 @@ export async function saveSiteImage(formData: FormData) {
     "image/webp": "webp",
   };
   const folder = slugify(slot.key.replace(/^\/images\//, "")).slice(0, 90);
-  const rowKeys = siteImageRowKeys(slotKey, slot.previews.map((preview) => preview.id));
+  const rowKeys = siteImageRowKeys(slotKey, [
+    ...slot.previews.map((preview) => preview.id),
+    SITE_IMAGE_SOURCE_VARIANT,
+  ]);
   const { data: existingImages, error: existingError } = await supabase
     .from("site_images")
     .select("slot_key,image_path")
@@ -146,7 +160,11 @@ export async function saveSiteImage(formData: FormData) {
   }
   const uploaded = plannedUploads.map(({ variantId, path }) => ({ variantId, path }));
 
-  const primaryPath = uploaded[0].path;
+  const primaryPath = uploaded.find(({ variantId }) => variantId !== SITE_IMAGE_SOURCE_VARIANT)?.path;
+  if (!primaryPath) {
+    await supabase.storage.from(SITE_IMAGE_BUCKET).remove(uploaded.map(({ path }) => path));
+    throw new Error("Aucun cadrage n’a été généré.");
+  }
   const rows = [
     { slot_key: slotKey, image_path: primaryPath },
     ...uploaded.flatMap(({ variantId, path }) => variantId
@@ -162,6 +180,12 @@ export async function saveSiteImage(formData: FormData) {
   }
 
   const newPaths = new Set(uploaded.map(({ path }) => path));
+  if (!(sourceImage instanceof File) || sourceImage.size === 0) {
+    const preservedSource = (existingImages ?? []).find(
+      ({ slot_key }) => slot_key === siteImageVariantKey(slotKey, SITE_IMAGE_SOURCE_VARIANT),
+    );
+    if (preservedSource) newPaths.add(preservedSource.image_path);
+  }
   const obsoletePaths = [...new Set((existingImages ?? [])
     .map(({ image_path }) => image_path)
     .filter((path) => !newPaths.has(path)))];
@@ -180,7 +204,10 @@ export async function resetSiteImage(formData: FormData) {
   const slotKey = value(formData, "slot_key");
   const slot = getSiteImageSlot(slotKey);
   if (!slot) throw new Error("Cette image ne fait pas partie de la médiathèque du site.");
-  const rowKeys = siteImageRowKeys(slotKey, slot.previews.map((preview) => preview.id));
+  const rowKeys = siteImageRowKeys(slotKey, [
+    ...slot.previews.map((preview) => preview.id),
+    SITE_IMAGE_SOURCE_VARIANT,
+  ]);
 
   const { data: existingImages, error: existingError } = await supabase
     .from("site_images")
@@ -200,6 +227,62 @@ export async function resetSiteImage(formData: FormData) {
   }
 
   revalidateSiteImages();
+}
+
+export async function saveSiteAudioSettings(formData: FormData) {
+  const supabase = await requireAdmin();
+  const volume = Number(value(formData, "volume"));
+  if (!Number.isFinite(volume) || volume < 0 || volume > 1) {
+    throw new Error("Le volume doit être compris entre 0 et 100 %.");
+  }
+
+  const { data: existing, error: existingError } = await supabase
+    .from("site_audio_settings")
+    .select("audio_path")
+    .eq("id", "background")
+    .maybeSingle();
+  if (existingError) throw existingError;
+
+  const requestedPath = value(formData, "audio_path");
+  const audioPath = requestedPath || existing?.audio_path;
+  if (!audioPath || !/^background\/[a-z0-9-]+\.[a-z0-9]+$/i.test(audioPath)) {
+    throw new Error("Choisissez une musique avant d’enregistrer.");
+  }
+
+  const { error: saveError } = await supabase.from("site_audio_settings").upsert({
+    id: "background",
+    audio_path: audioPath,
+    volume,
+  });
+  if (saveError) throw saveError;
+
+  if (requestedPath && existing?.audio_path && existing.audio_path !== requestedPath) {
+    await supabase.storage.from(SITE_AUDIO_BUCKET).remove([existing.audio_path]);
+  }
+
+  revalidateSiteAudio();
+}
+
+export async function removeSiteAudioSettings() {
+  const supabase = await requireAdmin();
+  const { data: existing, error: existingError } = await supabase
+    .from("site_audio_settings")
+    .select("audio_path")
+    .eq("id", "background")
+    .maybeSingle();
+  if (existingError) throw existingError;
+
+  const { error: deleteError } = await supabase
+    .from("site_audio_settings")
+    .delete()
+    .eq("id", "background");
+  if (deleteError) throw deleteError;
+
+  if (existing?.audio_path) {
+    await supabase.storage.from(SITE_AUDIO_BUCKET).remove([existing.audio_path]);
+  }
+
+  revalidateSiteAudio();
 }
 
 export async function saveEvent(formData: FormData) {

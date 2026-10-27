@@ -7,7 +7,8 @@ import { saveSiteImage } from "@/app/admin/actions";
 import type { SiteImagePreview } from "@/lib/site-image-slots";
 
 type EditorImage = {
-  file: File;
+  sourceChanged: boolean;
+  revokeOnClose: boolean;
   url: string;
   element: HTMLImageElement;
   width: number;
@@ -19,6 +20,8 @@ type CropState = { zoom: number; pan: Point };
 
 const MAX_SOURCE_BYTES = 20 * 1024 * 1024;
 const TARGET_BYTES = 950 * 1024;
+const SOURCE_TARGET_BYTES = 2.5 * 1024 * 1024;
+const SOURCE_MAX_DIMENSION = 2600;
 
 function formatBytes(bytes: number) {
   if (bytes < 1024) return `${bytes} o`;
@@ -113,6 +116,31 @@ async function optimizedCrop(
   return blob;
 }
 
+async function optimizedSource(image: EditorImage) {
+  let scale = Math.min(1, SOURCE_MAX_DIMENSION / Math.max(image.width, image.height));
+
+  while (true) {
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(image.width * scale));
+    canvas.height = Math.max(1, Math.round(image.height * scale));
+    const context = canvas.getContext("2d", { alpha: true });
+    if (!context) throw new Error("La préparation de la photo source n’est pas disponible dans ce navigateur.");
+    context.imageSmoothingEnabled = true;
+    context.imageSmoothingQuality = "high";
+    context.drawImage(image.element, 0, 0, canvas.width, canvas.height);
+
+    let quality = 0.86;
+    let blob = await canvasBlob(canvas, quality);
+    while (blob && blob.size > SOURCE_TARGET_BYTES && quality > 0.54) {
+      quality -= 0.05;
+      blob = await canvasBlob(canvas, quality);
+    }
+    if (!blob) throw new Error("La sauvegarde de la photo source a échoué.");
+    if (blob.size <= SOURCE_TARGET_BYTES || Math.max(canvas.width, canvas.height) <= 1200) return blob;
+    scale *= 0.82;
+  }
+}
+
 export function AdminImageCropper({
   slotKey,
   label,
@@ -121,6 +149,8 @@ export function AdminImageCropper({
   previews,
   circular = false,
   hasOverride,
+  existingSrc,
+  hasStoredSource,
 }: {
   slotKey: string;
   label: string;
@@ -129,6 +159,8 @@ export function AdminImageCropper({
   previews: SiteImagePreview[];
   circular?: boolean;
   hasOverride: boolean;
+  existingSrc: string;
+  hasStoredSource: boolean;
 }) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -141,6 +173,7 @@ export function AdminImageCropper({
     previews.map((preview) => [preview.id, initialCrop(preview)]),
   ));
   const [message, setMessage] = useState("");
+  const [isLoadingSource, setIsLoadingSource] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   const activePreview = previews.find((preview) => preview.id === activePreviewId) ?? previews[0];
@@ -157,7 +190,7 @@ export function AdminImageCropper({
   }, [editor]);
 
   useEffect(() => () => {
-    if (editor) URL.revokeObjectURL(editor.url);
+    if (editor?.revokeOnClose) URL.revokeObjectURL(editor.url);
   }, [editor]);
 
   const displayed = useMemo(() => {
@@ -166,11 +199,35 @@ export function AdminImageCropper({
   }, [activeCrop, editor, frame]);
 
   function closeEditor() {
-    if (editor) URL.revokeObjectURL(editor.url);
+    if (editor?.revokeOnClose) URL.revokeObjectURL(editor.url);
     setEditor(null);
     setActivePreviewId(previews[0].id);
     setCrops(Object.fromEntries(previews.map((preview) => [preview.id, initialCrop(preview)])));
     if (inputRef.current) inputRef.current.value = "";
+  }
+
+  function openEditor(url: string, sourceChanged: boolean, revokeOnClose: boolean) {
+    const image = new window.Image();
+    image.decoding = "async";
+    if (!revokeOnClose) image.crossOrigin = "anonymous";
+    image.onload = () => {
+      setEditor({ sourceChanged, revokeOnClose, url, element: image, width: image.naturalWidth, height: image.naturalHeight });
+      setActivePreviewId(previews[0].id);
+      setCrops(Object.fromEntries(previews.map((preview) => [preview.id, initialCrop(preview)])));
+      setIsLoadingSource(false);
+    };
+    image.onerror = () => {
+      if (revokeOnClose) URL.revokeObjectURL(url);
+      setMessage("Cette image ne peut pas être ouverte.");
+      setIsLoadingSource(false);
+    };
+    image.src = url;
+  }
+
+  function recropCurrentImage() {
+    setMessage("");
+    setIsLoadingSource(true);
+    openEditor(existingSrc, !hasStoredSource, false);
   }
 
   async function selectFile(file?: File) {
@@ -186,18 +243,7 @@ export function AdminImageCropper({
     }
 
     const url = URL.createObjectURL(file);
-    const image = new window.Image();
-    image.decoding = "async";
-    image.onload = () => {
-      setEditor({ file, url, element: image, width: image.naturalWidth, height: image.naturalHeight });
-      setActivePreviewId(previews[0].id);
-      setCrops(Object.fromEntries(previews.map((preview) => [preview.id, initialCrop(preview)])));
-    };
-    image.onerror = () => {
-      URL.revokeObjectURL(url);
-      setMessage("Cette image ne peut pas être ouverte.");
-    };
-    image.src = url;
+    openEditor(url, true, true);
   }
 
   function updateZoom(value: number) {
@@ -215,6 +261,11 @@ export function AdminImageCropper({
       const formData = new FormData();
       formData.set("slot_key", slotKey);
       let totalSize = 0;
+      if (editor.sourceChanged) {
+        const source = await optimizedSource(editor);
+        totalSize += source.size;
+        formData.set("source", new File([source], `${label}-source.webp`, { type: "image/webp" }));
+      }
       for (const preview of previews) {
         const crop = crops[preview.id] ?? initialCrop(preview);
         const blob = await optimizedCrop(editor, { width: preview.width, height: preview.height }, crop);
@@ -246,10 +297,16 @@ export function AdminImageCropper({
         accept="image/jpeg,image/png,image/webp"
         onChange={(event) => void selectFile(event.target.files?.[0])}
       />
-      <button className="button button-navy" type="button" onClick={() => inputRef.current?.click()} disabled={isPending}>
-        {isPending ? <LoaderCircle className="is-spinning" size={16} /> : <ImagePlus size={16} />}
-        {isPending ? "Optimisation…" : hasOverride ? "Remplacer et recadrer" : "Ajouter et recadrer"}
-      </button>
+      <div className="admin-crop-buttons">
+        <button className="button button-navy" type="button" onClick={recropCurrentImage} disabled={isPending || isLoadingSource}>
+          {isLoadingSource ? <LoaderCircle className="is-spinning" size={16} /> : <Crop size={16} />}
+          {isLoadingSource ? "Ouverture…" : "Recadrer la photo actuelle"}
+        </button>
+        <button className="button button-outline-admin" type="button" onClick={() => inputRef.current?.click()} disabled={isPending || isLoadingSource}>
+          <ImagePlus size={16} />
+          {hasOverride ? "Remplacer la photo" : "Choisir une nouvelle photo"}
+        </button>
+      </div>
       {message ? <p className="admin-upload-message" role="status">{message}</p> : null}
 
       {editor ? (

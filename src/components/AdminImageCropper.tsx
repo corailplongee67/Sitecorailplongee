@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, Crop, ImagePlus, LoaderCircle, Minus, Plus, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { saveSiteImage } from "@/app/admin/actions";
+import { saveSiteImagePaths } from "@/app/admin/actions";
 import type { SiteImagePreview } from "@/lib/site-image-slots";
+import { SITE_IMAGE_BUCKET, SITE_IMAGE_SOURCE_VARIANT, siteImageStorageFolder } from "@/lib/site-image-variants";
+import { createClient } from "@/lib/supabase/browser";
 
 type EditorImage = {
   sourceChanged: boolean;
@@ -17,6 +19,8 @@ type EditorImage = {
 
 type Point = { x: number; y: number };
 type CropState = { zoom: number; pan: Point };
+type SaveStage = "idle" | "preparing" | "uploading" | "finalizing";
+type Feedback = { kind: "success" | "error"; text: string } | null;
 
 const MAX_SOURCE_BYTES = 20 * 1024 * 1024;
 const TARGET_BYTES = 950 * 1024;
@@ -172,9 +176,10 @@ export function AdminImageCropper({
   const [crops, setCrops] = useState<Record<string, CropState>>(() => Object.fromEntries(
     previews.map((preview) => [preview.id, initialCrop(preview)]),
   ));
-  const [message, setMessage] = useState("");
+  const [feedback, setFeedback] = useState<Feedback>(null);
   const [isLoadingSource, setIsLoadingSource] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [saveStage, setSaveStage] = useState<SaveStage>("idle");
+  const isSaving = saveStage !== "idle";
 
   const activePreview = previews.find((preview) => preview.id === activePreviewId) ?? previews[0];
   const activeCrop = crops[activePreview.id] ?? initialCrop(activePreview);
@@ -192,6 +197,12 @@ export function AdminImageCropper({
   useEffect(() => () => {
     if (editor?.revokeOnClose) URL.revokeObjectURL(editor.url);
   }, [editor]);
+
+  useEffect(() => {
+    if (feedback?.kind !== "success") return;
+    const timeout = window.setTimeout(() => setFeedback(null), 6500);
+    return () => window.clearTimeout(timeout);
+  }, [feedback]);
 
   const displayed = useMemo(() => {
     if (!editor || !frame.width || !frame.height) return null;
@@ -218,27 +229,27 @@ export function AdminImageCropper({
     };
     image.onerror = () => {
       if (revokeOnClose) URL.revokeObjectURL(url);
-      setMessage("Cette image ne peut pas être ouverte.");
+      setFeedback({ kind: "error", text: "Cette image ne peut pas être ouverte." });
       setIsLoadingSource(false);
     };
     image.src = url;
   }
 
   function recropCurrentImage() {
-    setMessage("");
+    setFeedback(null);
     setIsLoadingSource(true);
     openEditor(existingSrc, !hasStoredSource, false);
   }
 
   async function selectFile(file?: File) {
-    setMessage("");
+    setFeedback(null);
     if (!file) return;
     if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
-      setMessage("Choisissez une image JPG, PNG ou WebP.");
+      setFeedback({ kind: "error", text: "Choisissez une image JPG, PNG ou WebP." });
       return;
     }
     if (file.size > MAX_SOURCE_BYTES) {
-      setMessage("L’image d’origine dépasse 20 Mo.");
+      setFeedback({ kind: "error", text: "L’image d’origine dépasse 20 Mo." });
       return;
     }
 
@@ -256,37 +267,84 @@ export function AdminImageCropper({
 
   async function confirmCrop() {
     if (!editor || !frame.width || !frame.height) return;
-    setMessage("");
+    setFeedback(null);
+    setSaveStage("preparing");
+    let uploadedPaths: string[] = [];
     try {
-      const formData = new FormData();
-      formData.set("slot_key", slotKey);
+      const generated: Array<{ variantId: string; blob: Blob }> = [];
       let totalSize = 0;
       if (editor.sourceChanged) {
         const source = await optimizedSource(editor);
         totalSize += source.size;
-        formData.set("source", new File([source], `${label}-source.webp`, { type: "image/webp" }));
+        generated.push({ variantId: SITE_IMAGE_SOURCE_VARIANT, blob: source });
       }
       for (const preview of previews) {
         const crop = crops[preview.id] ?? initialCrop(preview);
         const blob = await optimizedCrop(editor, { width: preview.width, height: preview.height }, crop);
         totalSize += blob.size;
-        const fileName = `${label}-${preview.id}`.toLowerCase().replace(/[^a-z0-9]+/gi, "-");
-        formData.set(`variant:${preview.id}`, new File([blob], `${fileName}.webp`, { type: "image/webp" }));
+        generated.push({ variantId: preview.id, blob });
       }
-      startTransition(async () => {
-        try {
-          await saveSiteImage(formData);
-          setMessage(`${previews.length} cadrage${previews.length > 1 ? "s" : ""} enregistré${previews.length > 1 ? "s" : ""} · ${formatBytes(totalSize)} en WebP`);
-          closeEditor();
-          router.refresh();
-        } catch (error) {
-          setMessage(error instanceof Error ? error.message : "L’enregistrement a échoué.");
-        }
+
+      setSaveStage("uploading");
+      const folder = siteImageStorageFolder(slotKey);
+      const plannedUploads = generated.map(({ variantId, blob }) => ({
+        variantId,
+        blob,
+        path: `${folder}/${variantId.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${crypto.randomUUID()}.webp`,
+      }));
+      const supabase = createClient();
+      const uploadResults = await Promise.all(plannedUploads.map(({ blob, path }) => (
+        supabase.storage.from(SITE_IMAGE_BUCKET).upload(path, blob, {
+          contentType: "image/webp",
+          cacheControl: "31536000",
+          upsert: false,
+        })
+      )));
+      uploadedPaths = plannedUploads
+        .filter((_, index) => !uploadResults[index].error)
+        .map(({ path }) => path);
+      const uploadError = uploadResults.find(({ error }) => error)?.error;
+      if (uploadError) throw uploadError;
+
+      setSaveStage("finalizing");
+      const formData = new FormData();
+      formData.set("slot_key", slotKey);
+      for (const { variantId, path } of plannedUploads) {
+        if (variantId === SITE_IMAGE_SOURCE_VARIANT) formData.set("source_path", path);
+        else formData.set(`variant_path:${variantId}`, path);
+      }
+      await saveSiteImagePaths(formData);
+
+      uploadedPaths = [];
+      setSaveStage("idle");
+      closeEditor();
+      setFeedback({
+        kind: "success",
+        text: `Enregistré avec succès · ${previews.length} cadrage${previews.length > 1 ? "s" : ""} · ${formatBytes(totalSize)} en WebP`,
       });
+      router.refresh();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Le recadrage a échoué.");
+      if (uploadedPaths.length) {
+        try {
+          await createClient().storage.from(SITE_IMAGE_BUCKET).remove(uploadedPaths);
+        } catch {
+          // Best-effort cleanup; no database row points at these files.
+        }
+      }
+      setFeedback({ kind: "error", text: error instanceof Error ? error.message : "Le recadrage a échoué." });
+      setSaveStage("idle");
     }
   }
+
+  const saveLabel = saveStage === "preparing"
+    ? "Préparation…"
+    : saveStage === "uploading"
+      ? "Envoi des cadrages…"
+      : saveStage === "finalizing"
+        ? "Validation…"
+        : previews.length > 1
+          ? `Enregistrer les ${previews.length} cadrages`
+          : "Valider et enregistrer";
 
   return (
     <div className="admin-crop-upload">
@@ -298,23 +356,27 @@ export function AdminImageCropper({
         onChange={(event) => void selectFile(event.target.files?.[0])}
       />
       <div className="admin-crop-buttons">
-        <button className="button button-navy" type="button" onClick={recropCurrentImage} disabled={isPending || isLoadingSource}>
+        <button className="button button-navy" type="button" onClick={recropCurrentImage} disabled={isSaving || isLoadingSource}>
           {isLoadingSource ? <LoaderCircle className="is-spinning" size={16} /> : <Crop size={16} />}
           {isLoadingSource ? "Ouverture…" : "Recadrer la photo actuelle"}
         </button>
-        <button className="button button-outline-admin" type="button" onClick={() => inputRef.current?.click()} disabled={isPending || isLoadingSource}>
+        <button className="button button-outline-admin" type="button" onClick={() => inputRef.current?.click()} disabled={isSaving || isLoadingSource}>
           <ImagePlus size={16} />
           {hasOverride ? "Remplacer la photo" : "Choisir une nouvelle photo"}
         </button>
       </div>
-      {message ? <p className="admin-upload-message" role="status">{message}</p> : null}
+      {feedback && !editor ? (
+        <p className={`admin-upload-message is-${feedback.kind}`} role={feedback.kind === "error" ? "alert" : "status"}>
+          {feedback.kind === "success" ? <Check size={16} /> : null}{feedback.text}
+        </p>
+      ) : null}
 
       {editor ? (
         <div className="crop-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby={`crop-title-${width}-${height}`}>
           <div className="crop-modal">
             <div className="crop-modal-heading">
               <div><small>RECADRAGE ET APERÇUS DU SITE</small><h3 id={`crop-title-${width}-${height}`}>{label}</h3></div>
-              <button type="button" onClick={closeEditor} aria-label="Fermer"><X /></button>
+              <button type="button" onClick={closeEditor} aria-label="Fermer" disabled={isSaving}><X /></button>
             </div>
 
             <div className="crop-workspace">
@@ -420,10 +482,11 @@ export function AdminImageCropper({
             </div>
 
             <div className="crop-actions">
-              <button type="button" className="button button-outline-admin" onClick={closeEditor}>Annuler</button>
-              <button type="button" className="button button-navy" onClick={() => void confirmCrop()} disabled={isPending}>
-                {isPending ? <LoaderCircle className="is-spinning" size={16} /> : <Check size={16} />}
-                {previews.length > 1 ? `Enregistrer les ${previews.length} cadrages` : "Valider et enregistrer"}
+              {feedback?.kind === "error" ? <p className="crop-save-error" role="alert">{feedback.text}</p> : null}
+              <button type="button" className="button button-outline-admin" onClick={closeEditor} disabled={isSaving}>Annuler</button>
+              <button type="button" className="button button-navy" onClick={() => void confirmCrop()} disabled={isSaving}>
+                {isSaving ? <LoaderCircle className="is-spinning" size={16} /> : <Check size={16} />}
+                {saveLabel}
               </button>
             </div>
           </div>

@@ -1100,6 +1100,9 @@ h2 { margin-bottom: 0; font-size: clamp(2.6rem, 5.2vw, 5.4rem); line-height: 0.9
 .admin-crop-upload .button { min-height: 42px; justify-content: center; }
 .admin-crop-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .admin-upload-message, .optimized-upload-status { margin: 0; color: #087f91; font-size: .68rem; font-weight: 650; line-height: 1.4; text-transform: none; letter-spacing: 0; }
+.admin-upload-message.is-success { display: flex; align-items: center; gap: 7px; width: fit-content; padding: 8px 11px; color: #0a6847; background: #e5f7ee; border: 1px solid #a9dfc5; border-radius: 10px; font-size: .75rem; }
+.admin-upload-message.is-error, .crop-save-error { color: #a22b2b; }
+.crop-save-error { flex: 1 1 100%; margin: 0; padding: 9px 11px; background: #fff0f0; border: 1px solid #efc0c0; border-radius: 9px; font-size: .72rem; font-weight: 700; line-height: 1.35; }
 .optimized-upload-status { margin-top: 6px; display: block; }
 .is-spinning { animation: admin-spin .85s linear infinite; }
 @keyframes admin-spin { to { transform: rotate(360deg); } }

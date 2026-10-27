@@ -5,8 +5,7 @@ import { redirect } from "next/navigation";
 import { fallbackEvents } from "@/lib/events-data";
 import { nextAvailableEventSlug } from "@/lib/event-slugs";
 import { getSiteImageSlot } from "@/lib/site-image-slots";
-import { SITE_IMAGE_SOURCE_VARIANT, siteImageRowKeys, siteImageVariantKey } from "@/lib/site-image-variants";
-import { SITE_IMAGE_BUCKET } from "@/lib/site-images-data";
+import { isSiteImageUploadPath, SITE_IMAGE_BUCKET, SITE_IMAGE_SOURCE_VARIANT, siteImageRowKeys, siteImageVariantKey } from "@/lib/site-image-variants";
 import { SITE_AUDIO_BUCKET } from "@/lib/site-audio-data";
 import { createClient } from "@/lib/supabase/server";
 
@@ -83,48 +82,26 @@ export async function signOut() {
   redirect("/admin/login/");
 }
 
-export async function saveSiteImage(formData: FormData) {
+export async function saveSiteImagePaths(formData: FormData) {
   const supabase = await requireAdmin();
   const slotKey = value(formData, "slot_key");
   const slot = getSiteImageSlot(slotKey);
 
   if (!slot) throw new Error("Cette image ne fait pas partie de la médiathèque du site.");
 
-  const variantImages = slot.previews.map((preview) => ({
-    preview,
-    image: formData.get(`variant:${preview.id}`),
+  const variants = slot.previews.map((preview) => ({
+    variantId: preview.id,
+    path: value(formData, `variant_path:${preview.id}`),
   }));
-  const hasVariantImages = variantImages.some(({ image }) => image instanceof File && image.size > 0);
-  const legacyImage = formData.get("image");
-  const sourceImage = formData.get("source");
-  const uploads: Array<{ variantId: string | null; image: FormDataEntryValue | null }> = hasVariantImages
-    ? variantImages.map(({ preview, image }) => ({ variantId: preview.id, image }))
-    : [{ variantId: null, image: legacyImage }];
-  if (sourceImage instanceof File && sourceImage.size > 0) {
-    uploads.push({ variantId: SITE_IMAGE_SOURCE_VARIANT, image: sourceImage });
+  const sourcePath = value(formData, "source_path");
+  const receivedPaths = [...variants.map(({ path }) => path), ...(sourcePath ? [sourcePath] : [])];
+  if (variants.some(({ path }) => !path)) {
+    throw new Error("Tous les cadrages doivent être envoyés avant la validation.");
+  }
+  if (new Set(receivedPaths).size !== receivedPaths.length || receivedPaths.some((path) => !isSiteImageUploadPath(slotKey, path))) {
+    throw new Error("Un fichier envoyé ne correspond pas à cette photo.");
   }
 
-  if (uploads.some(({ image }) => !(image instanceof File) || image.size === 0)) {
-    throw new Error("Tous les cadrages doivent être générés avant l’enregistrement.");
-  }
-
-  const files = uploads as Array<{ variantId: string | null; image: File }>;
-  if (files.some(({ image }) => image.size > 3 * 1024 * 1024)) {
-    throw new Error("Une image optimisée dépasse la limite de 3 Mo.");
-  }
-  if (files.reduce((total, { image }) => total + image.size, 0) > 8 * 1024 * 1024) {
-    throw new Error("L’ensemble des cadrages dépasse la limite de 8 Mo.");
-  }
-  if (files.some(({ image }) => !["image/jpeg", "image/png", "image/webp"].includes(image.type))) {
-    throw new Error("Les fichiers doivent être des images JPG, PNG ou WebP.");
-  }
-
-  const extensionByType: Record<string, string> = {
-    "image/jpeg": "jpg",
-    "image/png": "png",
-    "image/webp": "webp",
-  };
-  const folder = slugify(slot.key.replace(/^\/images\//, "")).slice(0, 90);
   const rowKeys = siteImageRowKeys(slotKey, [
     ...slot.previews.map((preview) => preview.id),
     SITE_IMAGE_SOURCE_VARIANT,
@@ -135,52 +112,20 @@ export async function saveSiteImage(formData: FormData) {
     .in("slot_key", rowKeys);
   if (existingError) throw existingError;
 
-  const plannedUploads = files.map(({ variantId, image }) => {
-    const suffix = variantId ? `${slugify(variantId)}-` : "";
-    return {
-      variantId,
-      image,
-      path: `${folder}/${suffix}${crypto.randomUUID()}.${extensionByType[image.type]}`,
-    };
-  });
-  const uploadResults = await Promise.all(plannedUploads.map(({ image, path }) => (
-    supabase.storage.from(SITE_IMAGE_BUCKET).upload(path, image, {
-      contentType: image.type,
-      cacheControl: "31536000",
-      upsert: false,
-    })
-  )));
-  const firstUploadError = uploadResults.find(({ error }) => error)?.error;
-  if (firstUploadError) {
-    const uploadedPaths = plannedUploads
-      .filter((_, index) => !uploadResults[index].error)
-      .map(({ path }) => path);
-    if (uploadedPaths.length) await supabase.storage.from(SITE_IMAGE_BUCKET).remove(uploadedPaths);
-    throw firstUploadError;
-  }
-  const uploaded = plannedUploads.map(({ variantId, path }) => ({ variantId, path }));
-
-  const primaryPath = uploaded.find(({ variantId }) => variantId !== SITE_IMAGE_SOURCE_VARIANT)?.path;
-  if (!primaryPath) {
-    await supabase.storage.from(SITE_IMAGE_BUCKET).remove(uploaded.map(({ path }) => path));
-    throw new Error("Aucun cadrage n’a été généré.");
-  }
+  const primaryPath = variants[0]?.path;
+  if (!primaryPath) throw new Error("Aucun cadrage n’a été généré.");
   const rows = [
     { slot_key: slotKey, image_path: primaryPath },
-    ...uploaded.flatMap(({ variantId, path }) => variantId
-      ? [{ slot_key: siteImageVariantKey(slotKey, variantId), image_path: path }]
-      : []),
+    ...variants.map(({ variantId, path }) => ({ slot_key: siteImageVariantKey(slotKey, variantId), image_path: path })),
+    ...(sourcePath ? [{ slot_key: siteImageVariantKey(slotKey, SITE_IMAGE_SOURCE_VARIANT), image_path: sourcePath }] : []),
   ];
   const { error: saveError } = await supabase
     .from("site_images")
     .upsert(rows);
-  if (saveError) {
-    await supabase.storage.from(SITE_IMAGE_BUCKET).remove(uploaded.map(({ path }) => path));
-    throw saveError;
-  }
+  if (saveError) throw saveError;
 
-  const newPaths = new Set(uploaded.map(({ path }) => path));
-  if (!(sourceImage instanceof File) || sourceImage.size === 0) {
+  const newPaths = new Set(receivedPaths);
+  if (!sourcePath) {
     const preservedSource = (existingImages ?? []).find(
       ({ slot_key }) => slot_key === siteImageVariantKey(slotKey, SITE_IMAGE_SOURCE_VARIANT),
     );
@@ -190,13 +135,13 @@ export async function saveSiteImage(formData: FormData) {
     .map(({ image_path }) => image_path)
     .filter((path) => !newPaths.has(path)))];
   if (obsoletePaths.length) {
-    const { error: removalError } = await supabase.storage
-      .from(SITE_IMAGE_BUCKET)
-      .remove(obsoletePaths);
-    if (removalError) throw removalError;
+    // The database already points at the new files. Old-file cleanup is best effort
+    // and must never make a successful save look like a failure to the editor.
+    await supabase.storage.from(SITE_IMAGE_BUCKET).remove(obsoletePaths);
   }
 
   revalidateSiteImages();
+  return { savedVariants: variants.length };
 }
 
 export async function resetSiteImage(formData: FormData) {

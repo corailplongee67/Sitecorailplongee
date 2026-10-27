@@ -1,7 +1,6 @@
 import type { SiteImageMap } from "@/components/SiteImage";
+import { SITE_IMAGE_BUCKET } from "./site-image-variants";
 import { hasSupabaseEnv } from "./supabase/server";
-
-export const SITE_IMAGE_BUCKET = "site-images";
 
 export function publicSiteImageUrl(path: string) {
   const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

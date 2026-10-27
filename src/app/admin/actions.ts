@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { fallbackEvents } from "@/lib/events-data";
 import { nextAvailableEventSlug } from "@/lib/event-slugs";
 import { getSiteImageSlot } from "@/lib/site-image-slots";
+import { siteImageRowKeys, siteImageVariantKey } from "@/lib/site-image-variants";
 import { SITE_IMAGE_BUCKET } from "@/lib/site-images-data";
 import { createClient } from "@/lib/supabase/server";
 
@@ -79,13 +80,32 @@ export async function saveSiteImage(formData: FormData) {
   const supabase = await requireAdmin();
   const slotKey = value(formData, "slot_key");
   const slot = getSiteImageSlot(slotKey);
-  const image = formData.get("image");
 
   if (!slot) throw new Error("Cette image ne fait pas partie de la médiathèque du site.");
-  if (!(image instanceof File) || image.size === 0) throw new Error("Sélectionnez une image à envoyer.");
-  if (image.size > 3 * 1024 * 1024) throw new Error("L’image optimisée dépasse la limite de 3 Mo.");
-  if (!["image/jpeg", "image/png", "image/webp"].includes(image.type)) {
-    throw new Error("Le fichier doit être une image JPG, PNG ou WebP.");
+
+  const variantImages = slot.previews.map((preview) => ({
+    preview,
+    image: formData.get(`variant:${preview.id}`),
+  }));
+  const hasVariantImages = variantImages.some(({ image }) => image instanceof File && image.size > 0);
+  const legacyImage = formData.get("image");
+  const uploads = hasVariantImages
+    ? variantImages.map(({ preview, image }) => ({ variantId: preview.id, image }))
+    : [{ variantId: null, image: legacyImage }];
+
+  if (uploads.some(({ image }) => !(image instanceof File) || image.size === 0)) {
+    throw new Error("Tous les cadrages doivent être générés avant l’enregistrement.");
+  }
+
+  const files = uploads as Array<{ variantId: string | null; image: File }>;
+  if (files.some(({ image }) => image.size > 3 * 1024 * 1024)) {
+    throw new Error("Une image optimisée dépasse la limite de 3 Mo.");
+  }
+  if (files.reduce((total, { image }) => total + image.size, 0) > 8 * 1024 * 1024) {
+    throw new Error("L’ensemble des cadrages dépasse la limite de 8 Mo.");
+  }
+  if (files.some(({ image }) => !["image/jpeg", "image/png", "image/webp"].includes(image.type))) {
+    throw new Error("Les fichiers doivent être des images JPG, PNG ou WebP.");
   }
 
   const extensionByType: Record<string, string> = {
@@ -94,33 +114,61 @@ export async function saveSiteImage(formData: FormData) {
     "image/webp": "webp",
   };
   const folder = slugify(slot.key.replace(/^\/images\//, "")).slice(0, 90);
-  const imagePath = `${folder}/${crypto.randomUUID()}.${extensionByType[image.type]}`;
-  const { data: existingImage, error: existingError } = await supabase
+  const rowKeys = siteImageRowKeys(slotKey, slot.previews.map((preview) => preview.id));
+  const { data: existingImages, error: existingError } = await supabase
     .from("site_images")
-    .select("image_path")
-    .eq("slot_key", slotKey)
-    .maybeSingle();
+    .select("slot_key,image_path")
+    .in("slot_key", rowKeys);
   if (existingError) throw existingError;
 
-  const { error: uploadError } = await supabase.storage.from(SITE_IMAGE_BUCKET).upload(imagePath, image, {
-    contentType: image.type,
-    cacheControl: "31536000",
-    upsert: false,
+  const plannedUploads = files.map(({ variantId, image }) => {
+    const suffix = variantId ? `${slugify(variantId)}-` : "";
+    return {
+      variantId,
+      image,
+      path: `${folder}/${suffix}${crypto.randomUUID()}.${extensionByType[image.type]}`,
+    };
   });
-  if (uploadError) throw uploadError;
+  const uploadResults = await Promise.all(plannedUploads.map(({ image, path }) => (
+    supabase.storage.from(SITE_IMAGE_BUCKET).upload(path, image, {
+      contentType: image.type,
+      cacheControl: "31536000",
+      upsert: false,
+    })
+  )));
+  const firstUploadError = uploadResults.find(({ error }) => error)?.error;
+  if (firstUploadError) {
+    const uploadedPaths = plannedUploads
+      .filter((_, index) => !uploadResults[index].error)
+      .map(({ path }) => path);
+    if (uploadedPaths.length) await supabase.storage.from(SITE_IMAGE_BUCKET).remove(uploadedPaths);
+    throw firstUploadError;
+  }
+  const uploaded = plannedUploads.map(({ variantId, path }) => ({ variantId, path }));
 
+  const primaryPath = uploaded[0].path;
+  const rows = [
+    { slot_key: slotKey, image_path: primaryPath },
+    ...uploaded.flatMap(({ variantId, path }) => variantId
+      ? [{ slot_key: siteImageVariantKey(slotKey, variantId), image_path: path }]
+      : []),
+  ];
   const { error: saveError } = await supabase
     .from("site_images")
-    .upsert({ slot_key: slotKey, image_path: imagePath });
+    .upsert(rows);
   if (saveError) {
-    await supabase.storage.from(SITE_IMAGE_BUCKET).remove([imagePath]);
+    await supabase.storage.from(SITE_IMAGE_BUCKET).remove(uploaded.map(({ path }) => path));
     throw saveError;
   }
 
-  if (existingImage?.image_path && existingImage.image_path !== imagePath) {
+  const newPaths = new Set(uploaded.map(({ path }) => path));
+  const obsoletePaths = [...new Set((existingImages ?? [])
+    .map(({ image_path }) => image_path)
+    .filter((path) => !newPaths.has(path)))];
+  if (obsoletePaths.length) {
     const { error: removalError } = await supabase.storage
       .from(SITE_IMAGE_BUCKET)
-      .remove([existingImage.image_path]);
+      .remove(obsoletePaths);
     if (removalError) throw removalError;
   }
 
@@ -130,22 +178,24 @@ export async function saveSiteImage(formData: FormData) {
 export async function resetSiteImage(formData: FormData) {
   const supabase = await requireAdmin();
   const slotKey = value(formData, "slot_key");
-  if (!getSiteImageSlot(slotKey)) throw new Error("Cette image ne fait pas partie de la médiathèque du site.");
+  const slot = getSiteImageSlot(slotKey);
+  if (!slot) throw new Error("Cette image ne fait pas partie de la médiathèque du site.");
+  const rowKeys = siteImageRowKeys(slotKey, slot.previews.map((preview) => preview.id));
 
-  const { data: existingImage, error: existingError } = await supabase
+  const { data: existingImages, error: existingError } = await supabase
     .from("site_images")
     .select("image_path")
-    .eq("slot_key", slotKey)
-    .maybeSingle();
+    .in("slot_key", rowKeys);
   if (existingError) throw existingError;
 
-  const { error: deleteError } = await supabase.from("site_images").delete().eq("slot_key", slotKey);
+  const { error: deleteError } = await supabase.from("site_images").delete().in("slot_key", rowKeys);
   if (deleteError) throw deleteError;
 
-  if (existingImage?.image_path) {
+  const existingPaths = [...new Set((existingImages ?? []).map(({ image_path }) => image_path))];
+  if (existingPaths.length) {
     const { error: removalError } = await supabase.storage
       .from(SITE_IMAGE_BUCKET)
-      .remove([existingImage.image_path]);
+      .remove(existingPaths);
     if (removalError) throw removalError;
   }
 

@@ -170,7 +170,13 @@ export function FrenchHomePage({
           <div className="shell home-origin-services-grid">
             {homeServices.map((service, index) => (
               <article className={`home-origin-service-card service-${index + 1}`} key={service.title}>
-                <Image src={service.image} alt={service.alt} fill sizes="(max-width: 760px) 100vw, 40vw" />
+                <Image
+                  src={service.image}
+                  alt={service.alt}
+                  fill
+                  sizes="(max-width: 760px) 100vw, 40vw"
+                  variants={{ desktop: "home-card-desktop", mobile: "home-card-mobile", breakpoint: 760 }}
+                />
                 <div className="home-origin-service-shade" />
                 <div className="home-origin-service-copy">
                   <p>0{index + 1}</p>
@@ -191,7 +197,13 @@ export function FrenchHomePage({
         <section className="home-origin-discovery section-shell">
           <div className="shell home-origin-discovery-grid">
             <div className="home-origin-discovery-image">
-              <Image src="/images/services/discovery.webp" alt="Première expérience de plongée à La Réunion" fill sizes="(max-width: 850px) 100vw, 50vw" />
+              <Image
+                src="/images/services/discovery.webp"
+                alt="Première expérience de plongée à La Réunion"
+                fill
+                sizes="(max-width: 850px) 100vw, 50vw"
+                variants={{ desktop: "home-feature-desktop", mobile: "home-feature-mobile", breakpoint: 850 }}
+              />
             </div>
             <div className="home-origin-discovery-copy">
               <p className="eyebrow light">Premières bulles</p>

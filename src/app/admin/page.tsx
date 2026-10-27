@@ -120,10 +120,10 @@ export default async function AdminPage() {
         <header className="admin-heading"><div><p className="eyebrow">Corail Plongée</p><h1>Tableau de bord</h1></div><span>Préproduction</span></header>
 
         <section id="photos" className="admin-section">
-          <div className="admin-section-title"><div><Images /><div><h2>Photos du site</h2><p>Remplacez les visuels sans modifier leur emplacement ni leur recadrage.</p></div></div><span>{siteImageSlots.length}</span></div>
+          <div className="admin-section-title"><div><Images /><div><h2>Photos du site</h2><p>Remplacez les visuels et ajustez leur cadrage pour chaque emplacement.</p></div></div><span>{siteImageSlots.length}</span></div>
           <div className="admin-media-notice">
             <strong>Importez une image JPG, PNG ou WebP jusqu’à 20 Mo.</strong>
-            <span>Avant l’envoi, vous choisissez le cadrage exact. L’image est ensuite redimensionnée et convertie en WebP léger, sans déformer la mise en page.</span>
+            <span>Avant l’envoi, choisissez le cadrage exact de chaque vignette. Les versions ordinateur, mobile et les différents blocs sont enregistrés séparément en WebP léger.</span>
           </div>
           <div className="admin-media-groups">
             {siteImageGroups.map((group, groupIndex) => (

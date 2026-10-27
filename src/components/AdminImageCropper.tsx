@@ -15,6 +15,7 @@ type EditorImage = {
 };
 
 type Point = { x: number; y: number };
+type CropState = { zoom: number; pan: Point };
 
 const MAX_SOURCE_BYTES = 20 * 1024 * 1024;
 const TARGET_BYTES = 950 * 1024;
@@ -29,37 +30,59 @@ function canvasBlob(canvas: HTMLCanvasElement, quality: number) {
   return new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/webp", quality));
 }
 
-function previewOutputStyle(
-  output: { width: number; height: number },
-  preview: SiteImagePreview,
+function initialCrop(preview: SiteImagePreview): CropState {
+  return {
+    zoom: 1,
+    pan: {
+      x: 1 - ((preview.positionX ?? 50) / 50),
+      y: 1 - ((preview.positionY ?? 50) / 50),
+    },
+  };
+}
+
+function cropDisplay(
+  image: Pick<EditorImage, "width" | "height">,
+  frame: { width: number; height: number },
+  crop: CropState,
 ) {
-  const outputRatio = output.width / output.height;
-  const previewRatio = preview.width / preview.height;
-  const positionX = (preview.positionX ?? 50) / 100;
-  const positionY = (preview.positionY ?? 50) / 100;
+  const baseScale = Math.max(frame.width / image.width, frame.height / image.height);
+  const width = image.width * baseScale * crop.zoom;
+  const height = image.height * baseScale * crop.zoom;
+  const maxX = Math.max(0, (width - frame.width) / 2);
+  const maxY = Math.max(0, (height - frame.height) / 2);
+  return {
+    width,
+    height,
+    offset: { x: crop.pan.x * maxX, y: crop.pan.y * maxY },
+    maxOffset: { x: maxX, y: maxY },
+  };
+}
 
-  if (outputRatio > previewRatio) {
-    const width = (outputRatio / previewRatio) * 100;
-    return { width: `${width}%`, height: "100%", left: `${(100 - width) * positionX}%`, top: 0 };
-  }
-
-  const height = (previewRatio / outputRatio) * 100;
-  return { width: "100%", height: `${height}%`, left: 0, top: `${(100 - height) * positionY}%` };
+function previewImageStyle(image: EditorImage, preview: SiteImagePreview, crop: CropState) {
+  const display = cropDisplay(image, { width: preview.width, height: preview.height }, crop);
+  return {
+    width: `${(display.width / preview.width) * 100}%`,
+    height: `${(display.height / preview.height) * 100}%`,
+    left: `${50 - (display.width / preview.width) * 50 + (display.offset.x / preview.width) * 100}%`,
+    top: `${50 - (display.height / preview.height) * 50 + (display.offset.y / preview.height) * 100}%`,
+  };
 }
 
 async function optimizedCrop(
   image: EditorImage,
-  frame: { width: number; height: number },
   output: { width: number; height: number },
-  zoom: number,
-  offset: Point,
+  crop: CropState,
 ) {
-  const baseScale = Math.max(frame.width / image.width, frame.height / image.height);
-  const scale = baseScale * zoom;
-  const sourceWidth = frame.width / scale;
-  const sourceHeight = frame.height / scale;
-  const sourceX = Math.max(0, Math.min(image.width - sourceWidth, (image.width - sourceWidth) / 2 - offset.x / scale));
-  const sourceY = Math.max(0, Math.min(image.height - sourceHeight, (image.height - sourceHeight) / 2 - offset.y / scale));
+  const imageRatio = image.width / image.height;
+  const outputRatio = output.width / output.height;
+  const coverWidth = imageRatio > outputRatio ? image.height * outputRatio : image.width;
+  const coverHeight = imageRatio > outputRatio ? image.height : image.width / outputRatio;
+  const sourceWidth = coverWidth / crop.zoom;
+  const sourceHeight = coverHeight / crop.zoom;
+  const centeredX = (image.width - sourceWidth) / 2;
+  const centeredY = (image.height - sourceHeight) / 2;
+  const sourceX = Math.max(0, Math.min(image.width - sourceWidth, centeredX - crop.pan.x * centeredX));
+  const sourceY = Math.max(0, Math.min(image.height - sourceHeight, centeredY - crop.pan.y * centeredY));
 
   const canvas = document.createElement("canvas");
   canvas.width = output.width;
@@ -110,13 +133,18 @@ export function AdminImageCropper({
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
-  const dragRef = useRef<{ pointerId: number; start: Point; origin: Point } | null>(null);
+  const dragRef = useRef<{ pointerId: number; start: Point; origin: Point; maxOffset: Point } | null>(null);
   const [editor, setEditor] = useState<EditorImage | null>(null);
   const [frame, setFrame] = useState({ width: 0, height: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [offset, setOffset] = useState<Point>({ x: 0, y: 0 });
+  const [activePreviewId, setActivePreviewId] = useState(previews[0].id);
+  const [crops, setCrops] = useState<Record<string, CropState>>(() => Object.fromEntries(
+    previews.map((preview) => [preview.id, initialCrop(preview)]),
+  ));
   const [message, setMessage] = useState("");
   const [isPending, startTransition] = useTransition();
+
+  const activePreview = previews.find((preview) => preview.id === activePreviewId) ?? previews[0];
+  const activeCrop = crops[activePreview.id] ?? initialCrop(activePreview);
 
   useEffect(() => {
     const node = frameRef.current;
@@ -134,37 +162,14 @@ export function AdminImageCropper({
 
   const displayed = useMemo(() => {
     if (!editor || !frame.width || !frame.height) return null;
-    const baseScale = Math.max(frame.width / editor.width, frame.height / editor.height);
-    return {
-      width: editor.width * baseScale * zoom,
-      height: editor.height * baseScale * zoom,
-    };
-  }, [editor, frame, zoom]);
-
-  const normalizedImageStyle = displayed && frame.width && frame.height
-    ? {
-        width: `${(displayed.width / frame.width) * 100}%`,
-        height: `${(displayed.height / frame.height) * 100}%`,
-        left: `${50 - (displayed.width / frame.width) * 50 + (offset.x / frame.width) * 100}%`,
-        top: `${50 - (displayed.height / frame.height) * 50 + (offset.y / frame.height) * 100}%`,
-      }
-    : null;
-
-  function clamp(next: Point, dimensions = displayed) {
-    if (!dimensions) return next;
-    const maxX = Math.max(0, (dimensions.width - frame.width) / 2);
-    const maxY = Math.max(0, (dimensions.height - frame.height) / 2);
-    return {
-      x: Math.max(-maxX, Math.min(maxX, next.x)),
-      y: Math.max(-maxY, Math.min(maxY, next.y)),
-    };
-  }
+    return cropDisplay(editor, frame, activeCrop);
+  }, [activeCrop, editor, frame]);
 
   function closeEditor() {
     if (editor) URL.revokeObjectURL(editor.url);
     setEditor(null);
-    setZoom(1);
-    setOffset({ x: 0, y: 0 });
+    setActivePreviewId(previews[0].id);
+    setCrops(Object.fromEntries(previews.map((preview) => [preview.id, initialCrop(preview)])));
     if (inputRef.current) inputRef.current.value = "";
   }
 
@@ -185,8 +190,8 @@ export function AdminImageCropper({
     image.decoding = "async";
     image.onload = () => {
       setEditor({ file, url, element: image, width: image.naturalWidth, height: image.naturalHeight });
-      setZoom(1);
-      setOffset({ x: 0, y: 0 });
+      setActivePreviewId(previews[0].id);
+      setCrops(Object.fromEntries(previews.map((preview) => [preview.id, initialCrop(preview)])));
     };
     image.onerror = () => {
       URL.revokeObjectURL(url);
@@ -197,28 +202,30 @@ export function AdminImageCropper({
 
   function updateZoom(value: number) {
     const nextZoom = Math.max(1, Math.min(3, value));
-    if (!editor || !frame.width) return setZoom(nextZoom);
-    const baseScale = Math.max(frame.width / editor.width, frame.height / editor.height);
-    const dimensions = {
-      width: editor.width * baseScale * nextZoom,
-      height: editor.height * baseScale * nextZoom,
-    };
-    setZoom(nextZoom);
-    setOffset((current) => clamp(current, dimensions));
+    setCrops((current) => ({
+      ...current,
+      [activePreview.id]: { ...(current[activePreview.id] ?? initialCrop(activePreview)), zoom: nextZoom },
+    }));
   }
 
   async function confirmCrop() {
     if (!editor || !frame.width || !frame.height) return;
     setMessage("");
     try {
-      const blob = await optimizedCrop(editor, frame, { width, height }, zoom, offset);
       const formData = new FormData();
       formData.set("slot_key", slotKey);
-      formData.set("image", new File([blob], `${label.toLowerCase().replace(/[^a-z0-9]+/gi, "-")}.webp`, { type: "image/webp" }));
+      let totalSize = 0;
+      for (const preview of previews) {
+        const crop = crops[preview.id] ?? initialCrop(preview);
+        const blob = await optimizedCrop(editor, { width: preview.width, height: preview.height }, crop);
+        totalSize += blob.size;
+        const fileName = `${label}-${preview.id}`.toLowerCase().replace(/[^a-z0-9]+/gi, "-");
+        formData.set(`variant:${preview.id}`, new File([blob], `${fileName}.webp`, { type: "image/webp" }));
+      }
       startTransition(async () => {
         try {
           await saveSiteImage(formData);
-          setMessage(`Photo enregistrée · ${formatBytes(blob.size)} en WebP`);
+          setMessage(`${previews.length} cadrage${previews.length > 1 ? "s" : ""} enregistré${previews.length > 1 ? "s" : ""} · ${formatBytes(totalSize)} en WebP`);
           closeEditor();
           router.refresh();
         } catch (error) {
@@ -254,21 +261,40 @@ export function AdminImageCropper({
             </div>
 
             <div className="crop-workspace">
+              <div className="crop-active-label">
+                <span>Cadrage en cours</span>
+                <strong>{activePreview.label}</strong>
+              </div>
               <div
                 ref={frameRef}
                 className={`crop-frame${circular ? " is-circular" : ""}`}
                 style={{
-                  aspectRatio: `${width} / ${height}`,
-                  width: `min(100%, ${circular ? 480 : 720}px, ${(56 * width) / height}svh)`,
+                  aspectRatio: `${activePreview.width} / ${activePreview.height}`,
+                  width: `min(100%, ${circular ? 480 : 720}px, ${(56 * activePreview.width) / activePreview.height}svh)`,
                 }}
                 onPointerDown={(event) => {
+                  if (!displayed) return;
                   event.currentTarget.setPointerCapture(event.pointerId);
-                  dragRef.current = { pointerId: event.pointerId, start: { x: event.clientX, y: event.clientY }, origin: offset };
+                  dragRef.current = {
+                    pointerId: event.pointerId,
+                    start: { x: event.clientX, y: event.clientY },
+                    origin: activeCrop.pan,
+                    maxOffset: displayed.maxOffset,
+                  };
                 }}
                 onPointerMove={(event) => {
                   const drag = dragRef.current;
                   if (!drag || drag.pointerId !== event.pointerId) return;
-                  setOffset(clamp({ x: drag.origin.x + event.clientX - drag.start.x, y: drag.origin.y + event.clientY - drag.start.y }));
+                  const deltaX = event.clientX - drag.start.x;
+                  const deltaY = event.clientY - drag.start.y;
+                  const pan = {
+                    x: drag.maxOffset.x ? Math.max(-1, Math.min(1, drag.origin.x + deltaX / drag.maxOffset.x)) : 0,
+                    y: drag.maxOffset.y ? Math.max(-1, Math.min(1, drag.origin.y + deltaY / drag.maxOffset.y)) : 0,
+                  };
+                  setCrops((current) => ({
+                    ...current,
+                    [activePreview.id]: { ...(current[activePreview.id] ?? initialCrop(activePreview)), pan },
+                  }));
                 }}
                 onPointerUp={() => { dragRef.current = null; }}
                 onPointerCancel={() => { dragRef.current = null; }}
@@ -282,8 +308,8 @@ export function AdminImageCropper({
                     style={{
                       width: displayed.width,
                       height: displayed.height,
-                      left: `calc(50% - ${displayed.width / 2}px + ${offset.x}px)`,
-                      top: `calc(50% - ${displayed.height / 2}px + ${offset.y}px)`,
+                      left: `calc(50% - ${displayed.width / 2}px + ${displayed.offset.x}px)`,
+                      top: `calc(50% - ${displayed.height / 2}px + ${displayed.offset.y}px)`,
                     }}
                   />
                 ) : null}
@@ -292,41 +318,47 @@ export function AdminImageCropper({
               <p><Crop size={15} /> Faites glisser la photo pour choisir le cadrage.</p>
             </div>
 
-            {normalizedImageStyle ? (
-              <div className="crop-site-preview-section">
-                <div className="crop-site-preview-heading">
-                  <strong>Résultat visible sur le site</strong>
-                  <span>Ces cadres reproduisent le recadrage appliqué sur ordinateur et mobile.</span>
-                </div>
-                <div className="crop-site-previews">
-                  {previews.map((preview) => (
-                    <figure className="crop-site-preview" key={`${preview.label}-${preview.width}-${preview.height}`}>
-                      <div className="crop-site-preview-frame" style={{ aspectRatio: `${preview.width} / ${preview.height}` }}>
-                        <div
-                          className="crop-site-preview-output"
-                          style={previewOutputStyle({ width, height }, preview)}
-                        >
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={editor.url} alt="" draggable={false} style={normalizedImageStyle} />
-                        </div>
-                      </div>
-                      <figcaption>{preview.label}</figcaption>
-                    </figure>
-                  ))}
-                </div>
+            <div className="crop-site-preview-section">
+              <div className="crop-site-preview-heading">
+                <strong>{previews.length > 1 ? "Choisissez l’emplacement à recadrer" : "Résultat visible sur le site"}</strong>
+                <span>{previews.length > 1
+                  ? "Cliquez sur chaque vignette : son cadrage et son zoom sont enregistrés indépendamment."
+                  : "Ce cadre reproduit le résultat qui sera affiché sur le site."}</span>
               </div>
-            ) : null}
+              <div className="crop-site-previews">
+                {previews.map((preview) => {
+                  const isActive = preview.id === activePreview.id;
+                  const crop = crops[preview.id] ?? initialCrop(preview);
+                  return (
+                    <button
+                      className={`crop-site-preview${isActive ? " is-active" : ""}`}
+                      type="button"
+                      key={preview.id}
+                      onClick={() => setActivePreviewId(preview.id)}
+                      aria-pressed={isActive}
+                    >
+                      <span className="crop-site-preview-frame" style={{ aspectRatio: `${preview.width} / ${preview.height}` }}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={editor.url} alt="" draggable={false} style={previewImageStyle(editor, preview, crop)} />
+                        {isActive ? <span className="crop-site-preview-badge"><Crop size={12} /> En cours</span> : null}
+                      </span>
+                      <span className="crop-site-preview-label">{preview.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
 
             <div className="crop-controls">
               <div className="crop-zoom">
                 <Minus size={16} />
-                <input aria-label="Zoom" type="range" min="1" max="3" step="0.01" value={zoom} onChange={(event) => updateZoom(Number(event.target.value))} />
+                <input aria-label={`Zoom · ${activePreview.label}`} type="range" min="1" max="3" step="0.01" value={activeCrop.zoom} onChange={(event) => updateZoom(Number(event.target.value))} />
                 <Plus size={16} />
               </div>
               <div className="crop-details">
-                <span>Sortie : {width} × {height}px</span>
+                <span>Sortie sélectionnée : {activePreview.width} × {activePreview.height}px</span>
                 <span>WebP optimisé · objectif inférieur à 950 Ko</span>
-                {editor.width < width || editor.height < height ? <strong>La photo source est plus petite que le format conseillé.</strong> : null}
+                {editor.width < activePreview.width || editor.height < activePreview.height ? <strong>La photo source est plus petite que ce format.</strong> : null}
               </div>
             </div>
 
@@ -334,7 +366,7 @@ export function AdminImageCropper({
               <button type="button" className="button button-outline-admin" onClick={closeEditor}>Annuler</button>
               <button type="button" className="button button-navy" onClick={() => void confirmCrop()} disabled={isPending}>
                 {isPending ? <LoaderCircle className="is-spinning" size={16} /> : <Check size={16} />}
-                Valider et enregistrer
+                {previews.length > 1 ? `Enregistrer les ${previews.length} cadrages` : "Valider et enregistrer"}
               </button>
             </div>
           </div>

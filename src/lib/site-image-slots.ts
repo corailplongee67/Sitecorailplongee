@@ -10,6 +10,7 @@ export type SiteImageSlot = {
 };
 
 export type SiteImagePreview = {
+  id: string;
   label: string;
   width: number;
   height: number;
@@ -35,22 +36,22 @@ const slot = (
   const { previews, ...rest } = options;
   const defaultPreviews: SiteImagePreview[] = kind === "Bannière"
     ? [
-        { label: "Ordinateur", width: 1600, height: 700 },
-        { label: "Mobile", width: 750, height: 1000 },
+        { id: "desktop", label: "Ordinateur", width: 1600, height: 700 },
+        { id: "mobile", label: "Mobile", width: 750, height: 1000 },
       ]
-    : [{ label: "Cadre principal", width, height }];
+    : [{ id: "default", label: "Cadre principal", width, height }];
 
   return { key, label, kind, width, height, previews: previews ?? defaultPreviews, ...rest };
 };
 
 const homeCardPreviews = (desktopWidth: number): SiteImagePreview[] => [
-  { label: "Carte d’accueil · ordinateur", width: desktopWidth, height: 1000 },
-  { label: "Carte d’accueil · mobile", width: 826, height: 1000 },
+  { id: "home-card-desktop", label: "Carte d’accueil · ordinateur", width: desktopWidth, height: 1000 },
+  { id: "home-card-mobile", label: "Carte d’accueil · mobile", width: 826, height: 1000 },
 ];
 
 const serviceCardPreviews: SiteImagePreview[] = [
-  { label: "Carte prestations · ordinateur", width: 1500, height: 1000 },
-  { label: "Carte prestations · mobile", width: 583, height: 1000 },
+  { id: "service-card-desktop", label: "Carte prestations · ordinateur", width: 1500, height: 1000 },
+  { id: "service-card-mobile", label: "Carte prestations · mobile", width: 583, height: 1000 },
 ];
 
 export const siteImageGroups: SiteImageGroup[] = [
@@ -65,8 +66,8 @@ export const siteImageGroups: SiteImageGroup[] = [
         usedOn: "Accueil et pages génériques",
         previews: [
           ...homeCardPreviews(1240),
-          { label: "Bloc Découverte · ordinateur", width: 1230, height: 1000, positionY: 58 },
-          { label: "Bloc Découverte · mobile", width: 1020, height: 1000, positionY: 58 },
+          { id: "home-feature-desktop", label: "Bloc Découverte · ordinateur", width: 1230, height: 1000, positionY: 58 },
+          { id: "home-feature-mobile", label: "Bloc Découverte · mobile", width: 1020, height: 1000, positionY: 58 },
         ],
       }),
       slot("/images/services/exploration.webp", "Carte Exploration", "Carte", 1000, 667, { previews: homeCardPreviews(1240) }),

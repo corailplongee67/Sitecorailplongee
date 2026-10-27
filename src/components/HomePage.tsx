@@ -117,7 +117,13 @@ export function HomePage({
           <div className="shell service-grid">
             {services.map((service, index) => (
               <article className={`service-card service-card-${index + 1}`} key={service.key}>
-                <Image src={service.image} alt="" fill sizes="(max-width: 760px) 100vw, 50vw" />
+                <Image
+                  src={service.image}
+                  alt=""
+                  fill
+                  sizes="(max-width: 760px) 100vw, 50vw"
+                  variants={{ desktop: "home-card-desktop", mobile: "home-card-mobile", breakpoint: 760 }}
+                />
                 <div className="card-shade" />
                 <div className="service-card-content">
                   <p>{service.eyebrow[locale]}</p>

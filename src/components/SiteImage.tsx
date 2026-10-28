@@ -49,8 +49,8 @@ export function SiteImage({ variant, variants, ...props }: SiteImageProps) {
 
   return (
     <picture className="site-image-picture">
-      <source media={`(min-width: ${breakpoint + 1}px)`} srcSet={desktopSrcSet} />
-      <source media={`(max-width: ${breakpoint}px)`} srcSet={mobileSrcSet} />
+      <source media={`(min-width: ${breakpoint + 1}px)`} srcSet={desktopSrcSet} sizes={props.sizes} />
+      <source media={`(max-width: ${breakpoint}px)`} srcSet={mobileSrcSet} sizes={props.sizes} />
       {/* getImageProps intentionally supplies the optimized attributes for art direction. */}
       <img {...mobileProps} alt={props.alt} />
     </picture>

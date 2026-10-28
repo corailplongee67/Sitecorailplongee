@@ -137,7 +137,6 @@ export function BlogPage({
                       alt=""
                       fill
                       sizes="(max-width: 760px) 100vw, (max-width: 1050px) 50vw, 33vw"
-                      priority={index < 3}
                     />
                     <span className="blog-origin-image-shade" />
                     <span className="blog-origin-index">{String(index + 1).padStart(2, "0")}</span>

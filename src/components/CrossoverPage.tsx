@@ -124,7 +124,7 @@ export function CrossoverPage({
         <section className="crossover-origin-content">
           <div className="shell">
             <div className="crossover-origin-panel">
-              {groups.map((group, groupIndex) => (
+              {groups.map((group) => (
                 <section className="crossover-origin-group" key={group.title}>
                   <header className="crossover-origin-heading">
                     <p className="eyebrow">{en ? group.eyebrowEn : group.eyebrow}</p>
@@ -146,7 +146,6 @@ export function CrossoverPage({
                             alt={label}
                             fill
                             sizes="(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 33vw"
-                            priority={groupIndex === 0 && index < 3}
                           />
                           <div className="crossover-origin-card-shade" />
                           <strong className="crossover-origin-price">

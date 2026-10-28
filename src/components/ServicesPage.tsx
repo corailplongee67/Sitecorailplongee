@@ -156,7 +156,6 @@ export function ServicesPage({
                       alt={offer.alt}
                       fill
                       sizes="(max-width: 760px) 100vw, (max-width: 1050px) 50vw, 33vw"
-                      priority={index < 3}
                       variants={{ desktop: "service-card-desktop", mobile: "service-card-mobile", breakpoint: 760 }}
                     />
                     <div className="services-origin-card-shade" />

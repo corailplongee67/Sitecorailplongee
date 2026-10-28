@@ -8,50 +8,49 @@ const PAUSED_KEY = "corail-background-music-paused";
 
 export function BackgroundMusicPlayer({ src, volume }: { src: string; volume: number }) {
   const pathname = usePathname();
+  const isAdmin = pathname.startsWith("/admin");
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     const audio = audioRef.current;
     if (audio) audio.volume = Math.max(0, Math.min(1, volume));
-  }, [volume]);
+  }, [volume, isAdmin]);
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio || window.localStorage.getItem(PAUSED_KEY) === "1") return;
+    if (!audio || isAdmin || window.localStorage.getItem(PAUSED_KEY) === "1") return;
 
     let cancelled = false;
+    const removeUnlockListeners = () => {
+      window.removeEventListener("pointerdown", unlock, true);
+      window.removeEventListener("keydown", unlock, true);
+    };
     const play = async () => {
       try {
         await audio.play();
-        if (!cancelled) setIsPlaying(true);
-        return true;
+        if (!cancelled) removeUnlockListeners();
       } catch {
-        return false;
+        // Browsers can require a user gesture before allowing audible playback.
       }
     };
     const unlock = (event: Event) => {
+      if (window.localStorage.getItem(PAUSED_KEY) === "1") return;
       if (event.target instanceof Element && event.target.closest(".background-music-player")) return;
       void play();
-      window.removeEventListener("pointerdown", unlock);
-      window.removeEventListener("keydown", unlock);
     };
 
-    void play().then((started) => {
-      if (!started && !cancelled) {
-        window.addEventListener("pointerdown", unlock, { once: true });
-        window.addEventListener("keydown", unlock, { once: true });
-      }
-    });
+    window.addEventListener("pointerdown", unlock, true);
+    window.addEventListener("keydown", unlock, true);
+    void play();
 
     return () => {
       cancelled = true;
-      window.removeEventListener("pointerdown", unlock);
-      window.removeEventListener("keydown", unlock);
+      removeUnlockListeners();
     };
-  }, [src]);
+  }, [src, isAdmin]);
 
-  if (pathname.startsWith("/admin")) return null;
+  if (isAdmin) return null;
 
   async function togglePlayback() {
     const audio = audioRef.current;
@@ -77,7 +76,7 @@ export function BackgroundMusicPlayer({ src, volume }: { src: string; volume: nu
         ref={audioRef}
         src={src}
         loop
-        preload="auto"
+        preload="metadata"
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
       />

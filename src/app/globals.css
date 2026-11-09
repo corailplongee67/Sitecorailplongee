@@ -1031,7 +1031,7 @@ h2 { margin-bottom: 0; font-size: clamp(2.6rem, 5.2vw, 5.4rem); line-height: 0.9
 .preview-editor-actions button:last-child { color: white; background: #073744; }
 .admin-sidebar > a img { width: 135px; height: auto; filter: brightness(0) invert(1); object-fit: contain; }
 .admin-sidebar nav { display: grid; gap: 5px; margin-top: 60px; }
-.admin-sidebar nav a, .admin-sidebar-bottom a, .admin-sidebar-bottom button { padding: 12px; display: flex; align-items: center; gap: 11px; color: rgba(255,255,255,.7); background: transparent; border: 0; font-size: .81rem; text-align: left; cursor: pointer; }
+.admin-sidebar nav a, .admin-sidebar nav .admin-edit-site, .admin-sidebar-bottom a, .admin-sidebar-bottom button { padding: 12px; display: flex; align-items: center; gap: 11px; color: rgba(255,255,255,.7); background: transparent; border: 0; font-size: .81rem; text-align: left; cursor: pointer; }
 .admin-sidebar nav a:hover { color: white; background: rgba(255,255,255,.07); }
 .admin-sidebar svg { width: 17px; }
 .admin-sidebar-bottom { margin-top: auto; display: grid; gap: 5px; }

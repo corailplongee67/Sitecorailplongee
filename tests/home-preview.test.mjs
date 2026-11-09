@@ -47,12 +47,12 @@ test("preview saves text and switches between editing links and navigation", asy
   const originalRequire = componentModule.require.bind(componentModule);
   componentModule.require = (id) => {
     if (id === "next/navigation") return { usePathname: () => "/" };
-    if (id === "@/app/admin/actions") return { saveLocalTextDraft: async (key, text) => { saved.push([key, text]); }, submitLocalTextReview: async (_previous, form) => ({ status: "success", message: "Validation enregistrée.", snapshot: form.get("snapshot") }) };
+    if (id === "@/app/admin/actions") return { publishTextBlock: async (key, text) => { saved.push([key, text]); } };
     if (id === "@/lib/site-contact") return { SITE_CONTACT_TEXT_KEY: "global.contact", resolveSiteContact: (raw) => raw ? JSON.parse(raw) : { email: "default@example.com" } };
     return originalRequire(id);
   };
   componentModule._compile(output, sourcePath);
-  const { PreviewTextProvider, PreviewText, PreviewModeButton, PreviewReviewButton, PreviewDisabledButton, useSiteContact, usePreviewTextValue } = componentModule.exports;
+  const { PreviewTextProvider, PreviewText, PreviewModeButton, PreviewDisabledButton, useSiteContact, usePreviewTextValue } = componentModule.exports;
   const { renderToStaticMarkup } = require("react-dom/server");
   const publicMarkup = renderToStaticMarkup(React.createElement(PreviewTextProvider, {
     enabled: false, initialDrafts: { "home.hero.title": "Brouillon privé" }, published: { "home.hero.title": "Titre publié" }, shared: true,
@@ -95,9 +95,8 @@ test("preview saves text and switches between editing links and navigation", asy
   assert.match(teamImage, /alt="Nouveau nom, Monitrice chez Corail Plongée"/);
   const root = createRoot(document.getElementById("root"));
   try {
-    await React.act(async () => root.render(React.createElement(PreviewTextProvider, { enabled: true, initialDrafts: {}, published: {}, shared: false },
+    await React.act(async () => root.render(React.createElement(PreviewTextProvider, { enabled: true, initialDrafts: {}, published: {}, shared: true },
       React.createElement(PreviewModeButton),
-      React.createElement(PreviewReviewButton),
       React.createElement("h1", null, React.createElement(PreviewText, { id: "home.hero.title" }, "Corail Plongée")),
       React.createElement("a", { href: "/test" }, React.createElement(PreviewText, { id: "home.link", embedded: true }, "Découvrir")),
     )));
@@ -109,20 +108,18 @@ test("preview saves text and switches between editing links and navigation", asy
       Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set.call(textarea, "Nouveau titre");
       textarea.dispatchEvent(new window.Event("input", { bubbles: true }));
     });
-    const save = [...document.querySelectorAll("button")].find((button) => button.textContent === "Enregistrer le brouillon");
+    const save = [...document.querySelectorAll("button")].find((button) => button.textContent === "Valider et mettre en ligne");
     await React.act(async () => save.dispatchEvent(new window.MouseEvent("click", { bubbles: true, cancelable: true })));
     assert.deepEqual(saved, [["home.hero.title", "Nouveau titre"]]);
     assert.equal(document.querySelector("h1").textContent, "Nouveau titre");
-    await React.act(async () => document.querySelector("form").dispatchEvent(new window.Event("submit", { bubbles: true, cancelable: true })));
-    assert.match(document.querySelector("form").textContent, /Validation enregistrée/);
     await React.act(async () => document.querySelector("h1 span").click());
     const secondEditor = document.querySelector("textarea");
     await React.act(async () => {
       Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set.call(secondEditor, "Titre corrigé");
       secondEditor.dispatchEvent(new window.Event("input", { bubbles: true }));
     });
-    await React.act(async () => [...document.querySelectorAll("button")].find((button) => button.textContent === "Enregistrer le brouillon").click());
-    assert.match(document.querySelector("form").textContent, /ont changé depuis la validation/);
+    await React.act(async () => [...document.querySelectorAll("button")].find((button) => button.textContent === "Valider et mettre en ligne").click());
+    assert.deepEqual(saved.at(-1), ["home.hero.title", "Titre corrigé"]);
     const link = document.querySelector('a[href="/test"]');
     await React.act(async () => link.dispatchEvent(new window.MouseEvent("click", { bubbles: true, cancelable: true })));
     assert.ok(document.querySelector('[role="dialog"]'));

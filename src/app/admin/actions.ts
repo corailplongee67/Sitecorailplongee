@@ -91,11 +91,28 @@ export async function saveLocalTextDraft(id: string, text: string | null) {
   else await writeLocalTextDraft(id, text);
 }
 
+export async function publishTextBlock(id: string, text: string) {
+  const supabase = await requireAdmin();
+  if (!(await draftMode()).isEnabled) throw new Error("Ouvrez la modification du site avant de publier un texte.");
+  if (id === SITE_CONTACT_TEXT_KEY || !text.trim() || text.length > 5000) throw new Error("Texte invalide.");
+  if (!sharedTextEditorEnabled()) {
+    await writeLocalTextDraft(id, text);
+    return;
+  }
+  const { error } = await supabase.rpc("publish_single_site_text", { text_key_value: id, content_value: text });
+  if (error) throw error;
+  revalidatePath("/", "layout");
+}
+
 export async function saveSiteContact(formData: FormData) {
   await requireAdmin();
   const contact = validateSiteContact({ address: value(formData, "address"), phone: value(formData, "phone"), email: value(formData, "email") });
   const data = JSON.stringify(contact);
-  if (sharedTextEditorEnabled()) await writeSharedTextDraft(SITE_CONTACT_TEXT_KEY, data);
+  if (sharedTextEditorEnabled()) {
+    const supabase = await requireAdmin();
+    const { error } = await supabase.rpc("publish_single_site_text", { text_key_value: SITE_CONTACT_TEXT_KEY, content_value: data });
+    if (error) throw error;
+  }
   else await writeLocalTextDraft(SITE_CONTACT_TEXT_KEY, data);
   revalidatePath("/", "layout");
   revalidatePath("/admin/");

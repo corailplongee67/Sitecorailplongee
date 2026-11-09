@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { CalendarDays, CloudSun, ExternalLink, Images, Link2, LogOut, MapPin, Music2, Plus, RotateCcw, Save, Tags, Trash2 } from "lucide-react";
+import { CalendarDays, CloudSun, ExternalLink, Images, Link2, LogOut, MapPin, Music2, Pencil, Plus, RotateCcw, Save, Tags, Trash2 } from "lucide-react";
 import { AdminBackgroundMusic } from "@/components/AdminBackgroundMusic";
 import { AdminImageCropper } from "@/components/AdminImageCropper";
 import { OptimizedEventImageInput } from "@/components/OptimizedEventImageInput";
@@ -11,10 +11,10 @@ import { siteImageGroups, siteImageSlots } from "@/lib/site-image-slots";
 import { SITE_IMAGE_SOURCE_VARIANT, siteImageVariantKey } from "@/lib/site-image-variants";
 import { publicSiteAudioUrl } from "@/lib/site-audio-data";
 import { publicSiteImageUrl } from "@/lib/site-images-data";
-import { readLocalTextDrafts, readLocalTextReview } from "@/lib/local-text-drafts";
-import { readSharedText, readSharedTextReview, sharedTextEditorEnabled } from "@/lib/shared-text-drafts";
+import { readLocalTextDrafts } from "@/lib/local-text-drafts";
+import { readSharedText, sharedTextEditorEnabled } from "@/lib/shared-text-drafts";
 import { resolveSiteContact, SITE_CONTACT_TEXT_KEY } from "@/lib/site-contact";
-import { deleteEvent, deletePrice, importLegacyEvents, openSitePreview, publishReviewedText, resetSiteImage, saveBookingLink, saveEvent, savePrice, savePriceSection, saveSiteContact, signOut } from "./actions";
+import { deleteEvent, deletePrice, importLegacyEvents, openSitePreview, resetSiteImage, saveBookingLink, saveEvent, savePrice, savePriceSection, saveSiteContact, signOut } from "./actions";
 
 export const metadata = { title: "Administration", robots: { index: false, follow: false } };
 
@@ -115,7 +115,6 @@ export default async function AdminPage() {
   const storageBase = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/event-images/`;
   const siteImageOverrides = new Map((siteImages ?? []).map((image) => [image.slot_key, image]));
   const sharedEditor = sharedTextEditorEnabled();
-  const textReview = sharedEditor ? await readSharedTextReview() : process.env.NODE_ENV === "development" ? await readLocalTextReview() : null;
   const [contactDrafts, publishedText] = await Promise.all([
     sharedEditor ? readSharedText(false) : process.env.NODE_ENV === "development" ? readLocalTextDrafts() : Promise.resolve({} as Record<string, string>),
     sharedEditor ? readSharedText(true) : Promise.resolve({} as Record<string, string>),
@@ -126,7 +125,7 @@ export default async function AdminPage() {
     <main className="admin-shell">
       <aside className="admin-sidebar">
         <Link href="/"><Image src="/images/brand/logo.png" alt="Corail Plongée" width={165} height={78} /></Link>
-        <nav>{(sharedEditor || process.env.NODE_ENV === "development") ? <a href="#contact"><MapPin /> Coordonnées</a> : null}<a href="#photos"><Images /> Photos</a><a href="#music"><Music2 /> Musique</a><a href="#events"><CalendarDays /> Évènements</a><a href="#prices"><Tags /> Tarifs</a><a href="#links"><Link2 /> Réservations</a><a className="admin-weather-link" href="#weather"><CloudSun /> Météo</a></nav>
+        <nav><form action={openSitePreview}><button className="admin-edit-site" type="submit"><Pencil /> Modifier le site</button></form>{(sharedEditor || process.env.NODE_ENV === "development") ? <a href="#contact"><MapPin /> Coordonnées</a> : null}<a href="#photos"><Images /> Photos</a><a href="#music"><Music2 /> Musique</a><a href="#events"><CalendarDays /> Évènements</a><a href="#prices"><Tags /> Tarifs</a><a href="#links"><Link2 /> Réservations</a><a className="admin-weather-link" href="#weather"><CloudSun /> Météo</a></nav>
         <div className="admin-sidebar-bottom"><Link href="/" target="_blank">Voir le site <ExternalLink /></Link><form action={signOut}><button><LogOut /> Déconnexion</button></form></div>
       </aside>
 
@@ -134,23 +133,19 @@ export default async function AdminPage() {
         <header className="admin-heading"><div><p className="eyebrow">Corail Plongée</p><h1>Tableau de bord</h1></div><span>Préproduction</span></header>
 
         <section className="admin-section">
-          <div className="admin-section-title"><div><ExternalLink /><div><h2>Aperçu du site</h2><p>{sharedEditor ? "Les brouillons restent privés jusqu’à leur publication." : "Essai local : les brouillons sont conservés sur cet ordinateur et ne sont pas publiés."}</p></div></div></div>
-          {textReview ? <p>{textReview.count} texte{textReview.count === 1 ? "" : "s"} en brouillon · {textReview.current ? "Validation demandée" : textReview.requestedAt ? "Modifié depuis la dernière validation" : "En cours de modification"}</p> : null}
-          <form action={openSitePreview}><button className="button button-navy" type="submit">Ouvrir l’aperçu privé</button></form>
-          {sharedEditor && appMetadata?.publish_site_texts === true && textReview?.current && "id" in textReview && textReview.id ? (
-            <form action={publishReviewedText}><input type="hidden" name="review_id" value={textReview.id} /><button className="button button-navy" type="submit">Publier les textes validés</button></form>
-          ) : null}
+          <div className="admin-section-title"><div><ExternalLink /><div><h2>Modifier le site</h2><p>Ouvrez le site, cliquez sur un texte et publiez votre modification.</p></div></div></div>
+          <form action={openSitePreview}><button className="button button-navy" type="submit">Modifier le site</button></form>
         </section>
 
         {(sharedEditor || process.env.NODE_ENV === "development") ? <section id="contact" className="admin-section">
-          <div className="admin-section-title"><div><MapPin /><div><h2>Coordonnées du centre</h2><p>Une seule fiche pour le pied de page, la page Contact et les liens associés. Les changements restent en brouillon jusqu’à validation.</p></div></div></div>
+          <div className="admin-section-title"><div><MapPin /><div><h2>Coordonnées du centre</h2><p>Une seule fiche pour le pied de page, la page Contact et les liens associés.</p></div></div></div>
           <form action={saveSiteContact}>
             <div className="field-grid">
               <label>Adresse<input name="address" defaultValue={siteContact.address} maxLength={300} required /></label>
               <label>Téléphone<input name="phone" type="tel" defaultValue={siteContact.phone} required /></label>
               <label>E-mail<input name="email" type="email" defaultValue={siteContact.email} required /></label>
             </div>
-            <button className="button button-navy" type="submit"><Save size={16} /> Enregistrer le brouillon</button>
+            <button className="button button-navy" type="submit"><Save size={16} /> Enregistrer les coordonnées</button>
           </form>
         </section> : null}
 

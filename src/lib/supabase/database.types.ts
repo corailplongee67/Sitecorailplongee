@@ -265,6 +265,7 @@ export type Database = {
     Views: Record<string, never>;
     Functions: {
       publish_site_text_review: { Args: { review_id: string }; Returns: undefined };
+      publish_single_site_text: { Args: { text_key_value: string; content_value: string }; Returns: undefined };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;

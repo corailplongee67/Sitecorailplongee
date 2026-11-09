@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import { draftMode } from "next/headers";
 import { BackgroundMusicPlayer } from "@/components/BackgroundMusicPlayer";
 import { SiteImageProvider } from "@/components/SiteImage";
-import { PreviewModeButton, PreviewReviewButton, PreviewTextProvider } from "@/components/PreviewText";
+import { PreviewModeButton, PreviewTextProvider } from "@/components/PreviewText";
 import { closeSitePreview } from "@/app/admin/actions";
 import { getSiteAudioSettings } from "@/lib/site-audio-data";
 import { getSiteImages } from "@/lib/site-images-data";
@@ -107,9 +107,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <SiteImageProvider images={siteImages}><PreviewTextProvider key={`${showPreview ? "editing" : "viewing"}:${previewRevision}`} enabled={canEdit} initialDrafts={drafts} published={publishedText} shared={sharedEditor}>
           {showPreview ? (
             <div className="site-preview-bar">
-              <span>Aperçu privé · {sharedEditor ? "brouillons non publiés" : "brouillons locaux"}</span>
+              <span>Modification du site{sharedEditor ? "" : " · mode local"}</span>
               {canEdit ? <PreviewModeButton /> : null}
-              {canEdit ? <PreviewReviewButton /> : null}
               <form action={closeSitePreview}><button type="submit">Quitter l’aperçu</button></form>
             </div>
           ) : null}

@@ -14,6 +14,7 @@ test("text reviews protect private drafts and only publish the validated version
       grant usage on schema auth to anon, authenticated;
       grant execute on all functions in schema auth to anon, authenticated;`);
     await db.exec(await readFile("supabase/migrations/20261104075555_site_text_editor.sql", "utf8"));
+    await db.exec(await readFile("supabase/migrations/20261109043836_publish_single_site_text.sql", "utf8"));
     const user = "11111111-1111-1111-1111-111111111111";
     const editor = JSON.stringify({ sub: user, app_metadata: { role: "admin" } });
     const publisher = JSON.stringify({ sub: user, app_metadata: { role: "admin", publish_site_texts: true } });
@@ -48,11 +49,19 @@ test("text reviews protect private drafts and only publish the validated version
     await db.query("select public.publish_site_text_review($1)", [id]);
     assert.equal((await db.query("select count(*)::int as count from public.site_text_drafts")).rows[0].count, 0);
 
+    await claims(editor);
+    await db.exec("insert into public.site_text_drafts (text_key, content) values ('home.other', 'À conserver')");
+    await db.query("select public.publish_single_site_text($1, $2)", ["home.test", "Publié directement"]);
+    assert.equal((await db.query("select count(*)::int as count from public.site_text_drafts")).rows[0].count, 1);
+    await assert.rejects(db.query("select public.publish_single_site_text($1, $2)", ["events.title", "Interdit"]));
+    await claims(JSON.stringify({ sub: user, app_metadata: { role: "member" } }));
+    await assert.rejects(db.query("select public.publish_single_site_text($1, $2)", ["home.test", "Interdit"]));
+
     await db.exec("set role anon");
     await claims("{}");
     await assert.rejects(db.exec("select * from public.site_text_drafts"));
     await assert.rejects(db.exec("select * from public.site_text_reviews"));
-    assert.equal((await db.query("select content from public.site_text_published where text_key = 'home.test'")).rows[0].content, "Brouillon");
+    assert.equal((await db.query("select content from public.site_text_published where text_key = 'home.test'")).rows[0].content, "Publié directement");
     assert.deepEqual(JSON.parse((await db.query("select content from public.site_text_published where text_key = 'global.contact'")).rows[0].content), JSON.parse(contact));
   } finally {
     await db.close();

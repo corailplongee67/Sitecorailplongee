@@ -3,7 +3,7 @@
 import { createContext, useActionState, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
-import { saveLocalTextDraft, submitLocalTextReview } from "@/app/admin/actions";
+import { publishTextBlock, submitLocalTextReview } from "@/app/admin/actions";
 import { resolveSiteContact, SITE_CONTACT_TEXT_KEY } from "@/lib/site-contact";
 
 type PreviewContextValue = {
@@ -131,26 +131,26 @@ export function PreviewText({ id, children, embedded = false }: { id: string; ch
     returnFocus.current?.focus();
   }
 
-  async function persist(restore = false) {
-    if (!restore && !value.trim()) {
+  async function persist() {
+    if (!value.trim()) {
       setError("Le texte ne peut pas être vide.");
       return;
     }
-    if (!restore && value.trim().length > limit) {
+    if (value.trim().length > limit) {
       setError(`Le texte ne doit pas dépasser ${limit} caractères.`);
       return;
     }
     const leading = children.match(/^\s*/)?.[0] ?? "";
     const trailing = children.match(/\s*$/)?.[0] ?? "";
-    const text = restore ? null : leading + value.trim() + trailing;
+    const text = leading + value.trim() + trailing;
     setSaving(true);
     setError("");
     try {
-      await saveLocalTextDraft(id, text);
+      await publishTextBlock(id, text);
       updateDraft(id, text);
       closeEditor();
     } catch {
-      setError("Impossible d’enregistrer le brouillon. Vérifiez votre connexion à l’administration et réessayez.");
+      setError("Impossible de publier ce texte. Vérifiez votre connexion à l’administration et réessayez.");
     } finally {
       setSaving(false);
     }
@@ -174,15 +174,14 @@ export function PreviewText({ id, children, embedded = false }: { id: string; ch
             }
           }}>
             <h2 id="preview-editor-title">Modifier le texte</h2>
-            <p>{shared ? "Brouillon privé : aucune modification du site public." : "Brouillon local : aucune modification du site public."}</p>
+            <p>{shared ? "La modification de ce bloc sera mise en ligne immédiatement." : "Essai local sur cet ordinateur."}</p>
             <label htmlFor="preview-editor-value">Texte</label>
             <textarea id="preview-editor-value" value={value} onChange={(event) => setValue(event.target.value)} rows={6} maxLength={limit} autoFocus disabled={saving} aria-describedby="preview-editor-limit" />
             <small id="preview-editor-limit">{value.length} / {limit} caractères</small>
             {error ? <p role="alert">{error}</p> : null}
             <div className="preview-editor-actions">
-              {stored !== null ? <button type="button" disabled={saving} onClick={() => void persist(true)}>Rétablir le texte publié</button> : null}
               <button type="button" disabled={saving} onClick={closeEditor}>Annuler</button>
-              <button type="button" disabled={saving} onClick={() => void persist()}>{saving ? "Enregistrement…" : "Enregistrer le brouillon"}</button>
+              <button type="button" disabled={saving} onClick={() => void persist()}>{saving ? "Publication…" : shared ? "Valider et mettre en ligne" : "Enregistrer en local"}</button>
             </div>
           </div>
         </div>, document.body,

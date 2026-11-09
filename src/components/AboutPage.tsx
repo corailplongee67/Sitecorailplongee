@@ -19,7 +19,7 @@ const frenchSections = [
       <>
         <PreviewText id="AboutPage.rich.1581e8766c4b.1">Corail Plongée est un centre de plongée sous-marine à La Réunion, situé
         sur le port de Saint-Gilles-les-Bains. Nous sommes ouverts toute l’année
-        de </PreviewText><strong><PreviewText id="AboutPage.rich.b994e31927d6.1">7h30 à 16h30 (12h le dimanche).</PreviewText></strong>
+        de </PreviewText><strong><PreviewText id="global.hours.weekdays">7h30 à 16h30</PreviewText>{" ("}<PreviewText id="global.hours.sunday">7h30 à 12h</PreviewText>{" le dimanche)."}</strong>
       </>,
       <>
         <PreviewText id="AboutPage.rich.e84c19d297e2.1">Nous sommes ravis de partager avec vous notre passion de la plongée sur

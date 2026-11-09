@@ -36,7 +36,7 @@ export function ContactPage({
           />
           <div className="contact-origin-hero-shade" />
           <div className="shell contact-origin-hero-copy">
-            <p className="eyebrow light"><PreviewText id="ContactPage.rich.f86925f2d25a.1">Saint-Gilles-les-Bains · </PreviewText>{en ? "Reunion Island" : "La Réunion"}</p>
+            <p className="eyebrow light"><PreviewText id="ContactPage.rich.f86925f2d25a.1">Saint-Gilles-les-Bains · </PreviewText><PreviewText id="contact.hero.location">{en ? "Reunion Island" : "La Réunion"}</PreviewText></p>
             <h1><PreviewText id="ContactPage.2b5c3d26721a.1">Contact</PreviewText></h1>
           </div>
         </section>
@@ -70,9 +70,9 @@ export function ContactPage({
                 <div>
                   <Clock3 aria-hidden="true" />
                   <span>
-                    <strong>{en ? "Opening hours" : "Heures d’ouverture"}</strong>
-                    {en ? "Monday to Saturday, 7.30am to 5pm" : "Lundi au samedi de 7h30 à 17h"}<br />
-                    {en ? "Sunday, 7.30am to 11.30am" : "Dimanche de 7h30 à 11h30"}
+                    <strong><PreviewText id="contact.hours.heading">{en ? "Opening hours" : "Heures d’ouverture"}</PreviewText></strong>
+                    {en ? "Monday to Saturday, 7.30am to 4.30pm" : <><PreviewText id="contact.hours.weekdays.label">Lundi au samedi de </PreviewText><PreviewText id="global.hours.weekdays">7h30 à 16h30</PreviewText></>}<br />
+                    {en ? "Sunday, 7.30am to 12pm" : <><PreviewText id="contact.hours.sunday.label">Dimanche de </PreviewText><PreviewText id="global.hours.sunday">7h30 à 12h</PreviewText></>}
                   </span>
                 </div>
               </div>

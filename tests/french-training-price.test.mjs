@@ -20,8 +20,9 @@ test("French training prices follow the existing catalog across both placements"
   const originalRequire = pageModule.require.bind(pageModule);
   const Empty = () => null;
   const Link = ({ children }) => React.createElement("a", null, children);
+  const textIds = [];
   pageModule.require = (id) => {
-    if (id === "./PreviewText") return { PreviewText: ({ children }) => React.createElement(React.Fragment, null, children) };
+    if (id === "./PreviewText") return { PreviewText: ({ id: textId, children }) => { textIds.push(textId); return React.createElement(React.Fragment, null, children); } };
     if (id === "./SiteImage") return { SiteImage: Empty };
     if (id === "next/link") return { __esModule: true, default: Link };
     if (id === "@/components/Header") return { Header: Empty };
@@ -47,6 +48,11 @@ test("French training prices follow the existing catalog across both placements"
   assert.match(page.querySelector("#niveau-3 header strong").textContent, /905\s*€/);
   assert.equal([...page.querySelectorAll(".french-training-origin-options p:first-child")].length, 4);
   for (const licence of page.querySelectorAll(".french-training-origin-options p:first-child")) assert.match(licence.textContent, /Licence 62,50€ pour le diplôme FFESSM \/ CMAS/);
+  assert.equal(textIds.filter((id) => id === "french-training.price.before").length, 4);
+  assert.equal(textIds.filter((id) => id === "french-training.price.after").length, 4);
+  assert.ok(textIds.includes("french-training.niveau-2.option.1.description"));
+  assert.ok(textIds.includes("french-training.niveau-3.option.1.description"));
+  assert.match(page.querySelector("#niveau-2 .french-training-origin-options p:nth-child(2)").textContent, /Nitrox 80€/);
   assert.match(render("en").querySelector("#niveau-3 header strong").textContent, /795/);
   assert.equal(render("fr", []).querySelector("#niveau-1 header strong"), null);
 });

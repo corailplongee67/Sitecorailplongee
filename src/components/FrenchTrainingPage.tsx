@@ -246,14 +246,17 @@ export function FrenchTrainingPage({
                       <aside className="french-training-origin-level-details">
                         <section>
                           <h3><PreviewText id="FrenchTrainingPage.53efae4b98b6.1">{en ? "Training cost" : "Coût de la formation"}</PreviewText></h3>
-                          {displayPrice ? <p>{en ? "The training costs " : "Le coût de la formation est de "}<strong>{displayPrice}</strong>{en ? " and includes:" : " et comprend :"}</p> : null}
+                          {displayPrice ? <p><PreviewText id="french-training.price.before">{en ? "The training costs " : "Le coût de la formation est de "}</PreviewText><strong>{displayPrice}</strong><PreviewText id="french-training.price.after">{en ? " and includes:" : " et comprend :"}</PreviewText></p> : null}
                           <ul>
                             {copy.included.map((item, index) => (
                               <li key={item}><Check aria-hidden="true" /><PreviewText id={`french-training.${level.id}.included.${index}`}>{item}</PreviewText></li>
                             ))}
                           </ul>
                           <div className="french-training-origin-options">
-                            {copy.options.map((option, index) => <p key={option}><span><PreviewText id="FrenchTrainingPage.rich.45aaacba7ea1.1">Option</PreviewText></span><span>{!en && index === 0 ? <><PreviewText id="french-training.licence.before">Licence </PreviewText>{licenceAmount}<PreviewText id="french-training.licence.after"> pour le diplôme FFESSM / CMAS</PreviewText></> : option}</span></p>)}
+                            {copy.options.map((option, index) => {
+                              const optionParts = !en && index > 0 ? option.match(/^(.*?)(\d+€)$/) : null;
+                              return <p key={option}><span><PreviewText id="FrenchTrainingPage.rich.45aaacba7ea1.1">Option</PreviewText></span><span>{!en && index === 0 ? <><PreviewText id="french-training.licence.before">Licence </PreviewText>{licenceAmount}<PreviewText id="french-training.licence.after"> pour le diplôme FFESSM / CMAS</PreviewText></> : optionParts ? <><PreviewText id={`french-training.${level.id}.option.${index}.description`}>{optionParts[1]}</PreviewText>{optionParts[2]}</> : option}</span></p>;
+                            })}
                           </div>
                         </section>
 

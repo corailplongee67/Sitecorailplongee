@@ -98,6 +98,7 @@ test("preview saves text and switches between editing links and navigation", asy
     await React.act(async () => root.render(React.createElement(PreviewTextProvider, { enabled: true, initialDrafts: {}, published: {}, shared: true },
       React.createElement(PreviewModeButton),
       React.createElement("h1", null, React.createElement(PreviewText, { id: "home.hero.title" }, "Corail Plongée")),
+      React.createElement("p", { id: "repeated" }, React.createElement(PreviewText, { id: "home.hero.title" }, "Corail Plongée")),
       React.createElement("a", { href: "/test" }, React.createElement(PreviewText, { id: "home.link", embedded: true }, "Découvrir")),
     )));
     await React.act(async () => document.querySelector("h1 span").dispatchEvent(new window.MouseEvent("click", { bubbles: true, cancelable: true })));
@@ -112,6 +113,7 @@ test("preview saves text and switches between editing links and navigation", asy
     await React.act(async () => save.dispatchEvent(new window.MouseEvent("click", { bubbles: true, cancelable: true })));
     assert.deepEqual(saved, [["home.hero.title", "Nouveau titre"]]);
     assert.equal(document.querySelector("h1").textContent, "Nouveau titre");
+    assert.equal(document.querySelector("#repeated").textContent, "Nouveau titre");
     await React.act(async () => document.querySelector("h1 span").click());
     const secondEditor = document.querySelector("textarea");
     await React.act(async () => {
@@ -120,6 +122,7 @@ test("preview saves text and switches between editing links and navigation", asy
     });
     await React.act(async () => [...document.querySelectorAll("button")].find((button) => button.textContent === "Valider et mettre en ligne").click());
     assert.deepEqual(saved.at(-1), ["home.hero.title", "Titre corrigé"]);
+    assert.equal(document.querySelector("#repeated").textContent, "Titre corrigé");
     const link = document.querySelector('a[href="/test"]');
     await React.act(async () => link.dispatchEvent(new window.MouseEvent("click", { bubbles: true, cancelable: true })));
     assert.ok(document.querySelector('[role="dialog"]'));

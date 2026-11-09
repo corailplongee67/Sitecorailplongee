@@ -163,10 +163,7 @@ export function CetaceanPage({
                   puissent grandir en toute sécurité.
                 </PreviewText></p>
                 <p>
-                  <PreviewText id="CetaceanPage.1cd5e9170b6a.1">Si cette année, les baleines sont nombreuses à visiter la Réunion, nous vous proposons
-                  une sortie de 3 heures. Vous serez accompagnés de 2 moniteurs de plongée pour observer
-                  ces animaux majestueux en milieu naturel ainsi que les dauphins résidents.
-                </PreviewText></p>
+                  <PreviewText id="cetacean.intro.excursion.before">Si cette année, les baleines sont nombreuses à visiter la Réunion, nous vous proposons une sortie de </PreviewText><PreviewText id="cetacean.facts.duration.value">3 heures</PreviewText><PreviewText id="cetacean.intro.excursion.between">. Vous serez accompagnés de </PreviewText><PreviewText id="cetacean.facts.instructors.value">2 moniteurs</PreviewText><PreviewText id="cetacean.intro.excursion.after"> de plongée pour observer ces animaux majestueux en milieu naturel ainsi que les dauphins résidents.</PreviewText></p>
                 <p>
                   <PreviewText id="CetaceanPage.16449f045f60.1">Nous nous mettons à l’eau avec palmes, masque, tuba et combinaison si les conditions
                   d’observation sont bonnes. Cela varie en fonction de la visibilité, de la houle, du
@@ -200,7 +197,7 @@ export function CetaceanPage({
                 <article key={id}>
                   <Icon aria-hidden="true" />
                   <div>
-                    <strong>{value}</strong>
+                    <strong><PreviewText id={`cetacean.facts.${id}.value`}>{value}</PreviewText></strong>
                     <span><PreviewText id={`cetacean.facts.${id}.label`}>{label}</PreviewText></span>
                   </div>
                 </article>
@@ -304,12 +301,7 @@ export function CetaceanPage({
                   mer et que le fond ne sera pas visible.
                 </PreviewText></p>
                 <p>
-                  <PreviewText id="CetaceanPage.733959966943.1">Bien sûr, un instructeur sera toujours dans l’eau avec le groupe (9 personnes maximum),
-                  et tout le monde restera ensemble dans l’eau en se tenant par la main. Notre approche se
-                  fait toujours avec calme et respect. Si les animaux le souhaitent, ils peuvent parfois
-                  s’approcher, sinon ils ne feront que passer, ou alors ils plongeront pour éviter le contact.
-                  Une fois l’observation terminée, nous retournerons au bateau à la nage.
-                </PreviewText></p>
+                  <PreviewText id="cetacean.story.group.before">Bien sûr, un instructeur sera toujours dans l’eau avec le groupe (</PreviewText><PreviewText id="cetacean.facts.group-size.value">9 personnes</PreviewText><PreviewText id="cetacean.story.group.after"> maximum), et tout le monde restera ensemble dans l’eau en se tenant par la main. Notre approche se fait toujours avec calme et respect. Si les animaux le souhaitent, ils peuvent parfois s’approcher, sinon ils ne feront que passer, ou alors ils plongeront pour éviter le contact. Une fois l’observation terminée, nous retournerons au bateau à la nage.</PreviewText></p>
                 <p>
                   <PreviewText id="CetaceanPage.77df35140378.1">Cette activité peut être répétée autant de fois que les animaux nous le permettent. Elle
                   peut donc être très exigeante physiquement et constituer un excellent entraînement

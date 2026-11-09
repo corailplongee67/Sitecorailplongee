@@ -1,3 +1,4 @@
+import { PreviewText } from "./PreviewText";
 import { SiteImage as Image } from "./SiteImage";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
@@ -94,9 +95,9 @@ export function LegacyPage({
           <Image src={localHero(path)} alt="" fill priority sizes="100vw" />
           <div className="legacy-hero-shade" />
           <div className="shell legacy-hero-copy">
-            <p className="eyebrow light">{eyebrow}</p>
-            <h1>{h1}</h1>
-            {page.metaDescription ? <p>{decodeEntities(page.metaDescription)}</p> : null}
+            <p className="eyebrow light"><PreviewText id={`legacy.${path}.eyebrow`}>{eyebrow}</PreviewText></p>
+            <h1><PreviewText id={`legacy.${path}.title`}>{h1}</PreviewText></h1>
+            {page.metaDescription ? <p><PreviewText id={`legacy.${path}.description`}>{decodeEntities(page.metaDescription)}</PreviewText></p> : null}
           </div>
         </section>
 
@@ -111,24 +112,24 @@ export function LegacyPage({
               {paragraphs.length ? paragraphs.map((paragraph, index) => (
                 index === 1 && page.headings?.h2?.[0] ? (
                   <div key={index}>
-                    <h2>{decodeEntities(page.headings.h2[0])}</h2>
-                    <p>{paragraph}</p>
+                    <h2><PreviewText id={`legacy.${path}.section.title`}>{decodeEntities(page.headings.h2[0])}</PreviewText></h2>
+                    <p><PreviewText id={`legacy.${path}.paragraph.${index}`}>{paragraph}</PreviewText></p>
                   </div>
-                ) : <p key={index}>{paragraph}</p>
+                ) : <p key={index}><PreviewText id={`legacy.${path}.paragraph.${index}`}>{paragraph}</PreviewText></p>
               )) : (
-                <p>{fr ? "Cette page est en cours de reprise depuis le site historique." : "This page is being migrated from the previous website."}</p>
+                <p><PreviewText id="LegacyPage.547cb6f9eafb.1">{fr ? "Cette page est en cours de reprise depuis le site historique." : "This page is being migrated from the previous website."}</PreviewText></p>
               )}
             </article>
             <aside>
-              <p className="eyebrow">{fr ? "Envie de bulles ?" : "Ready for bubbles?"}</p>
-              <h2>{fr ? "On s’occupe du reste." : "We’ll handle the rest."}</h2>
-              <p>{fr ? "Choisissez votre créneau dans l’agenda sécurisé Zuurit ou contactez directement le centre." : "Choose a time in the secure Zuurit calendar or contact the centre directly."}</p>
-              <BookingCta href={bookingLinks.main_booking}>{fr ? "Réserver" : "Book"}</BookingCta>
-              <a className="text-link" href={bookingLinks.agenda} target="_blank" rel="noreferrer">{fr ? "Voir l’agenda" : "View calendar"} <ArrowRight /></a>
+              <p className="eyebrow"><PreviewText id="LegacyPage.aa82a348eb7e.1">{fr ? "Envie de bulles ?" : "Ready for bubbles?"}</PreviewText></p>
+              <h2><PreviewText id="LegacyPage.f1f95155e9f2.1">{fr ? "On s’occupe du reste." : "We’ll handle the rest."}</PreviewText></h2>
+              <p><PreviewText id="LegacyPage.1c1125f071c9.1">{fr ? "Choisissez votre créneau dans l’agenda sécurisé Zuurit ou contactez directement le centre." : "Choose a time in the secure Zuurit calendar or contact the centre directly."}</PreviewText></p>
+              <BookingCta href={bookingLinks.main_booking}><PreviewText embedded id="LegacyPage.link.5154862db341.1">{fr ? "Réserver" : "Book"}</PreviewText></BookingCta>
+              <a className="text-link" href={bookingLinks.agenda} target="_blank" rel="noreferrer"><PreviewText embedded id="LegacyPage.link.fbc677d7c88b.1">{fr ? "Voir l’agenda" : "View calendar"}</PreviewText> <ArrowRight /></a>
             </aside>
           </div>
           <div className="shell legacy-back">
-            <Link href={fr ? "/" : "/en/home/"}><ArrowLeft /> {fr ? "Retour à l’accueil" : "Back home"}</Link>
+            <Link href={fr ? "/" : "/en/home/"}><ArrowLeft /> <PreviewText embedded id="LegacyPage.link.71b47927b8d6.1">{fr ? "Retour à l’accueil" : "Back home"}</PreviewText></Link>
           </div>
         </section>
       </main>

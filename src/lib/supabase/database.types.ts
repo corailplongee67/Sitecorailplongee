@@ -9,6 +9,24 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      site_text_published: {
+        Row: { text_key: string; content: string; updated_at: string };
+        Insert: { text_key: string; content: string; updated_at?: string };
+        Update: Partial<Database["public"]["Tables"]["site_text_published"]["Insert"]>;
+        Relationships: [];
+      };
+      site_text_drafts: {
+        Row: { text_key: string; content: string; updated_at: string };
+        Insert: { text_key: string; content: string; updated_at?: string };
+        Update: Partial<Database["public"]["Tables"]["site_text_drafts"]["Insert"]>;
+        Relationships: [];
+      };
+      site_text_reviews: {
+        Row: { id: string; snapshot: Json; created_at: string; created_by: string };
+        Insert: { id?: string; snapshot: Json; created_at?: string; created_by?: string };
+        Update: Partial<Database["public"]["Tables"]["site_text_reviews"]["Insert"]>;
+        Relationships: [];
+      };
       booking_links: {
         Row: {
           id: string;
@@ -245,7 +263,9 @@ export type Database = {
       };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      publish_site_text_review: { Args: { review_id: string }; Returns: undefined };
+    };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };

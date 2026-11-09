@@ -19,6 +19,7 @@ import { ReunionDivingPage } from "@/components/ReunionDivingPage";
 import { ServicesPage } from "@/components/ServicesPage";
 import { SsiTrainingPage } from "@/components/SsiTrainingPage";
 import { getBookingLinks, getEventBySlug, getPriceCatalog } from "@/lib/content-data";
+import { discoveryPackAmount } from "@/lib/discovery-price";
 import auditPages from "../../../docs/audit/current-site-pages.json";
 
 type PageProps = { params: Promise<{ slug: string[] }> };
@@ -123,7 +124,11 @@ export default async function Page({ params }: PageProps) {
   const page = findPage(path);
   if (!page) notFound();
 
-  const bookingLinks = await getBookingLinks();
+  const needsSharedPrices = path === "/decouverte/" || path === "/formation-francaise/" || path === "/en/french-training/";
+  const [bookingLinks, sharedCatalog] = await Promise.all([
+    getBookingLinks(),
+    needsSharedPrices ? getPriceCatalog() : Promise.resolve(null),
+  ]);
   if (path === "/qui-sommes-nous/" || path === "/en/about-us/") {
     return (
       <AboutPage
@@ -133,9 +138,11 @@ export default async function Page({ params }: PageProps) {
     );
   }
   if (path === "/decouverte/" || path === "/en/discover/" || path === "/en/i-discover-baptism/") {
+    const packAmountCents = sharedCatalog ? discoveryPackAmount(sharedCatalog.prices) : null;
     return (
       <DiscoveryPage
         bookingLinks={bookingLinks}
+        packAmountCents={packAmountCents}
         locale={path.startsWith("/en/") ? "en" : "fr"}
       />
     );
@@ -157,9 +164,11 @@ export default async function Page({ params }: PageProps) {
     );
   }
   if (path === "/formation-francaise/" || path === "/en/french-training/") {
+    const catalog = sharedCatalog ?? await getPriceCatalog();
     return (
       <FrenchTrainingPage
         bookingLinks={bookingLinks}
+        prices={catalog.prices}
         locale={path.startsWith("/en/") ? "en" : "fr"}
       />
     );

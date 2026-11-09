@@ -1,3 +1,4 @@
+import { PreviewText } from "./PreviewText";
 import { SiteImage as Image } from "./SiteImage";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
@@ -130,20 +131,20 @@ export function ServicesPage({
           />
           <div className="services-origin-hero-shade" />
           <div className="shell services-origin-hero-copy">
-            <p className="eyebrow light">Corail Plongée · {isEnglish ? "Reunion Island" : "La Réunion"}</p>
-            <h1>{isEnglish ? "Our services" : "Nos prestations"}</h1>
+            <p className="eyebrow light"><PreviewText id="ServicesPage.rich.40e467cf393a.1">Corail Plongée · </PreviewText><PreviewText id="services.hero.location">{isEnglish ? "Reunion Island" : "La Réunion"}</PreviewText></p>
+            <h1><PreviewText id="ServicesPage.426a33bc5e2a.1">{isEnglish ? "Our services" : "Nos prestations"}</PreviewText></h1>
           </div>
         </section>
 
         <section className="services-origin-content" id="content">
           <div className="shell">
             <header className="services-origin-intro">
-              <p className="eyebrow">Corail Plongée La Réunion</p>
-              <h2>{isEnglish ? "Discover activities" : "Découvrez notre activité"}</h2>
+              <p className="eyebrow"><PreviewText id="ServicesPage.0aab4d9434c1.1">Corail Plongée La Réunion</PreviewText></p>
+              <h2><PreviewText id="ServicesPage.9dd08f0b5546.1">{isEnglish ? "Discover activities" : "Découvrez notre activité"}</PreviewText></h2>
               <p>
-                {isEnglish
+                <PreviewText id="ServicesPage.5bb039cad49f.1">{isEnglish
                   ? "Corail Plongée Reunion makes you discover the Indian Ocean and its richness all year long. First dives, training courses for all levels… Take advantage of the exceptional setting of Reunion Island and offer yourself an extraordinary experience. FFESSM and SSI training courses are also available."
-                  : "Corail Plongée Réunion vous fait découvrir l’océan Indien et ses richesses tout au long de l’année. Baptêmes de plongée, formations tous niveaux… Profitez du cadre exceptionnel de La Réunion et offrez-vous une expérience hors du commun. Formations FFESSM et SSI possibles."}
+                  : "Corail Plongée Réunion vous fait découvrir l’océan Indien et ses richesses tout au long de l’année. Baptêmes de plongée, formations tous niveaux… Profitez du cadre exceptionnel de La Réunion et offrez-vous une expérience hors du commun. Formations FFESSM et SSI possibles."}</PreviewText>
               </p>
             </header>
 
@@ -162,10 +163,10 @@ export function ServicesPage({
                     <span>{String(index + 1).padStart(2, "0")}</span>
                   </div>
                   <div className="services-origin-card-copy">
-                    <h3>{offer.title}</h3>
-                    <p>{offer.description}</p>
+                    <h3><PreviewText id={`services.offer.${index}.title`}>{offer.title}</PreviewText></h3>
+                    <p><PreviewText id={`services.offer.${index}.description`}>{offer.description}</PreviewText></p>
                     <Link href={offer.href}>
-                      {isEnglish ? "Learn more" : "En savoir plus"} <ArrowRight aria-hidden="true" size={17} />
+                      <PreviewText embedded id="ServicesPage.link.6f7f4c858a31.1">{isEnglish ? "Learn more" : "En savoir plus"}</PreviewText> <ArrowRight aria-hidden="true" size={17} />
                     </Link>
                   </div>
                 </article>

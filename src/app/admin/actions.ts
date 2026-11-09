@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath, updateTag } from "next/cache";
+import { draftMode } from "next/headers";
 import { redirect } from "next/navigation";
 import { fallbackEvents } from "@/lib/events-data";
 import { nextAvailableEventSlug } from "@/lib/event-slugs";
@@ -8,6 +9,9 @@ import { getSiteImageSlot } from "@/lib/site-image-slots";
 import { isSiteImageUploadPath, SITE_IMAGE_BUCKET, SITE_IMAGE_SOURCE_VARIANT, siteImageRowKeys, siteImageVariantKey } from "@/lib/site-image-variants";
 import { SITE_AUDIO_BUCKET } from "@/lib/site-audio-data";
 import { createClient } from "@/lib/supabase/server";
+import { requestLocalTextReview, writeLocalTextDraft } from "@/lib/local-text-drafts";
+import { sharedTextEditorEnabled, submitSharedTextReview, writeSharedTextDraft } from "@/lib/shared-text-drafts";
+import { SITE_CONTACT_TEXT_KEY, validateSiteContact } from "@/lib/site-contact";
 
 function value(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
@@ -39,6 +43,9 @@ function revalidatePrices() {
   revalidatePath("/");
   revalidatePath("/en/home/");
   revalidatePath("/nos-tarifs/");
+  revalidatePath("/decouverte/");
+  revalidatePath("/formation-francaise/");
+  revalidatePath("/en/french-training/");
   revalidatePath("/en/rates/");
   revalidatePath("/admin/");
 }
@@ -65,6 +72,65 @@ async function requireAdmin() {
   return supabase;
 }
 
+export async function openSitePreview() {
+  await requireAdmin();
+  (await draftMode()).enable();
+  redirect("/");
+}
+
+export async function closeSitePreview() {
+  (await draftMode()).disable();
+  redirect("/admin/");
+}
+
+export async function saveLocalTextDraft(id: string, text: string | null) {
+  await requireAdmin();
+  if (!(await draftMode()).isEnabled) throw new Error("Ouvrez l’aperçu privé avant de modifier un texte.");
+  if (id === SITE_CONTACT_TEXT_KEY) throw new Error("Modifiez les coordonnées dans leur fiche dédiée.");
+  if (sharedTextEditorEnabled()) await writeSharedTextDraft(id, text);
+  else await writeLocalTextDraft(id, text);
+}
+
+export async function saveSiteContact(formData: FormData) {
+  await requireAdmin();
+  const contact = validateSiteContact({ address: value(formData, "address"), phone: value(formData, "phone"), email: value(formData, "email") });
+  const data = JSON.stringify(contact);
+  if (sharedTextEditorEnabled()) await writeSharedTextDraft(SITE_CONTACT_TEXT_KEY, data);
+  else await writeLocalTextDraft(SITE_CONTACT_TEXT_KEY, data);
+  revalidatePath("/", "layout");
+  revalidatePath("/admin/");
+}
+
+export async function submitLocalTextReview(_previous: { status: string; message: string; snapshot: string }, formData: FormData) {
+  await requireAdmin();
+  if (!(await draftMode()).isEnabled) throw new Error("Ouvrez l’aperçu privé avant de valider les brouillons.");
+  const snapshot = String(formData.get("snapshot") ?? "");
+  try {
+    const expected: unknown = JSON.parse(snapshot);
+    if (sharedTextEditorEnabled()) await submitSharedTextReview(expected);
+    else await requestLocalTextReview(expected);
+  } catch (error) {
+    const message = error instanceof Error && (error.message.startsWith("Les brouillons ont changé") || error.message.startsWith("Il n’y a aucun brouillon"))
+      ? error.message : "La validation n’a pas pu être enregistrée. Réessayez après avoir actualisé l’aperçu.";
+    return { status: "error", message, snapshot: "" };
+  }
+  revalidatePath("/admin/");
+  return { status: "success", message: "Validation enregistrée. Les modifications restent en attente de mise en ligne.", snapshot };
+}
+
+export async function publishReviewedText(formData: FormData) {
+  if (!sharedTextEditorEnabled()) throw new Error("La publication des textes n’est pas activée.");
+  const supabase = await requireAdmin();
+  const { data } = await supabase.auth.getClaims();
+  const metadata = data?.claims?.app_metadata as { publish_site_texts?: boolean } | undefined;
+  if (metadata?.publish_site_texts !== true) throw new Error("Ce compte ne peut pas publier les textes.");
+  const reviewId = value(formData, "review_id");
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(reviewId)) throw new Error("Validation introuvable.");
+  const { error } = await supabase.rpc("publish_site_text_review", { review_id: reviewId });
+  if (error) throw error;
+  revalidatePath("/", "layout");
+}
+
 export async function signIn(formData: FormData) {
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({
@@ -79,6 +145,7 @@ export async function signIn(formData: FormData) {
 export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
+  (await draftMode()).disable();
   redirect("/admin/login/");
 }
 

@@ -1,3 +1,4 @@
+import { PreviewText } from "./PreviewText";
 import { SiteImage as Image } from "./SiteImage";
 import Link from "next/link";
 import { ArrowLeft, FileText } from "lucide-react";
@@ -193,8 +194,8 @@ export function LegalPage({
           <Image src="/images/hero/corail-reef.jpg" alt={en ? "Coral reef in Reunion Island" : "Récif corallien de La Réunion"} fill priority sizes="100vw" />
           <div className="legal-origin-hero-shade" />
           <div className="shell legal-origin-hero-copy">
-            <p className="eyebrow light">Corail Plongée</p>
-            <h1>{title}</h1>
+            <p className="eyebrow light"><PreviewText id="LegalPage.a09d1349af4a.1">Corail Plongée</PreviewText></p>
+            <h1><PreviewText id={`legal.${path}.title`}>{title}</PreviewText></h1>
           </div>
         </section>
 
@@ -203,8 +204,8 @@ export function LegalPage({
             <aside className="legal-origin-summary" aria-label={en ? "Page contents" : "Sommaire de la page"}>
               <div>
                 <FileText aria-hidden="true" />
-                <p className="eyebrow">{en ? "On this page" : "Dans cette page"}</p>
-                <h2>{en ? "Contents" : "Sommaire"}</h2>
+                <p className="eyebrow"><PreviewText id="LegalPage.942d302204cd.1">{en ? "On this page" : "Dans cette page"}</PreviewText></p>
+                <h2><PreviewText id="LegalPage.b8bd7ae4658a.1">{en ? "Contents" : "Sommaire"}</PreviewText></h2>
               </div>
               <nav>
                 {sections.filter((section) => section.level === 2).map((section, index) => (
@@ -218,7 +219,7 @@ export function LegalPage({
 
             <article className="legal-origin-document">
               <header>
-                <p className="eyebrow">{en ? "Information document" : "Document d’information"}</p>
+                <p className="eyebrow"><PreviewText id="LegalPage.0d3a5fab1798.1">{en ? "Information document" : "Document d’information"}</PreviewText></p>
                 <p>{decodeEntities(page.metaDescription ?? (en ? "Legal information from Corail Plongée." : "Informations légales de Corail Plongée."))}</p>
               </header>
               {sections.map((section, index) => (
@@ -229,15 +230,15 @@ export function LegalPage({
                 >
                   <div className="legal-origin-section-heading">
                     <span>{String(index + 1).padStart(2, "0")}</span>
-                    {section.level === 3 ? <h3>{section.title}</h3> : <h2>{section.title}</h2>}
+                    {section.level === 3 ? <h3><PreviewText id={`legal.${path}.section.${index}.title`}>{section.title}</PreviewText></h3> : <h2><PreviewText id={`legal.${path}.section.${index}.title`}>{section.title}</PreviewText></h2>}
                   </div>
                   {section.paragraphs.map((paragraph, paragraphIndex) => (
-                    <p key={`${section.id}-${paragraphIndex}`}>{paragraph}</p>
+                    <p key={`${section.id}-${paragraphIndex}`}><PreviewText id={`legal.${path}.section.${index}.paragraph.${paragraphIndex}`}>{paragraph}</PreviewText></p>
                   ))}
                 </section>
               ))}
               <Link className="legal-origin-back" href={en ? "/en/home/" : "/"}>
-                <ArrowLeft aria-hidden="true" /> {en ? "Back home" : "Retour à l’accueil"}
+                <ArrowLeft aria-hidden="true" /> <PreviewText embedded id="LegalPage.link.2df217e6fce1.1">{en ? "Back home" : "Retour à l’accueil"}</PreviewText>
               </Link>
             </article>
           </div>

@@ -5,7 +5,17 @@ import Link from "next/link";
 import { ChevronDown, LockKeyhole, Menu, UserRound, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { alternateLocalePath, nav, type Locale } from "@/lib/site-data";
+import { alternateLocalePath, nav, type Locale, type NavigationItem } from "@/lib/site-data";
+import { PreviewText } from "./PreviewText";
+
+function navigationTextKey(item: NavigationItem) {
+  return `navigation.${item.href ?? item.bookingKey ?? item.label}`;
+}
+
+function NavigationLabel({ item }: { item: NavigationItem }) {
+  if (item.href === "/evenements/" || item.href === "/en/our-events/") return <>{item.label}</>;
+  return <PreviewText embedded id={navigationTextKey(item)}>{item.label}</PreviewText>;
+}
 
 export function Header({
   locale,
@@ -70,13 +80,13 @@ export function Header({
             <div
               className={`desktop-nav-group${servicesOpen ? " is-open" : ""}`}
               key={item.href}
-              onMouseLeave={() => setServicesOpen(false)}
+              onMouseLeave={() => { if (!document.querySelector(".preview-editor-backdrop")) setServicesOpen(false); }}
               onBlur={(event) => {
-                if (!event.currentTarget.contains(event.relatedTarget)) setServicesOpen(false);
+                if (!event.currentTarget.contains(event.relatedTarget) && !document.querySelector(".preview-editor-backdrop")) setServicesOpen(false);
               }}
             >
               <div className="desktop-nav-parent">
-                <Link href={item.href ?? "#"}>{item.label}</Link>
+                <Link href={item.href ?? "#"}><NavigationLabel item={item} /></Link>
                 <button
                   type="button"
                   aria-expanded={servicesOpen}
@@ -89,16 +99,16 @@ export function Header({
               </div>
               <div id="desktop-services-menu" className="desktop-dropdown">
                 {item.children.map((child) => (
-                  <Link key={child.href} href={child.href}>{child.label}</Link>
+                  <Link key={child.href} href={child.href}><PreviewText embedded id={`navigation.${child.href}`}>{child.label}</PreviewText></Link>
                 ))}
               </div>
             </div>
           ) : item.bookingKey ? (
             <a className="desktop-nav-action" key={item.label} href={itemHref(item)} target="_blank" rel="noreferrer">
-              {item.label}
+              <NavigationLabel item={item} />
             </a>
           ) : (
-            <Link key={item.href} href={itemHref(item)}>{item.label}</Link>
+            <Link key={item.href} href={itemHref(item)}><NavigationLabel item={item} /></Link>
           ))}
         </nav>
 
@@ -133,7 +143,7 @@ export function Header({
           {items.map((item) => item.children ? (
             <div className="mobile-nav-group" key={item.href}>
               <div className="mobile-nav-parent">
-                <Link href={item.href ?? "#"} onClick={closeMobileNavigation}>{item.label}</Link>
+                <Link href={item.href ?? "#"} onClick={closeMobileNavigation}><NavigationLabel item={item} /></Link>
                 <button
                   type="button"
                   aria-expanded={mobileServicesOpen}
@@ -147,15 +157,15 @@ export function Header({
               {mobileServicesOpen ? (
                 <div id="mobile-services-menu" className="mobile-subnav">
                   {item.children.map((child) => (
-                    <Link key={child.href} href={child.href} onClick={closeMobileNavigation}>{child.label}</Link>
+                    <Link key={child.href} href={child.href} onClick={closeMobileNavigation}><PreviewText embedded id={`navigation.${child.href}`}>{child.label}</PreviewText></Link>
                   ))}
                 </div>
               ) : null}
             </div>
           ) : item.bookingKey ? (
-            <a key={item.label} href={itemHref(item)} target="_blank" rel="noreferrer" onClick={closeMobileNavigation}>{item.label}</a>
+            <a key={item.label} href={itemHref(item)} target="_blank" rel="noreferrer" onClick={closeMobileNavigation}><NavigationLabel item={item} /></a>
           ) : (
-            <Link key={item.href} href={itemHref(item)} onClick={closeMobileNavigation}>{item.label}</Link>
+            <Link key={item.href} href={itemHref(item)} onClick={closeMobileNavigation}><NavigationLabel item={item} /></Link>
           ))}
         </nav>
       ) : null}

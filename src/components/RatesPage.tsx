@@ -1,3 +1,4 @@
+import { PreviewText } from "./PreviewText";
 import { SiteImage as Image } from "./SiteImage";
 import Link from "next/link";
 import { ArrowRight, Check, Info } from "lucide-react";
@@ -29,7 +30,7 @@ function SectionButton({
 }) {
   const key = section.booking_link_key as BookingKey | null;
   if (!key) return null;
-  return <BookingCta href={bookingLinks[key] ?? bookingLinks.main_booking}>{locale === "fr" ? "Réserver" : "Book"}</BookingCta>;
+  return <BookingCta href={bookingLinks[key] ?? bookingLinks.main_booking}><PreviewText embedded id="RatesPage.link.98d9e61c9d14.1">{locale === "fr" ? "Réserver" : "Book"}</PreviewText></BookingCta>;
 }
 
 function ListSection({ prices, locale }: { prices: PublicCatalogPrice[]; locale: Locale }) {
@@ -94,7 +95,7 @@ function ExplorationRateSection({
     <div className="exploration-rate-columns" aria-label={fr ? section.title_fr : section.title_en}>
       {columns.map((column) => (
         <section className="exploration-rate-column" key={column.key}>
-          <h3>{column.title}</h3>
+          <h3><PreviewText id={`rates.column.${column.key}.title`}>{column.title}</PreviewText></h3>
           <div className="exploration-rate-list">
             {column.prices.map((price) => (
               <div className="exploration-rate-row" key={price.id}>
@@ -133,9 +134,9 @@ export function RatesPage({
           <Image src="/images/hero/corail-reef.jpg" alt={fr ? "Récif corallien à La Réunion" : "Coral reef in Reunion Island"} fill priority sizes="100vw" />
           <div className="rates-hero-shade" />
           <div className="shell rates-hero-copy">
-            <p className="eyebrow light">Corail Plongée · Saint-Gilles-les-Bains</p>
-            <h1>{fr ? "Nos tarifs" : "Our rates"}</h1>
-            <p>{fr ? "Tous nos prix, organisés simplement pour choisir votre prochaine immersion." : "All our prices, clearly organised to help you choose your next dive."}</p>
+            <p className="eyebrow light"><PreviewText id="RatesPage.f86843a1559d.1">Corail Plongée · Saint-Gilles-les-Bains</PreviewText></p>
+            <h1><PreviewText id="RatesPage.1fe72c6a6e4a.1">{fr ? "Nos tarifs" : "Our rates"}</PreviewText></h1>
+            <p><PreviewText id="RatesPage.60cab375b8fb.1">{fr ? "Tous nos prix, organisés simplement pour choisir votre prochaine immersion." : "All our prices, clearly organised to help you choose your next dive."}</PreviewText></p>
           </div>
         </section>
 
@@ -177,15 +178,15 @@ export function RatesPage({
             <div className="rates-final-cta">
               <Check />
               <div>
-                <p className="eyebrow coral">{fr ? "Prêt à plonger ?" : "Ready to dive?"}</p>
-                <h2>{fr ? "Choisissez votre créneau." : "Choose your time."}</h2>
+                <p className="eyebrow coral"><PreviewText id="RatesPage.44f35bae0f54.1">{fr ? "Prêt à plonger ?" : "Ready to dive?"}</PreviewText></p>
+                <h2><PreviewText id="RatesPage.b40fddca0fc3.1">{fr ? "Choisissez votre créneau." : "Choose your time."}</PreviewText></h2>
               </div>
               <a className="button button-coral" href={bookingLinks.main_booking} target="_blank" rel="noreferrer">
-                {fr ? "Réserver en ligne" : "Book online"} <ArrowRight />
+                <PreviewText embedded id="RatesPage.link.f75a7cf6e980.1">{fr ? "Réserver en ligne" : "Book online"}</PreviewText> <ArrowRight />
               </a>
             </div>
 
-            <Link className="rates-back" href={fr ? "/" : "/en/home/"}>{fr ? "Retour à l’accueil" : "Back home"}</Link>
+            <Link className="rates-back" href={fr ? "/" : "/en/home/"}><PreviewText embedded id="RatesPage.link.71b47927b8d6.1">{fr ? "Retour à l’accueil" : "Back home"}</PreviewText></Link>
           </div>
         </section>
       </main>

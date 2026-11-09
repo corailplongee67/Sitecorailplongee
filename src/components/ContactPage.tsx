@@ -1,5 +1,7 @@
+import { PreviewText } from "./PreviewText";
 import { SiteImage as Image } from "./SiteImage";
-import { ArrowUpRight, Clock3, Mail, MapPin, Phone } from "lucide-react";
+import { ArrowUpRight, Clock3 } from "lucide-react";
+import { ContactDetails, ContactMap } from "./SiteContact";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import type { BookingKey } from "@/lib/site-data";
@@ -34,8 +36,8 @@ export function ContactPage({
           />
           <div className="contact-origin-hero-shade" />
           <div className="shell contact-origin-hero-copy">
-            <p className="eyebrow light">Saint-Gilles-les-Bains · {en ? "Reunion Island" : "La Réunion"}</p>
-            <h1>Contact</h1>
+            <p className="eyebrow light"><PreviewText id="ContactPage.rich.f86925f2d25a.1">Saint-Gilles-les-Bains · </PreviewText>{en ? "Reunion Island" : "La Réunion"}</p>
+            <h1><PreviewText id="ContactPage.2b5c3d26721a.1">Contact</PreviewText></h1>
           </div>
         </section>
 
@@ -59,39 +61,11 @@ export function ContactPage({
 
           <div className="shell contact-origin-panel">
             <div className="contact-origin-details">
-              <p className="eyebrow">Corail Plongée</p>
-              <h2>{en ? "Contact us" : "Contactez-nous"}</h2>
+              <p className="eyebrow"><PreviewText id="ContactPage.a09d1349af4a.1">Corail Plongée</PreviewText></p>
+              <h2><PreviewText id="ContactPage.4080e861e04b.1">{en ? "Contact us" : "Contactez-nous"}</PreviewText></h2>
 
               <div className="contact-origin-list">
-                <a
-                  href="https://maps.google.com/?q=Corail+Plongee+Saint-Gilles-les-Bains"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <MapPin aria-hidden="true" />
-                  <span>
-                    <strong>{en ? "Address" : "Adresse"}</strong>
-                    Port de plaisance,<br />
-                    Saint-Gilles les Bains 97434,<br />
-                    {en ? "Reunion Island" : "La Réunion"}
-                  </span>
-                </a>
-
-                <a href="tel:+262262243725">
-                  <Phone aria-hidden="true" />
-                  <span>
-                    <strong>{en ? "Phone" : "Téléphone"}</strong>
-                    02.62.24.37.25
-                  </span>
-                </a>
-
-                <a href="mailto:info@corail-plongee.com">
-                  <Mail aria-hidden="true" />
-                  <span>
-                    <strong>Mail</strong>
-                    info@corail-plongee.com
-                  </span>
-                </a>
+                <ContactDetails english={en} />
 
                 <div>
                   <Clock3 aria-hidden="true" />
@@ -109,21 +83,12 @@ export function ContactPage({
                 target="_blank"
                 rel="noreferrer"
               >
-                {en ? "I book" : "Je réserve"} <ArrowUpRight aria-hidden="true" size={18} />
+                <PreviewText embedded id="ContactPage.link.a2285d7a0a6c.1">{en ? "I book" : "Je réserve"}</PreviewText> <ArrowUpRight aria-hidden="true" size={18} />
               </a>
             </div>
 
             <div className="contact-origin-map">
-              <iframe
-                title={en ? "Corail Plongée location at Saint-Gilles-les-Bains marina" : "Localisation de Corail Plongée au port de Saint-Gilles-les-Bains"}
-                src="https://www.google.com/maps?q=Corail+Plong%C3%A9e+Saint-Gilles-les-Bains+La+R%C3%A9union&output=embed"
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
-              <div className="contact-origin-map-label">
-                <MapPin aria-hidden="true" size={17} />
-                Port de plaisance · Saint-Gilles-les-Bains
-              </div>
+              <ContactMap english={en} />
             </div>
           </div>
         </section>

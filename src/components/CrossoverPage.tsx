@@ -1,3 +1,4 @@
+import { PreviewText } from "./PreviewText";
 import { SiteImage as Image } from "./SiteImage";
 import { ArrowUpRight } from "lucide-react";
 import { Footer } from "@/components/Footer";
@@ -116,19 +117,19 @@ export function CrossoverPage({
           />
           <div className="crossover-origin-hero-shade" />
           <div className="shell crossover-origin-hero-copy">
-            <p className="eyebrow light">{en ? "Change certification" : "Changer de certification"}</p>
-            <h1>{en ? "Continual courses" : "Passerelle"}</h1>
+            <p className="eyebrow light"><PreviewText id="CrossoverPage.794eaa126cff.1">{en ? "Change certification" : "Changer de certification"}</PreviewText></p>
+            <h1><PreviewText id="CrossoverPage.082be4dbfa9b.1">{en ? "Continual courses" : "Passerelle"}</PreviewText></h1>
           </div>
         </section>
 
         <section className="crossover-origin-content">
           <div className="shell">
             <div className="crossover-origin-panel">
-              {groups.map((group) => (
+              {groups.map((group, groupIndex) => (
                 <section className="crossover-origin-group" key={group.title}>
                   <header className="crossover-origin-heading">
-                    <p className="eyebrow">{en ? group.eyebrowEn : group.eyebrow}</p>
-                    <h2>{en ? group.titleEn : group.title}</h2>
+                    <p className="eyebrow"><PreviewText id={`crossover.group.${groupIndex}.eyebrow`}>{en ? group.eyebrowEn : group.eyebrow}</PreviewText></p>
+                    <h2><PreviewText id={`crossover.group.${groupIndex}.title`}>{en ? group.titleEn : group.title}</PreviewText></h2>
                   </header>
 
                   <div className="crossover-origin-grid">
@@ -166,15 +167,15 @@ export function CrossoverPage({
                     target="_blank"
                     rel="noreferrer"
                   >
-                    {en ? "Book this course" : "Réserver cette passerelle"} <ArrowUpRight aria-hidden="true" size={17} />
+                    <PreviewText embedded id="CrossoverPage.link.81f9db537d95.1">{en ? "Book this course" : "Réserver cette passerelle"}</PreviewText> <ArrowUpRight aria-hidden="true" size={17} />
                   </a>
                 </section>
               ))}
 
               <div className="crossover-origin-actions">
                 <div>
-                  <p className="eyebrow">{en ? "Ready to have your level recognised?" : "Prêt à faire reconnaître votre niveau ?"}</p>
-                  <h2>{en ? "Choose your next certification." : "Choisissez votre prochaine certification."}</h2>
+                  <p className="eyebrow"><PreviewText id="CrossoverPage.ca22e9e036b2.1">{en ? "Ready to have your level recognised?" : "Prêt à faire reconnaître votre niveau ?"}</PreviewText></p>
+                  <h2><PreviewText id="CrossoverPage.2bb7ab2697f7.1">{en ? "Choose your next certification." : "Choisissez votre prochaine certification."}</PreviewText></h2>
                 </div>
                 <div>
                   <a
@@ -183,7 +184,7 @@ export function CrossoverPage({
                     target="_blank"
                     rel="noreferrer"
                   >
-                    {en ? "I book" : "Je réserve"} <ArrowUpRight aria-hidden="true" size={18} />
+                    <PreviewText embedded id="CrossoverPage.link.a2285d7a0a6c.1">{en ? "I book" : "Je réserve"}</PreviewText> <ArrowUpRight aria-hidden="true" size={18} />
                   </a>
                   <a
                     className="button crossover-origin-shop"
@@ -191,7 +192,7 @@ export function CrossoverPage({
                     target="_blank"
                     rel="noreferrer"
                   >
-                    {en ? "Shop" : "Boutique"} <ArrowUpRight aria-hidden="true" size={18} />
+                    <PreviewText embedded id="CrossoverPage.link.c64dcd8517a8.1">{en ? "Shop" : "Boutique"}</PreviewText> <ArrowUpRight aria-hidden="true" size={18} />
                   </a>
                 </div>
               </div>

@@ -1,3 +1,4 @@
+import { PreviewText } from "./PreviewText";
 import { SiteImage as Image } from "./SiteImage";
 import { ArrowUpRight, CalendarDays, Droplets, Eye, ThermometerSun } from "lucide-react";
 import { Footer } from "@/components/Footer";
@@ -104,9 +105,9 @@ export function ReunionDivingPage({
           />
           <div className="reunion-origin-hero-shade" />
           <div className="shell reunion-origin-hero-copy">
-            <p className="eyebrow light">Corail Plongée {en ? "Reunion Island" : "Réunion"}</p>
-            <h1>{en ? "Diving in Reunion Island" : "Plonger Réunion"}</h1>
-            <p>{en ? "Scuba diving centre on Reunion Island" : "Centre de plongée sous-marine sur l’île de la Réunion"}</p>
+            <p className="eyebrow light"><PreviewText id="ReunionDivingPage.rich.ca511c78337a.1">Corail Plongée </PreviewText>{en ? "Reunion Island" : "Réunion"}</p>
+            <h1><PreviewText id="ReunionDivingPage.eff3975e9417.1">{en ? "Diving in Reunion Island" : "Plonger Réunion"}</PreviewText></h1>
+            <p><PreviewText id="ReunionDivingPage.83608ded6943.1">{en ? "Scuba diving centre on Reunion Island" : "Centre de plongée sous-marine sur l’île de la Réunion"}</PreviewText></p>
           </div>
         </section>
 
@@ -120,20 +121,20 @@ export function ReunionDivingPage({
           />
           <div className="shell reunion-origin-conditions-grid">
             <header>
-              <p className="eyebrow coral">{en ? "365 days of diving" : "365 jours de plongée"}</p>
-              <h2>{en ? "Geographic diversity" : "Les conditions"}</h2>
-              <p className="reunion-origin-conditions-lead">{en ? "Two types of diving are available:" : "Deux types de plongées sont proposés :"}</p>
+              <p className="eyebrow coral"><PreviewText id="ReunionDivingPage.5dae7ae935f2.1">{en ? "365 days of diving" : "365 jours de plongée"}</PreviewText></p>
+              <h2><PreviewText id="ReunionDivingPage.e23e83213259.1">{en ? "Geographic diversity" : "Les conditions"}</PreviewText></h2>
+              <p className="reunion-origin-conditions-lead"><PreviewText id="ReunionDivingPage.22e17a174b91.1">{en ? "Two types of diving are available:" : "Deux types de plongées sont proposés :"}</PreviewText></p>
             </header>
             <div className="reunion-origin-coasts">
               <article>
                 <span>01</span>
-                <h3>{en ? "The leeward coast" : "La côte sous le vent"}</h3>
-                <p>{en ? "On the west coast, the coral lagoon has formed a natural barrier reef. Offshore diving takes place along its outer slope, where you can discover an extraordinary variety of flora and fauna." : "À l’ouest, sur la côte sous le vent, le lagon corallien a fait surgir des flots un récif barrière. Au large, la plongée se pratique sur la pente externe de celui-ci."}</p>
+                <h3><PreviewText id="ReunionDivingPage.d9b2bd3d6d92.1">{en ? "The leeward coast" : "La côte sous le vent"}</PreviewText></h3>
+                <p><PreviewText id="ReunionDivingPage.34049b7f5b7b.1">{en ? "On the west coast, the coral lagoon has formed a natural barrier reef. Offshore diving takes place along its outer slope, where you can discover an extraordinary variety of flora and fauna." : "À l’ouest, sur la côte sous le vent, le lagon corallien a fait surgir des flots un récif barrière. Au large, la plongée se pratique sur la pente externe de celui-ci."}</PreviewText></p>
               </article>
               <article>
                 <span>02</span>
-                <h3>{en ? "The windward coast" : "La côte au vent"}</h3>
-                <p>{en ? "On the east coast, beautiful ancient lava flows create more athletic but equally rewarding dives. Wind and rain make access less regular than on the west coast." : "À l’est, sur la côte au vent, les plongées seront plus sportives qu’ailleurs, mais non dénuées de charmes."}</p>
+                <h3><PreviewText id="ReunionDivingPage.b3f1af3539a1.1">{en ? "The windward coast" : "La côte au vent"}</PreviewText></h3>
+                <p><PreviewText id="ReunionDivingPage.3c009a8364b2.1">{en ? "On the east coast, beautiful ancient lava flows create more athletic but equally rewarding dives. Wind and rain make access less regular than on the west coast." : "À l’est, sur la côte au vent, les plongées seront plus sportives qu’ailleurs, mais non dénuées de charmes."}</PreviewText></p>
               </article>
             </div>
             <div className="reunion-origin-facts">
@@ -142,15 +143,15 @@ export function ReunionDivingPage({
               <div><Eye aria-hidden="true" /><strong>{en ? "Excellent" : "Excellente"}</strong><span>{en ? "visibility" : "visibilité"}</span></div>
             </div>
             <p className="reunion-origin-condition-note">
-              {en ? "On the leeward coast, diving conditions are ideal 365 days a year, with water temperatures between 24 and 30°C and exceptional visibility." : "Sur la côte sous le vent, les conditions de plongées sont idéales, possibles 365 jours par an, avec une température de l’eau qui évolue entre 24 et 30°, et une visibilité excellente."}
+              <PreviewText id="ReunionDivingPage.cbf0a61c043a.1">{en ? "On the leeward coast, diving conditions are ideal 365 days a year, with water temperatures between 24 and 30°C and exceptional visibility." : "Sur la côte sous le vent, les conditions de plongées sont idéales, possibles 365 jours par an, avec une température de l’eau qui évolue entre 24 et 30°, et une visibilité excellente."}</PreviewText>
             </p>
           </div>
         </section>
 
         <section className="reunion-origin-environments">
           <div className="shell reunion-origin-environments-heading">
-            <p className="eyebrow light">{en ? "Exceptional underwater landscapes" : "Un relief sous-marin d’exception"}</p>
-            <h2>{en ? "Four worlds to explore" : "Quatre univers à explorer"}</h2>
+            <p className="eyebrow light"><PreviewText id="ReunionDivingPage.214061427fbb.1">{en ? "Exceptional underwater landscapes" : "Un relief sous-marin d’exception"}</PreviewText></p>
+            <h2><PreviewText id="ReunionDivingPage.3ea39ea4a048.1">{en ? "Four worlds to explore" : "Quatre univers à explorer"}</PreviewText></h2>
           </div>
           {diveEnvironments.map((environment, index) => {
             const copy = en ? environmentCopyEn[environment.id] : environment;
@@ -174,9 +175,9 @@ export function ReunionDivingPage({
                   <p className="reunion-origin-number" aria-hidden="true">
                     {String(index + 1).padStart(2, "0")}
                   </p>
-                  <h3>{copy.title}</h3>
+                  <h3><PreviewText id={`reunion.environment.${environment.id}.title`}>{copy.title}</PreviewText></h3>
                   <span className="reunion-origin-rule" aria-hidden="true" />
-                  {copy.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+                  {copy.paragraphs.map((paragraph, paragraphIndex) => <p key={paragraph}><PreviewText id={`reunion.environment.${environment.id}.paragraph.${paragraphIndex}`}>{paragraph}</PreviewText></p>)}
                 </div>
               </div>
             </article>
@@ -201,13 +202,13 @@ export function ReunionDivingPage({
           />
           <div className="shell reunion-origin-pelagics-copy">
             <div className="reunion-origin-pelagics-icon"><Droplets aria-hidden="true" /></div>
-            <p className="eyebrow light">{en ? "The Indian Ocean’s great spectacle" : "Le grand cinéma de l’océan Indien"}</p>
-            <h2>{en ? "The pelagic species" : "Les pélagiques"}</h2>
-            <p>{en ? "At certain times of the year, the ocean offers the possibility of diving with whales and dolphins." : "Enfin et pour finir, le grand cinéma vous offre la possibilité de plonger avec les baleines et les dauphins à certaines périodes de l’année."}</p>
-            <p>{en ? "From July onwards, these mammals gather off Saint-Gilles to our greatest delight." : "En effet, dès le mois de juillet, ces mammifères se donnent rendez-vous au large de St-Gilles pour notre plus grand bonheur."}</p>
-            <p>{en ? "Throughout the year, you may also encounter tuna, barracuda, trevally and perhaps even a shark." : "Néanmoins, tout au long de l’année, vous pourrez admirer les pélagiques, thons, barracudas, carrangues…"}</p>
+            <p className="eyebrow light"><PreviewText id="ReunionDivingPage.a6a6efc73ef5.1">{en ? "The Indian Ocean’s great spectacle" : "Le grand cinéma de l’océan Indien"}</PreviewText></p>
+            <h2><PreviewText id="ReunionDivingPage.173e94ad37d5.1">{en ? "The pelagic species" : "Les pélagiques"}</PreviewText></h2>
+            <p><PreviewText id="ReunionDivingPage.77970806d748.1">{en ? "At certain times of the year, the ocean offers the possibility of diving with whales and dolphins." : "Enfin et pour finir, le grand cinéma vous offre la possibilité de plonger avec les baleines et les dauphins à certaines périodes de l’année."}</PreviewText></p>
+            <p><PreviewText id="ReunionDivingPage.0c4d75aced38.1">{en ? "From July onwards, these mammals gather off Saint-Gilles to our greatest delight." : "En effet, dès le mois de juillet, ces mammifères se donnent rendez-vous au large de St-Gilles pour notre plus grand bonheur."}</PreviewText></p>
+            <p><PreviewText id="ReunionDivingPage.e867a0009f1e.1">{en ? "Throughout the year, you may also encounter tuna, barracuda, trevally and perhaps even a shark." : "Néanmoins, tout au long de l’année, vous pourrez admirer les pélagiques, thons, barracudas, carrangues…"}</PreviewText></p>
             <a className="button button-coral" href={bookingLinks.shop} target="_blank" rel="noreferrer">
-              {en ? "I book" : "Je réserve"} <ArrowUpRight aria-hidden="true" size={18} />
+              <PreviewText embedded id="ReunionDivingPage.link.a2285d7a0a6c.1">{en ? "I book" : "Je réserve"}</PreviewText> <ArrowUpRight aria-hidden="true" size={18} />
             </a>
           </div>
         </section>

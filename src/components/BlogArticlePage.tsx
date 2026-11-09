@@ -1,3 +1,4 @@
+import { PreviewText } from "./PreviewText";
 import { SiteImage as Image } from "./SiteImage";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, CalendarDays, Clock3, Mail, Share2 } from "lucide-react";
@@ -150,11 +151,11 @@ export function BlogArticlePage({
           <Image src={visual.hero} alt="" fill priority sizes="100vw" />
           <div className="article-origin-hero-shade" />
           <div className="shell article-origin-hero-copy">
-            <Link href="/blog/">Le journal de Corail Plongée</Link>
-            <h1>{content.title}</h1>
+            <Link href="/blog/"><PreviewText embedded id="BlogArticlePage.link.f1a3f7af124c.1">Le journal de Corail Plongée</PreviewText></Link>
+            <h1><PreviewText id={`article.${path}.title`}>{content.title}</PreviewText></h1>
             <div className="article-origin-meta">
               {content.date ? <time dateTime={page.lastmod}><CalendarDays aria-hidden="true" /> {content.date}</time> : null}
-              <span><Clock3 aria-hidden="true" /> {content.readingMinutes} min de lecture</span>
+              <span><Clock3 aria-hidden="true" /> {content.readingMinutes} <PreviewText id="article.reading-time">min de lecture</PreviewText></span>
             </div>
           </div>
         </section>
@@ -163,16 +164,16 @@ export function BlogArticlePage({
           <div className="shell article-origin-layout">
             <article className="article-origin-document">
               <div className="article-origin-lead">
-                {content.intro.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
+                {content.intro.map((paragraph, index) => <p key={index}><PreviewText id={`article.${path}.intro.${index}`}>{paragraph}</PreviewText></p>)}
               </div>
 
               {content.sections.map((section, index) => (
                 <div key={section.id}>
                   <section className={section.level === 3 ? "article-origin-faq" : undefined} id={section.id}>
                     <p className="article-origin-chapter">{section.level === 3 ? "Question" : `Chapitre ${String(index + 1).padStart(2, "0")}`}</p>
-                    {section.level === 3 ? <h3>{section.title}</h3> : <h2>{section.title}</h2>}
+                    {section.level === 3 ? <h3><PreviewText id={`article.${path}.section.${index}.title`}>{section.title}</PreviewText></h3> : <h2><PreviewText id={`article.${path}.section.${index}.title`}>{section.title}</PreviewText></h2>}
                     {section.paragraphs.map((paragraph, paragraphIndex) => (
-                      <p key={`${section.id}-${paragraphIndex}`}>{paragraph}</p>
+                      <p key={`${section.id}-${paragraphIndex}`}><PreviewText id={`article.${path}.section.${index}.paragraph.${paragraphIndex}`}>{paragraph}</PreviewText></p>
                     ))}
                   </section>
                   {visual.detail && index === 1 ? (
@@ -191,18 +192,18 @@ export function BlogArticlePage({
               <footer className="article-origin-share">
                 <div><Share2 aria-hidden="true" /><span>Partager cet article</span></div>
                 <div>
-                  <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`} target="_blank" rel="noreferrer">Facebook</a>
-                  <a href={`mailto:?subject=${encodedTitle}&body=${encodedUrl}`}><Mail aria-hidden="true" /> E-mail</a>
+                  <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`} target="_blank" rel="noreferrer"><PreviewText embedded id="BlogArticlePage.link.d41f5b4977ee.1">Facebook</PreviewText></a>
+                  <a href={`mailto:?subject=${encodedTitle}&body=${encodedUrl}`}><Mail aria-hidden="true" /> <PreviewText embedded id="BlogArticlePage.link.2550d962e536.1">E-mail</PreviewText></a>
                 </div>
               </footer>
             </article>
 
             <aside className="article-origin-aside">
-              <p className="eyebrow">Envie de passer à l’eau ?</p>
-              <h2>Vivez votre propre histoire.</h2>
-              <p>Notre équipe vous accueille à Saint-Gilles-les-Bains pour une plongée adaptée à votre niveau.</p>
-              <BookingCta href={bookingLinks.main_booking}>Réserver une plongée</BookingCta>
-              <Link href="/blog/">Tous les articles <ArrowRight aria-hidden="true" /></Link>
+              <p className="eyebrow"><PreviewText id="BlogArticlePage.8d65e6640a7b.1">Envie de passer à l’eau ?</PreviewText></p>
+              <h2><PreviewText id="BlogArticlePage.f53021b5a18d.1">Vivez votre propre histoire.</PreviewText></h2>
+              <p><PreviewText id="BlogArticlePage.3e01515fd824.1">Notre équipe vous accueille à Saint-Gilles-les-Bains pour une plongée adaptée à votre niveau.</PreviewText></p>
+              <BookingCta href={bookingLinks.main_booking}><PreviewText embedded id="BlogArticlePage.link.99b753f82669.1">Réserver une plongée</PreviewText></BookingCta>
+              <Link href="/blog/"><PreviewText embedded id="BlogArticlePage.link.51dc4aaa795f.1">Tous les articles </PreviewText><ArrowRight aria-hidden="true" /></Link>
             </aside>
           </div>
 

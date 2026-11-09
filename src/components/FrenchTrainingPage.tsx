@@ -1,9 +1,11 @@
+import { PreviewText } from "./PreviewText";
 import { SiteImage as Image } from "./SiteImage";
 import Link from "next/link";
 import { ArrowUpRight, Check } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import type { BookingKey } from "@/lib/site-data";
+import type { PublicCatalogPrice } from "@/lib/pricing-data";
 
 type BookingLinks = Record<BookingKey, string>;
 
@@ -164,9 +166,11 @@ const levelCopyEn: Record<string, {
 
 export function FrenchTrainingPage({
   bookingLinks,
+  prices,
   locale = "fr",
 }: {
   bookingLinks: BookingLinks;
+  prices: PublicCatalogPrice[];
   locale?: "fr" | "en";
 }) {
   const en = locale === "en";
@@ -190,9 +194,9 @@ export function FrenchTrainingPage({
           />
           <div className="french-training-origin-hero-shade" />
           <div className="shell french-training-origin-hero-copy">
-            <p className="eyebrow light">Certifications ANMP &amp; FFESSM</p>
-            <h1>{en ? "French training" : "Formation française"}</h1>
-            <p>{en ? "From Level 1 to Level 4, progress on the coral reefs of Saint-Gilles." : "Du Niveau 1 au Niveau 4, progressez sur les fonds coralliens de Saint-Gilles."}</p>
+            <p className="eyebrow light"><PreviewText id="FrenchTrainingPage.d42c5301de03.1">Certifications ANMP &amp; FFESSM</PreviewText></p>
+            <h1><PreviewText id="FrenchTrainingPage.9a97e069f351.1">{en ? "French training" : "Formation française"}</PreviewText></h1>
+            <p><PreviewText id="FrenchTrainingPage.1f3d9d3317f2.1">{en ? "From Level 1 to Level 4, progress on the coral reefs of Saint-Gilles." : "Du Niveau 1 au Niveau 4, progressez sur les fonds coralliens de Saint-Gilles."}</PreviewText></p>
           </div>
         </section>
 
@@ -200,66 +204,69 @@ export function FrenchTrainingPage({
           <div className="shell">
             <div className="french-training-origin-panel">
               <div className="french-training-origin-panel-heading">
-                <p className="eyebrow">{en ? "French certification" : "Formation française"}</p>
-                <h2>{en ? "Choose your level" : "Choisissez votre niveau"}</h2>
-                <p>{en ? "A complete pathway, from your first certification to supervising exploration dives." : "Un parcours complet, de vos premières certifications à l’encadrement en exploration."}</p>
+                <p className="eyebrow"><PreviewText id="FrenchTrainingPage.73b6cf123be0.1">{en ? "French certification" : "Formation française"}</PreviewText></p>
+                <h2><PreviewText id="FrenchTrainingPage.0d6f979e09ed.1">{en ? "Choose your level" : "Choisissez votre niveau"}</PreviewText></h2>
+                <p><PreviewText id="FrenchTrainingPage.68ba07cfabea.1">{en ? "A complete pathway, from your first certification to supervising exploration dives." : "Un parcours complet, de vos premières certifications à l’encadrement en exploration."}</PreviewText></p>
               </div>
 
               <div className="french-training-origin-levels">
                 {levels.map((level) => {
                   const copy = en ? levelCopyEn[level.id] : level;
+                  const priceKey = level.id === "niveau-1" ? "french-pe20" : level.id === "niveau-2" ? "french-level-2" : level.id === "niveau-3" ? (en ? "french-level-3" : "french-level-3-rifap") : null;
+                  const price = priceKey ? prices.find((entry) => entry.content_key === priceKey) : null;
+                  const displayPrice = priceKey ? (price ? `${(en ? price.prefix_en : price.prefix_fr) ?? ""}${new Intl.NumberFormat(en ? "en-GB" : "fr-FR", { minimumFractionDigits: price.amount_cents % 100 === 0 ? 0 : 2, maximumFractionDigits: 2 }).format(price.amount_cents / 100)} €${(en ? price.suffix_en : price.suffix_fr) ?? ""}` : null) : copy.price;
                   return (
                   <article className="french-training-origin-level" id={level.id} key={level.id}>
                     <header className="french-training-origin-level-heading">
                       <span aria-hidden="true">{level.number}</span>
                       <div>
-                        <p>{en ? "French certification" : "Certification française"}</p>
-                        <h2>{copy.title}</h2>
+                        <p><PreviewText id="FrenchTrainingPage.35613296b001.1">{en ? "French certification" : "Certification française"}</PreviewText></p>
+                        <h2><PreviewText id={`french-training.${level.id}.title`}>{copy.title}</PreviewText></h2>
                       </div>
-                      <strong>{copy.price}</strong>
+                      {displayPrice ? <strong>{displayPrice}</strong> : null}
                     </header>
 
                     <div className="french-training-origin-level-grid">
                       <div className="french-training-origin-level-story">
                         <section>
-                          <h3>{en ? "Purpose of the training" : "But de la formation"}</h3>
-                          <p>{copy.objective}</p>
+                          <h3><PreviewText id="FrenchTrainingPage.6ffc67df8483.1">{en ? "Purpose of the training" : "But de la formation"}</PreviewText></h3>
+                          <p><PreviewText id={`french-training.${level.id}.objective`}>{copy.objective}</PreviewText></p>
                         </section>
 
                         {copy.dives.length ? (
                           <section>
-                            <h3>{en ? "Dives" : "Plongées"}</h3>
-                            {copy.dives.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+                            <h3><PreviewText id="FrenchTrainingPage.76a93b89362c.1">{en ? "Dives" : "Plongées"}</PreviewText></h3>
+                            {copy.dives.map((paragraph, index) => <p key={paragraph}><PreviewText id={`french-training.${level.id}.dive.${index}`}>{paragraph}</PreviewText></p>)}
                           </section>
                         ) : null}
                       </div>
 
                       <aside className="french-training-origin-level-details">
                         <section>
-                          <h3>{en ? "Training cost" : "Coût de la formation"}</h3>
-                          <p>{en ? "The training costs " : "Le coût de la formation est de "}<strong>{copy.price}</strong>{en ? " and includes:" : " et comprend :"}</p>
+                          <h3><PreviewText id="FrenchTrainingPage.53efae4b98b6.1">{en ? "Training cost" : "Coût de la formation"}</PreviewText></h3>
+                          {displayPrice ? <p>{en ? "The training costs " : "Le coût de la formation est de "}<strong>{displayPrice}</strong>{en ? " and includes:" : " et comprend :"}</p> : null}
                           <ul>
-                            {copy.included.map((item) => (
-                              <li key={item}><Check aria-hidden="true" />{item}</li>
+                            {copy.included.map((item, index) => (
+                              <li key={item}><Check aria-hidden="true" /><PreviewText id={`french-training.${level.id}.included.${index}`}>{item}</PreviewText></li>
                             ))}
                           </ul>
                           <div className="french-training-origin-options">
-                            {copy.options.map((option) => <p key={option}><span>Option</span>{option}</p>)}
+                            {copy.options.map((option) => <p key={option}><span><PreviewText id="FrenchTrainingPage.rich.45aaacba7ea1.1">Option</PreviewText></span>{option}</p>)}
                           </div>
                         </section>
 
                         <section>
-                          <h3>{en ? "Registration conditions" : "Condition d’inscription"}</h3>
+                          <h3><PreviewText id="FrenchTrainingPage.9ec2370813ab.1">{en ? "Registration conditions" : "Condition d’inscription"}</PreviewText></h3>
                           <ul>
-                            {copy.requirements.map((item) => (
-                              <li key={item}><Check aria-hidden="true" />{item}</li>
+                            {copy.requirements.map((item, index) => (
+                              <li key={item}><Check aria-hidden="true" /><PreviewText id={`french-training.${level.id}.requirement.${index}`}>{item}</PreviewText></li>
                             ))}
                           </ul>
                         </section>
 
                         {level.id === "niveau-4" ? (
                           <Link className="button french-training-origin-button" href={en ? "/en/contact/" : "/contactez-nous/"}>
-                            {en ? "Contact us" : "Nous consulter"} <ArrowUpRight aria-hidden="true" size={18} />
+                            <PreviewText embedded id="FrenchTrainingPage.link.4b1b379b7fe4.1">{en ? "Contact us" : "Nous consulter"}</PreviewText> <ArrowUpRight aria-hidden="true" size={18} />
                           </Link>
                         ) : (
                           <a
@@ -268,7 +275,7 @@ export function FrenchTrainingPage({
                             target="_blank"
                             rel="noreferrer"
                           >
-                            {en ? "I book" : "Je réserve"} <ArrowUpRight aria-hidden="true" size={18} />
+                            <PreviewText embedded id="FrenchTrainingPage.link.a2285d7a0a6c.1">{en ? "I book" : "Je réserve"}</PreviewText> <ArrowUpRight aria-hidden="true" size={18} />
                           </a>
                         )}
                       </aside>

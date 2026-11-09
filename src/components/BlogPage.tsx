@@ -1,3 +1,4 @@
+import { PreviewText } from "./PreviewText";
 import { SiteImage as Image } from "./SiteImage";
 import Link from "next/link";
 import { ArrowUpRight, CalendarDays } from "lucide-react";
@@ -108,9 +109,9 @@ export function BlogPage({
           />
           <div className="blog-origin-hero-shade" />
           <div className="shell blog-origin-hero-copy">
-            <p className="eyebrow light">{en ? "Advice · Discoveries · Ocean" : "Conseils · Découvertes · Océan"}</p>
-            <h1>Blog</h1>
-            <p>{en ? "Blog about diving in Reunion Island" : "Blog sur la Plongée à la Réunion"}</p>
+            <p className="eyebrow light"><PreviewText id="BlogPage.e51ee3a97203.1">{en ? "Advice · Discoveries · Ocean" : "Conseils · Découvertes · Océan"}</PreviewText></p>
+            <h1><PreviewText id="BlogPage.8c6bc099534a.1">Blog</PreviewText></h1>
+            <p><PreviewText id="BlogPage.6b631127c96a.1">{en ? "Blog about diving in Reunion Island" : "Blog sur la Plongée à la Réunion"}</PreviewText></p>
           </div>
         </section>
 
@@ -118,13 +119,13 @@ export function BlogPage({
           <div className="shell blog-origin-panel">
             <header className="blog-origin-heading">
               <div>
-                <p className="eyebrow">{en ? "The Corail Plongée journal" : "Le journal de Corail Plongée"}</p>
-                <h2>Blog</h2>
+                <p className="eyebrow"><PreviewText id="BlogPage.c40dfcf918df.1">{en ? "The Corail Plongée journal" : "Le journal de Corail Plongée"}</PreviewText></p>
+                <h2><PreviewText id="BlogPage.8c6bc099534a.2">Blog</PreviewText></h2>
               </div>
               <p>
-                {en
+                <PreviewText id="BlogPage.f4492473077a.1">{en
                   ? "Practical advice, marine biodiversity and exploration stories to prepare for and enrich your dives in Reunion Island."
-                  : "Conseils pratiques, biodiversité marine et récits d’exploration pour préparer et enrichir vos plongées à La Réunion."}
+                  : "Conseils pratiques, biodiversité marine et récits d’exploration pour préparer et enrichir vos plongées à La Réunion."}</PreviewText>
               </p>
             </header>
 
@@ -145,10 +146,10 @@ export function BlogPage({
                     <p className="blog-origin-date">
                       <CalendarDays aria-hidden="true" size={15} /> {article.date}
                     </p>
-                    <h3><Link href={article.href}>{article.title}</Link></h3>
-                    <p className="blog-origin-excerpt">{article.excerpt}…</p>
+                    <h3><Link href={article.href}><PreviewText embedded id={`article.${article.href}.title`}>{article.title}</PreviewText></Link></h3>
+                    <p className="blog-origin-excerpt"><PreviewText id={`article.${article.href}.excerpt`}>{article.excerpt}</PreviewText>…</p>
                     <Link className="blog-origin-read" href={article.href}>
-                      Lire l’article <ArrowUpRight aria-hidden="true" size={17} />
+                      <PreviewText embedded id="BlogPage.link.ad2f0f05ef5e.1">Lire l’article </PreviewText><ArrowUpRight aria-hidden="true" size={17} />
                     </Link>
                   </div>
                 </article>

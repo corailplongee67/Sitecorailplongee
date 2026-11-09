@@ -1,3 +1,4 @@
+import { PreviewText } from "./PreviewText";
 import { SiteImage as Image } from "./SiteImage";
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2, ExternalLink, Gift, ShieldCheck } from "lucide-react";
@@ -117,14 +118,14 @@ export function ProductDetailPage({
       <main className="product-origin-main">
         <section className="product-origin-hero">
           <div className="shell product-origin-breadcrumb">
-            <Link href="/en/shop/"><ArrowLeft aria-hidden="true" /> Secure shop</Link>
+            <Link href="/en/shop/"><ArrowLeft aria-hidden="true" /> <PreviewText embedded id="ProductDetailPage.link.3ea48ea27d1b.1">Secure shop</PreviewText></Link>
           </div>
           <div className="shell product-origin-grid">
             <figure className="product-origin-image">
               <Image src={imageUrl} alt={imageAlt} fill priority sizes="(max-width: 900px) 100vw, 48vw" />
             </figure>
             <div className="product-origin-summary">
-              <p className="eyebrow light">Corail Plongée experience</p>
+              <p className="eyebrow light"><PreviewText id="ProductDetailPage.52e6796498db.1">Corail Plongée experience</PreviewText></p>
               <h1>{content.title}</h1>
               {content.historicalPrice ? (
                 <div className="product-origin-price">
@@ -132,10 +133,10 @@ export function ProductDetailPage({
                   <strong>€{content.historicalPrice}</strong>
                 </div>
               ) : null}
-              <p>Current price, dates and availability are confirmed in Corail Plongée’s secure booking shop.</p>
+              <p><PreviewText id="ProductDetailPage.67f33087d9dd.1">Current price, dates and availability are confirmed in Corail Plongée’s secure booking shop.</PreviewText></p>
               <div className="product-origin-actions">
-                <BookingCta href={bookingLinks.gift_dive}>Buy or offer this dive</BookingCta>
-                <a href={bookingLinks.agenda} target="_blank" rel="noreferrer">Check availability <ExternalLink aria-hidden="true" /></a>
+                <BookingCta href={bookingLinks.gift_dive}><PreviewText embedded id="ProductDetailPage.link.68f3e21f6874.1">Buy or offer this dive</PreviewText></BookingCta>
+                <a href={bookingLinks.agenda} target="_blank" rel="noreferrer"><PreviewText embedded id="ProductDetailPage.link.ba74bca9c97e.1">Check availability </PreviewText><ExternalLink aria-hidden="true" /></a>
               </div>
               <div className="product-origin-trust">
                 <span><ShieldCheck aria-hidden="true" /> Secure Zuurit checkout</span>
@@ -149,7 +150,7 @@ export function ProductDetailPage({
           <div className="shell product-origin-document">
             {content.intro.length ? (
               <div className="product-origin-intro">
-                <p className="eyebrow">About this experience</p>
+                <p className="eyebrow"><PreviewText id="ProductDetailPage.a5b2a013ce39.1">About this experience</PreviewText></p>
                 {content.intro.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
               </div>
             ) : null}
@@ -169,10 +170,10 @@ export function ProductDetailPage({
 
             <div className="product-origin-final">
               <div>
-                <p className="eyebrow light">Ready for bubbles?</p>
-                <h2>Complete your order in the secure shop.</h2>
+                <p className="eyebrow light"><PreviewText id="ProductDetailPage.baf418a6bd2c.1">Ready for bubbles?</PreviewText></p>
+                <h2><PreviewText id="ProductDetailPage.6ac5b4a55346.1">Complete your order in the secure shop.</PreviewText></h2>
               </div>
-              <BookingCta href={bookingLinks.gift_dive}>Open the shop</BookingCta>
+              <BookingCta href={bookingLinks.gift_dive}><PreviewText embedded id="ProductDetailPage.link.4ffc2fbc00e9.1">Open the shop</PreviewText></BookingCta>
             </div>
           </div>
         </section>

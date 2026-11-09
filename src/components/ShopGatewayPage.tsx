@@ -1,3 +1,4 @@
+import { PreviewText } from "./PreviewText";
 import { SiteImage as Image } from "./SiteImage";
 import Link from "next/link";
 import { ArrowLeft, CalendarDays, ExternalLink, Gift, LockKeyhole, ShoppingBag } from "lucide-react";
@@ -28,32 +29,32 @@ export function ShopGatewayPage({ locale, bookingLinks }: {
           <Image src="/images/hero/diving-reunion.jpg" alt="" fill priority sizes="100vw" />
           <div className="shop-gateway-shade" />
           <div className="shell shop-gateway-copy">
-            <p className="eyebrow light">Corail Plongée · Saint-Gilles-les-Bains</p>
-            <h1>{fr ? "La boutique" : "The shop"}</h1>
-            <p>{fr ? "Réservez une expérience ou offrez une plongée depuis notre espace de paiement sécurisé." : "Book an experience or offer a dive through our secure checkout."}</p>
-            <BookingCta href={bookingLinks.gift_dive}>{fr ? "Accéder à la boutique" : "Open the shop"}</BookingCta>
+            <p className="eyebrow light"><PreviewText id="ShopGatewayPage.f86843a1559d.1">Corail Plongée · Saint-Gilles-les-Bains</PreviewText></p>
+            <h1><PreviewText id="ShopGatewayPage.c5bab94d742e.1">{fr ? "La boutique" : "The shop"}</PreviewText></h1>
+            <p><PreviewText id="ShopGatewayPage.b3962abd7574.1">{fr ? "Réservez une expérience ou offrez une plongée depuis notre espace de paiement sécurisé." : "Book an experience or offer a dive through our secure checkout."}</PreviewText></p>
+            <BookingCta href={bookingLinks.gift_dive}><PreviewText embedded id="ShopGatewayPage.link.e148dbc17878.1">{fr ? "Accéder à la boutique" : "Open the shop"}</PreviewText></BookingCta>
           </div>
         </section>
 
         <section className="shop-gateway-section">
           <div className="shell shop-gateway-layout">
             <div className="shop-gateway-categories">
-              <p className="eyebrow">{fr ? "Toutes vos envies" : "Every way to dive"}</p>
-              <h2>{fr ? "Choisissez votre expérience." : "Choose your experience."}</h2>
+              <p className="eyebrow"><PreviewText id="ShopGatewayPage.7e7923c8c781.1">{fr ? "Toutes vos envies" : "Every way to dive"}</PreviewText></p>
+              <h2><PreviewText id="ShopGatewayPage.3d51a7744627.1">{fr ? "Choisissez votre expérience." : "Choose your experience."}</PreviewText></h2>
               <div>
                 {categories.map((category, index) => <span key={category[0]}><b>{String(index + 1).padStart(2, "0")}</b>{fr ? category[0] : category[1]}</span>)}
               </div>
             </div>
             <aside className="shop-gateway-panel">
               <ShoppingBag aria-hidden="true" />
-              <h2>{fr ? "Une commande simple et sécurisée" : "A simple, secure order"}</h2>
+              <h2><PreviewText id="ShopGatewayPage.ef4ace8f063b.1">{fr ? "Une commande simple et sécurisée" : "A simple, secure order"}</PreviewText></h2>
               <ul>
                 <li><LockKeyhole aria-hidden="true" /> {fr ? "Paiement géré dans la boutique Zuurit" : "Payment handled in the Zuurit shop"}</li>
                 <li><Gift aria-hidden="true" /> {fr ? "Possibilité d’offrir la prestation" : "Option to offer the experience as a gift"}</li>
                 <li><CalendarDays aria-hidden="true" /> {fr ? "Agenda et disponibilités actualisés" : "Up-to-date calendar and availability"}</li>
               </ul>
-              <a href={bookingLinks.gift_dive} target="_blank" rel="noreferrer">{fr ? "Voir tous les produits" : "See all products"} <ExternalLink aria-hidden="true" /></a>
-              <Link href={fr ? "/" : "/en/home/"}><ArrowLeft aria-hidden="true" /> {fr ? "Retour à l’accueil" : "Back home"}</Link>
+              <a href={bookingLinks.gift_dive} target="_blank" rel="noreferrer"><PreviewText embedded id="ShopGatewayPage.link.f0988abea99a.1">{fr ? "Voir tous les produits" : "See all products"}</PreviewText> <ExternalLink aria-hidden="true" /></a>
+              <Link href={fr ? "/" : "/en/home/"}><ArrowLeft aria-hidden="true" /> <PreviewText embedded id="ShopGatewayPage.link.71b47927b8d6.1">{fr ? "Retour à l’accueil" : "Back home"}</PreviewText></Link>
             </aside>
           </div>
         </section>

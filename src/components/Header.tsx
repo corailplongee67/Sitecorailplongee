@@ -6,15 +6,19 @@ import { ChevronDown, LockKeyhole, Menu, UserRound, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { alternateLocalePath, nav, type Locale, type NavigationItem } from "@/lib/site-data";
-import { PreviewText } from "./PreviewText";
+import { usePreviewTextValue } from "./PreviewText";
 
 function navigationTextKey(item: NavigationItem) {
   return `navigation.${item.href ?? item.bookingKey ?? item.label}`;
 }
 
 function NavigationLabel({ item }: { item: NavigationItem }) {
-  if (item.href === "/evenements/" || item.href === "/en/our-events/") return <>{item.label}</>;
-  return <PreviewText embedded id={navigationTextKey(item)}>{item.label}</PreviewText>;
+  const label = usePreviewTextValue(navigationTextKey(item), item.label);
+  return <>{item.href === "/evenements/" || item.href === "/en/our-events/" ? item.label : label}</>;
+}
+
+function SubnavigationLabel({ href, label }: { href: string; label: string }) {
+  return <>{usePreviewTextValue(`navigation.${href}`, label)}</>;
 }
 
 export function Header({
@@ -99,7 +103,7 @@ export function Header({
               </div>
               <div id="desktop-services-menu" className="desktop-dropdown">
                 {item.children.map((child) => (
-                  <Link key={child.href} href={child.href}><PreviewText embedded id={`navigation.${child.href}`}>{child.label}</PreviewText></Link>
+                  <Link key={child.href} href={child.href}><SubnavigationLabel href={child.href} label={child.label} /></Link>
                 ))}
               </div>
             </div>
@@ -157,7 +161,7 @@ export function Header({
               {mobileServicesOpen ? (
                 <div id="mobile-services-menu" className="mobile-subnav">
                   {item.children.map((child) => (
-                    <Link key={child.href} href={child.href} onClick={closeMobileNavigation}><PreviewText embedded id={`navigation.${child.href}`}>{child.label}</PreviewText></Link>
+                    <Link key={child.href} href={child.href} onClick={closeMobileNavigation}><SubnavigationLabel href={child.href} label={child.label} /></Link>
                   ))}
                 </div>
               ) : null}

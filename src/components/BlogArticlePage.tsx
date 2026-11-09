@@ -190,7 +190,7 @@ export function BlogArticlePage({
               ))}
 
               <footer className="article-origin-share">
-                <div><Share2 aria-hidden="true" /><span>Partager cet article</span></div>
+                <div><Share2 aria-hidden="true" /><span><PreviewText id="blog.article.share">Partager cet article</PreviewText></span></div>
                 <div>
                   <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`} target="_blank" rel="noreferrer"><PreviewText embedded id="BlogArticlePage.link.d41f5b4977ee.1">Facebook</PreviewText></a>
                   <a href={`mailto:?subject=${encodedTitle}&body=${encodedUrl}`}><Mail aria-hidden="true" /> <PreviewText embedded id="BlogArticlePage.link.2550d962e536.1">E-mail</PreviewText></a>
@@ -208,8 +208,8 @@ export function BlogArticlePage({
           </div>
 
           <nav className="shell article-origin-navigation" aria-label="Articles précédent et suivant">
-            <Link href={previousPath}><ArrowLeft aria-hidden="true" /><span>Article précédent</span></Link>
-            <Link href={nextPath}><span>Article suivant</span><ArrowRight aria-hidden="true" /></Link>
+            <Link href={previousPath}><ArrowLeft aria-hidden="true" /><span><PreviewText embedded id="blog.article.previous">Article précédent</PreviewText></span></Link>
+            <Link href={nextPath}><span><PreviewText embedded id="blog.article.next">Article suivant</PreviewText></span><ArrowRight aria-hidden="true" /></Link>
           </nav>
         </section>
       </main>

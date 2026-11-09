@@ -9,9 +9,9 @@ import type { BookingKey } from "@/lib/site-data";
 type BookingLinks = Record<BookingKey, string>;
 
 const keyFacts = [
-  { icon: Clock3, value: "3 heures", label: "de sortie en mer" },
-  { icon: UsersRound, value: "2 moniteurs", label: "pour vous accompagner" },
-  { icon: Waves, value: "9 personnes", label: "maximum par groupe dans l’eau" },
+  { id: "duration", icon: Clock3, value: "3 heures", label: "de sortie en mer" },
+  { id: "instructors", icon: UsersRound, value: "2 moniteurs", label: "pour vous accompagner" },
+  { id: "group-size", icon: Waves, value: "9 personnes", label: "maximum par groupe dans l’eau" },
 ];
 
 function EnglishCetaceanPage({ bookingLinks }: { bookingLinks: BookingLinks }) {
@@ -196,12 +196,12 @@ export function CetaceanPage({
             </div>
 
             <div className="cetacean-origin-facts">
-              {keyFacts.map(({ icon: Icon, value, label }) => (
-                <article key={value}>
+              {keyFacts.map(({ id, icon: Icon, value, label }) => (
+                <article key={id}>
                   <Icon aria-hidden="true" />
                   <div>
                     <strong>{value}</strong>
-                    <span>{label}</span>
+                    <span><PreviewText id={`cetacean.facts.${id}.label`}>{label}</PreviewText></span>
                   </div>
                 </article>
               ))}

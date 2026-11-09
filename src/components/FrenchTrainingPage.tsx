@@ -174,6 +174,8 @@ export function FrenchTrainingPage({
   locale?: "fr" | "en";
 }) {
   const en = locale === "en";
+  const licencePrice = prices.find((entry) => entry.content_key === "french-ffessm-licence");
+  const licenceAmount = licencePrice ? `${new Intl.NumberFormat(en ? "en-GB" : "fr-FR", { minimumFractionDigits: licencePrice.amount_cents % 100 === 0 ? 0 : 2, maximumFractionDigits: 2 }).format(licencePrice.amount_cents / 100)}€` : null;
   return (
     <>
       <Header
@@ -251,7 +253,7 @@ export function FrenchTrainingPage({
                             ))}
                           </ul>
                           <div className="french-training-origin-options">
-                            {copy.options.map((option) => <p key={option}><span><PreviewText id="FrenchTrainingPage.rich.45aaacba7ea1.1">Option</PreviewText></span>{option}</p>)}
+                            {copy.options.map((option, index) => <p key={option}><span><PreviewText id="FrenchTrainingPage.rich.45aaacba7ea1.1">Option</PreviewText></span><span>{!en && index === 0 ? <><PreviewText id="french-training.licence.before">Licence </PreviewText>{licenceAmount}<PreviewText id="french-training.licence.after"> pour le diplôme FFESSM / CMAS</PreviewText></> : option}</span></p>)}
                           </div>
                         </section>
 

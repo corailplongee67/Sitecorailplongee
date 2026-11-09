@@ -35,6 +35,7 @@ test("French training prices follow the existing catalog across both placements"
     { content_key: "french-level-2", amount_cents: 77500, prefix_fr: "À partir de ", suffix_fr: " / personne" },
     { content_key: "french-level-3-rifap", amount_cents: 90500 },
     { content_key: "french-level-3", amount_cents: 79500 },
+    { content_key: "french-ffessm-licence", amount_cents: 6250 },
   ];
   const render = (locale, entries = prices) => new JSDOM(renderToStaticMarkup(React.createElement(pageModule.exports.FrenchTrainingPage, {
     bookingLinks: { agenda: "/agenda", gift_dive: "/gift", customer_account: "/account", french_training_booking: "/book" }, prices: entries, locale,
@@ -44,6 +45,8 @@ test("French training prices follow the existing catalog across both placements"
   assert.match(page.querySelector("#niveau-1 .french-training-origin-level-details p strong").textContent, /430,50\s*€/);
   assert.match(page.querySelector("#niveau-2 header strong").textContent, /À partir de 775\s*€ \/ personne/);
   assert.match(page.querySelector("#niveau-3 header strong").textContent, /905\s*€/);
+  assert.equal([...page.querySelectorAll(".french-training-origin-options p:first-child")].length, 4);
+  for (const licence of page.querySelectorAll(".french-training-origin-options p:first-child")) assert.match(licence.textContent, /Licence 62,50€ pour le diplôme FFESSM \/ CMAS/);
   assert.match(render("en").querySelector("#niveau-3 header strong").textContent, /795/);
   assert.equal(render("fr", []).querySelector("#niveau-1 header strong"), null);
 });

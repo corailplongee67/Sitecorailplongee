@@ -728,7 +728,7 @@ h2 { margin-bottom: 0; font-size: clamp(2.6rem, 5.2vw, 5.4rem); line-height: 0.9
 .french-training-origin-level-details li svg { flex: 0 0 auto; width: 19px; height: 19px; margin-top: 2px; padding: 3px; color: #062459; background: #a8e9e6; border-radius: 50%; }
 .french-training-origin-options { margin-top: 24px; display: grid; gap: 8px; }
 .french-training-origin-options p { margin: 0; padding: 12px 14px; display: grid; grid-template-columns: auto 1fr; gap: 10px; color: white; background: rgba(232,184,72,.13); border-left: 2px solid #e8b848; font-size: .88rem; }
-.french-training-origin-options span { color: #f3ce79; font-size: .68rem; font-weight: 760; letter-spacing: .1em; text-transform: uppercase; }
+.french-training-origin-options p > span:first-child { color: #f3ce79; font-size: .68rem; font-weight: 760; letter-spacing: .1em; text-transform: uppercase; }
 .french-training-origin-button { width: 100%; margin-top: 34px; color: #17242a; background: #e8b848; }
 .french-training-origin-button:hover { background: #f1c65f; }
 

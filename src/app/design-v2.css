@@ -696,7 +696,7 @@ p { line-height: 1.68; }
 .ssi-origin-specialty-copy h3,
 .ssi-origin-specialty-copy h4,
 .french-training-origin-level-details p strong,
-.french-training-origin-options span,
+.french-training-origin-options p > span:first-child,
 .crossover-origin-card-copy > span { color: var(--aqua-light); }
 .discovery-origin-pack-copy .discovery-origin-pack-close,
 .french-training-origin-options p { border-left-color: var(--coral); background: rgba(243, 151, 138, 0.11); }

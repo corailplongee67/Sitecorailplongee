@@ -13,7 +13,8 @@ function amount(price: PublicCatalogPrice, locale: Locale) {
   const value = new Intl.NumberFormat(fr ? "fr-FR" : "en-GB", {
     style: "currency",
     currency: "EUR",
-    maximumFractionDigits: 0,
+    minimumFractionDigits: price.amount_cents % 100 === 0 ? 0 : 2,
+    maximumFractionDigits: 2,
   }).format(price.amount_cents / 100);
 
   return `${fr ? price.prefix_fr ?? "" : price.prefix_en ?? ""}${value}${fr ? price.suffix_fr ?? "" : price.suffix_en ?? ""}`;

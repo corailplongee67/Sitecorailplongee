@@ -105,7 +105,7 @@ export function ReunionDivingPage({
           />
           <div className="reunion-origin-hero-shade" />
           <div className="shell reunion-origin-hero-copy">
-            <p className="eyebrow light"><PreviewText id="ReunionDivingPage.rich.ca511c78337a.1">Corail Plongée </PreviewText>{en ? "Reunion Island" : "Réunion"}</p>
+            <p className="eyebrow light"><PreviewText id="ReunionDivingPage.rich.ca511c78337a.1">Corail Plongée </PreviewText><PreviewText id="reunion.hero.location">{en ? "Reunion Island" : "Réunion"}</PreviewText></p>
             <h1><PreviewText id="ReunionDivingPage.eff3975e9417.1">{en ? "Diving in Reunion Island" : "Plonger Réunion"}</PreviewText></h1>
             <p><PreviewText id="ReunionDivingPage.83608ded6943.1">{en ? "Scuba diving centre on Reunion Island" : "Centre de plongée sous-marine sur l’île de la Réunion"}</PreviewText></p>
           </div>

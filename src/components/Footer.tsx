@@ -1,7 +1,7 @@
 import { PreviewText } from "./PreviewText";
 import Image from "next/image";
 import Link from "next/link";
-import { FooterContact } from "./SiteContact";
+import { FooterContact, FooterLocation } from "./SiteContact";
 import { type Locale } from "@/lib/site-data";
 
 const partners = [
@@ -68,12 +68,12 @@ export function Footer({ locale }: { locale: Locale }) {
           <p><PreviewText id="Footer.397f2ebefd15.1">{isFr ? "Ce site a été financé à l’aide du FEDER (REACT-UE) dans le cadre de la réponse de l’Union européenne à la pandémie COVID-19." : "This site was funded by the ERDF (REACT-EU) as part of the European Union’s response to the COVID-19 pandemic."}</PreviewText></p>
           <p><PreviewText id="Footer.2f3652823da3.1">{isFr ? "Le recrutement de 3 moniteurs de plongée et 1 secrétaire a été financé par l’Union européenne." : "The recruitment of three diving instructors and one secretary was funded by the European Union."}</PreviewText></p>
           <p><PreviewText id="Footer.7de2fc6c7dd4.1">{isFr ? "Le développement de l’activité de plongée sous-marine de loisirs est financé par l’Union européenne pour l’acquisition d’un bateau « Popot Dive »." : "The development of recreational scuba diving was supported by the European Union through the acquisition of the “Popot Dive” boat."}</PreviewText></p>
-          <strong>{isFr ? "L’Europe s’engage à La Réunion." : "Europe is committed to Reunion Island."}</strong>
+          <strong><PreviewText id="Footer.funding.commitment">{isFr ? "L’Europe s’engage à La Réunion." : "Europe is committed to Reunion Island."}</PreviewText></strong>
         </div>
       </div>
       <div className="footer-bottom shell">
         <span>© {new Date().getFullYear()} Corail Plongée</span>
-        <span>{isFr ? "Port de Saint-Gilles · Île de La Réunion" : "Saint-Gilles marina · Reunion Island"}</span>
+        <FooterLocation english={!isFr} />
       </div>
     </footer>
   );

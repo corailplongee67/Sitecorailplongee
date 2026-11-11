@@ -14,6 +14,17 @@ test("opening hours use the same editable values on the contact and about pages"
   const values = { "global.hours.weekdays": "8h à 18h", "global.hours.sunday": "8h à 13h" };
   const Empty = () => null;
   const Link = ({ children }) => React.createElement("a", null, children);
+  const hoursPath = path.resolve("src/lib/opening-hours.ts");
+  const hoursSource = await readFile(hoursPath, "utf8");
+  const hoursModule = new Module(hoursPath);
+  hoursModule.filename = hoursPath;
+  hoursModule.paths = Module._nodeModulePaths(path.dirname(hoursPath));
+  hoursModule._compile(ts.transpileModule(hoursSource, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText, hoursPath);
+  const formatHours = hoursModule.exports.formatEnglishOpeningHours;
+  assert.equal(formatHours("7h30 à 16h30"), "7.30am to 4.30pm");
+  assert.equal(formatHours("8h à 12h"), "8am to 12pm");
+  assert.equal(formatHours("sur rendez-vous"), "sur rendez-vous");
+  assert.equal(formatHours("29h à 99h"), "29h à 99h");
   async function load(name) {
     const filename = path.resolve(`src/components/${name}.tsx`);
     const source = await readFile(filename, "utf8");
@@ -24,6 +35,7 @@ test("opening hours use the same editable values on the contact and about pages"
     const originalRequire = componentModule.require.bind(componentModule);
     componentModule.require = (id) => {
       if (id === "./PreviewText") return { PreviewText: ({ id: key, children }) => React.createElement(React.Fragment, null, values[key] ?? children) };
+      if (id === "./OpeningHoursText") return { OpeningHoursText: ({ id: key, fallback }) => formatHours(values[key] ?? fallback) };
       if (id === "./SiteImage") return { SiteImage: Empty };
       if (id === "./AboutTeamImage") return { AboutTeamImage: Empty };
       if (id === "./SiteContact") return { ContactDetails: Empty, ContactMap: Empty };
@@ -42,5 +54,8 @@ test("opening hours use the same editable values on the contact and about pages"
     const text = new JSDOM(renderToStaticMarkup(React.createElement(Page, props))).window.document.body.textContent;
     assert.match(text, /8h à 18h/);
     assert.match(text, /8h à 13h/);
+    const englishText = new JSDOM(renderToStaticMarkup(React.createElement(Page, { ...props, locale: "en" }))).window.document.body.textContent;
+    assert.match(englishText, /8am to 6pm/);
+    assert.match(englishText, /8am to 1pm/);
   }
 });

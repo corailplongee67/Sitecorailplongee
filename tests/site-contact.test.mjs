@@ -34,6 +34,7 @@ test("shared contact keeps display, call, email and map links aligned", async ()
   const components = await compile("src/components/SiteContact.tsx", { "@/lib/site-contact": util, "./PreviewText": { useSiteContact: () => changed } });
   const markup = renderToStaticMarkup(React.createElement("div", null,
     React.createElement(components.FooterContact),
+    React.createElement(components.FooterLocation, { english: false }),
     React.createElement(components.ContactDetails, { english: false }),
     React.createElement(components.ContactMap, { english: false }),
     React.createElement(components.ContactEmailLink, null, "Écrire"),
@@ -44,4 +45,7 @@ test("shared contact keeps display, call, email and map links aligned", async ()
   assert.equal(document.querySelectorAll('a[href*="12%20rue%20du%20Port"]').length, 2);
   assert.match(document.querySelector("iframe").src, /12%20rue%20du%20Port/);
   assert.match(document.body.textContent, /12 rue du Port, La Réunion/);
+  assert.equal(document.querySelector("div > span").textContent, changed.address);
+  const defaults = await compile("src/components/SiteContact.tsx", { "@/lib/site-contact": util, "./PreviewText": { useSiteContact: () => util.defaultSiteContact } });
+  assert.equal(renderToStaticMarkup(React.createElement(defaults.FooterLocation, { english: false })), "<span>Port de Saint-Gilles · Île de La Réunion</span>");
 });

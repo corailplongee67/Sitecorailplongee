@@ -1,4 +1,5 @@
 import { PreviewText } from "./PreviewText";
+import { OpeningHoursText } from "./OpeningHoursText";
 import { AboutTeamImage } from "./AboutTeamImage";
 import { SiteImage as Image } from "./SiteImage";
 import { ArrowUpRight } from "lucide-react";
@@ -113,8 +114,7 @@ const englishSections = [
     paragraphs: [
       <>
         Corail Plongée is a scuba diving center on Reunion Island, located in the
-        port of Saint-Gilles-les-Bains. We are open year round from <strong>7.30 AM
-        to 4.30 PM (12 PM on Sundays).</strong>
+        port of Saint-Gilles-les-Bains. We are open year round from <strong><OpeningHoursText id="global.hours.weekdays" fallback="7h30 à 16h30" />{" ("}<OpeningHoursText id="global.hours.sunday" fallback="7h30 à 12h" />{" on Sundays)."}</strong>
       </>,
       <>
         We are excited to share our passion for diving with you on the many sites

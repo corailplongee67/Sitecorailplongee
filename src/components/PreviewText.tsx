@@ -71,6 +71,11 @@ export function usePreviewTextValue(id: string, fallback: string) {
   return preview ? drafts[id] ?? publicText : publicText;
 }
 
+export function useSharedTextValue(id: string, fallback: string) {
+  const { preview, drafts, published } = useContext(PreviewContext);
+  return (preview ? drafts[id] : undefined) ?? published[id] ?? fallback;
+}
+
 export function PreviewDisabledButton({ id, children }: { id: string; children: string }) {
   const { enabled } = useContext(PreviewContext);
   return <button type="button" disabled={!enabled}><PreviewText embedded id={id}>{children}</PreviewText></button>;

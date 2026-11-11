@@ -15,6 +15,14 @@ export function FooterContact() {
   </>;
 }
 
+export function FooterLocation({ english }: { english: boolean }) {
+  const contact = useSiteContact();
+  const location = contact.address === defaultSiteContact.address
+    ? (english ? "Saint-Gilles marina · Reunion Island" : "Port de Saint-Gilles · Île de La Réunion")
+    : contact.address;
+  return <span>{location}</span>;
+}
+
 export function ContactDetails({ english }: { english: boolean }) {
   const contact = useSiteContact();
   const defaultAddress = contact.address === defaultSiteContact.address;

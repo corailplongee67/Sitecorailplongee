@@ -1,4 +1,5 @@
 import { PreviewText } from "./PreviewText";
+import { OpeningHoursText } from "./OpeningHoursText";
 import { SiteImage as Image } from "./SiteImage";
 import { ArrowUpRight, Clock3 } from "lucide-react";
 import { ContactDetails, ContactMap } from "./SiteContact";
@@ -71,8 +72,8 @@ export function ContactPage({
                   <Clock3 aria-hidden="true" />
                   <span>
                     <strong><PreviewText id="contact.hours.heading">{en ? "Opening hours" : "Heures d’ouverture"}</PreviewText></strong>
-                    {en ? "Monday to Saturday, 7.30am to 4.30pm" : <><PreviewText id="contact.hours.weekdays.label">Lundi au samedi de </PreviewText><PreviewText id="global.hours.weekdays">7h30 à 16h30</PreviewText></>}<br />
-                    {en ? "Sunday, 7.30am to 12pm" : <><PreviewText id="contact.hours.sunday.label">Dimanche de </PreviewText><PreviewText id="global.hours.sunday">7h30 à 12h</PreviewText></>}
+                    {en ? <>Monday to Saturday, <OpeningHoursText id="global.hours.weekdays" fallback="7h30 à 16h30" /></> : <><PreviewText id="contact.hours.weekdays.label">Lundi au samedi de </PreviewText><PreviewText id="global.hours.weekdays">7h30 à 16h30</PreviewText></>}<br />
+                    {en ? <>Sunday, <OpeningHoursText id="global.hours.sunday" fallback="7h30 à 12h" /></> : <><PreviewText id="contact.hours.sunday.label">Dimanche de </PreviewText><PreviewText id="global.hours.sunday">7h30 à 12h</PreviewText></>}
                   </span>
                 </div>
               </div>

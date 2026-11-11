@@ -45,20 +45,26 @@ test("preview saves text and switches between editing links and navigation", asy
   componentModule.filename = sourcePath;
   componentModule.paths = Module._nodeModulePaths(path.dirname(sourcePath));
   const originalRequire = componentModule.require.bind(componentModule);
+  let pathname = "/";
   componentModule.require = (id) => {
-    if (id === "next/navigation") return { usePathname: () => "/" };
+    if (id === "next/navigation") return { usePathname: () => pathname };
     if (id === "@/app/admin/actions") return { publishTextBlock: async (key, text) => { saved.push([key, text]); } };
     if (id === "@/lib/site-contact") return { SITE_CONTACT_TEXT_KEY: "global.contact", resolveSiteContact: (raw) => raw ? JSON.parse(raw) : { email: "default@example.com" } };
     return originalRequire(id);
   };
   componentModule._compile(output, sourcePath);
-  const { PreviewTextProvider, PreviewText, PreviewModeButton, PreviewDisabledButton, useSiteContact, usePreviewTextValue } = componentModule.exports;
+  const { PreviewTextProvider, PreviewText, PreviewModeButton, PreviewDisabledButton, useSiteContact, usePreviewTextValue, useSharedTextValue } = componentModule.exports;
   const { renderToStaticMarkup } = require("react-dom/server");
   const publicMarkup = renderToStaticMarkup(React.createElement(PreviewTextProvider, {
     enabled: false, initialDrafts: { "home.hero.title": "Brouillon privé" }, published: { "home.hero.title": "Titre publié" }, shared: true,
   }, React.createElement("h1", null, React.createElement(PreviewText, { id: "home.hero.title" }, "Texte d’origine"))));
   assert.equal(publicMarkup, "<h1>Titre publié</h1>");
   assert.doesNotMatch(publicMarkup, /Brouillon privé/);
+  pathname = "/en/contact/";
+  const SharedHours = () => React.createElement("span", null, useSharedTextValue("global.hours.weekdays", "Horaires par défaut"));
+  const englishHours = renderToStaticMarkup(React.createElement(PreviewTextProvider, { enabled: false, initialDrafts: {}, published: { "global.hours.weekdays": "8h à 18h" }, shared: true }, React.createElement(SharedHours)));
+  assert.equal(englishHours, "<span>8h à 18h</span>");
+  pathname = "/";
   const disabledButton = renderToStaticMarkup(React.createElement(PreviewTextProvider, {
     enabled: false, initialDrafts: {}, published: {}, shared: false,
   }, React.createElement(PreviewDisabledButton, { id: "home.newsletter.submit" }, "Envoyer")));

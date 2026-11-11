@@ -8,12 +8,12 @@ import { Header } from "./Header";
 import type { BookingKey, Locale } from "@/lib/site-data";
 
 const categories = [
-  ["Découverte & initiation", "Discovery & introductory dives"],
-  ["Formations SSI", "SSI training"],
-  ["Formations françaises", "French diving courses"],
-  ["Nitrox", "Nitrox courses"],
-  ["Exploration encadrée", "Guided exploration"],
-  ["Exploration autonome", "Independent exploration"],
+  ["Découverte & initiation", "Discovery & introductory dives", "discovery"],
+  ["Formations SSI", "SSI training", "ssi"],
+  ["Formations françaises", "French diving courses", "french-training"],
+  ["Nitrox", "Nitrox courses", "nitrox"],
+  ["Exploration encadrée", "Guided exploration", "guided"],
+  ["Exploration autonome", "Independent exploration", "independent"],
 ];
 
 export function ShopGatewayPage({ locale, bookingLinks }: {
@@ -42,16 +42,16 @@ export function ShopGatewayPage({ locale, bookingLinks }: {
               <p className="eyebrow"><PreviewText id="ShopGatewayPage.7e7923c8c781.1">{fr ? "Toutes vos envies" : "Every way to dive"}</PreviewText></p>
               <h2><PreviewText id="ShopGatewayPage.3d51a7744627.1">{fr ? "Choisissez votre expérience." : "Choose your experience."}</PreviewText></h2>
               <div>
-                {categories.map((category, index) => <span key={category[0]}><b>{String(index + 1).padStart(2, "0")}</b>{fr ? category[0] : category[1]}</span>)}
+                {categories.map((category, index) => <span key={category[2]}><b>{String(index + 1).padStart(2, "0")}</b><PreviewText id={`shop.category.${category[2]}`}>{fr ? category[0] : category[1]}</PreviewText></span>)}
               </div>
             </div>
             <aside className="shop-gateway-panel">
               <ShoppingBag aria-hidden="true" />
               <h2><PreviewText id="ShopGatewayPage.ef4ace8f063b.1">{fr ? "Une commande simple et sécurisée" : "A simple, secure order"}</PreviewText></h2>
               <ul>
-                <li><LockKeyhole aria-hidden="true" /> {fr ? "Paiement géré dans la boutique Zuurit" : "Payment handled in the Zuurit shop"}</li>
-                <li><Gift aria-hidden="true" /> {fr ? "Possibilité d’offrir la prestation" : "Option to offer the experience as a gift"}</li>
-                <li><CalendarDays aria-hidden="true" /> {fr ? "Agenda et disponibilités actualisés" : "Up-to-date calendar and availability"}</li>
+                <li><LockKeyhole aria-hidden="true" /> <PreviewText id="shop.trust.payment">{fr ? "Paiement géré dans la boutique Zuurit" : "Payment handled in the Zuurit shop"}</PreviewText></li>
+                <li><Gift aria-hidden="true" /> <PreviewText id="shop.trust.gift">{fr ? "Possibilité d’offrir la prestation" : "Option to offer the experience as a gift"}</PreviewText></li>
+                <li><CalendarDays aria-hidden="true" /> <PreviewText id="shop.trust.availability">{fr ? "Agenda et disponibilités actualisés" : "Up-to-date calendar and availability"}</PreviewText></li>
               </ul>
               <a href={bookingLinks.gift_dive} target="_blank" rel="noreferrer"><PreviewText embedded id="ShopGatewayPage.link.f0988abea99a.1">{fr ? "Voir tous les produits" : "See all products"}</PreviewText> <ExternalLink aria-hidden="true" /></a>
               <Link href={fr ? "/" : "/en/home/"}><ArrowLeft aria-hidden="true" /> <PreviewText embedded id="ShopGatewayPage.link.71b47927b8d6.1">{fr ? "Retour à l’accueil" : "Back home"}</PreviewText></Link>

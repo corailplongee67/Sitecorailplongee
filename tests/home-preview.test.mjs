@@ -93,6 +93,26 @@ test("preview saves text and switches between editing links and navigation", asy
     enabled: true, initialDrafts: { "about.team.0.name": "Nouveau nom", "about.team.0.role": "Monitrice" }, published: {}, shared: false,
   }, React.createElement(teamImageModule.exports.AboutTeamImage, { image: "/photo.jpg", name: "Ancien nom", role: "Moniteur", index: 0, english: false })));
   assert.match(teamImage, /alt="Nouveau nom, Monitrice chez Corail Plongée"/);
+  const blogLinksPath = path.resolve("src/components/BlogArticleLinks.tsx");
+  const blogLinksSource = await readFile(blogLinksPath, "utf8");
+  const blogLinksModule = new Module(blogLinksPath);
+  blogLinksModule.filename = blogLinksPath;
+  blogLinksModule.paths = Module._nodeModulePaths(path.dirname(blogLinksPath));
+  const blogLinksRequire = blogLinksModule.require.bind(blogLinksModule);
+  blogLinksModule.require = (id) => {
+    if (id === "./PreviewText") return componentModule.exports;
+    if (id === "next/link") return { __esModule: true, default: ({ children, ...props }) => React.createElement("a", props, children) };
+    return blogLinksRequire(id);
+  };
+  blogLinksModule._compile(ts.transpileModule(blogLinksSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText, blogLinksPath);
+  const blogLinks = renderToStaticMarkup(React.createElement(PreviewTextProvider, {
+    enabled: false, initialDrafts: {}, published: { "article./article/.title": "Titre corrigé" }, shared: true,
+  }, React.createElement(React.Fragment, null,
+    React.createElement(blogLinksModule.exports.BlogArticleImageLink, { href: "/article/", title: "Ancien titre" }, "Image"),
+    React.createElement(blogLinksModule.exports.BlogArticleEmailLink, { path: "/article/", title: "Ancien titre", url: "https://example.org/article/" }, "Partager"),
+  )));
+  assert.match(blogLinks, /aria-label="Titre corrigé"/);
+  assert.match(blogLinks, /subject=Titre%20corrig%C3%A9/);
   const root = createRoot(document.getElementById("root"));
   try {
     await React.act(async () => root.render(React.createElement(PreviewTextProvider, { enabled: true, initialDrafts: {}, published: {}, shared: true },

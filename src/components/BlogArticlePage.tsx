@@ -1,4 +1,5 @@
 import { PreviewText } from "./PreviewText";
+import { BlogArticleEmailLink } from "./BlogArticleLinks";
 import { SiteImage as Image } from "./SiteImage";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, CalendarDays, Clock3, Mail, Share2 } from "lucide-react";
@@ -136,7 +137,6 @@ export function BlogArticlePage({
   const previousPath = currentIndex > 0 ? articlePaths[currentIndex - 1] : articlePaths.at(-1)!;
   const nextPath = currentIndex < articlePaths.length - 1 ? articlePaths[currentIndex + 1] : articlePaths[0];
   const encodedUrl = encodeURIComponent(page.url);
-  const encodedTitle = encodeURIComponent(content.title);
 
   return (
     <>
@@ -193,7 +193,7 @@ export function BlogArticlePage({
                 <div><Share2 aria-hidden="true" /><span><PreviewText id="blog.article.share">Partager cet article</PreviewText></span></div>
                 <div>
                   <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`} target="_blank" rel="noreferrer"><PreviewText embedded id="BlogArticlePage.link.d41f5b4977ee.1">Facebook</PreviewText></a>
-                  <a href={`mailto:?subject=${encodedTitle}&body=${encodedUrl}`}><Mail aria-hidden="true" /> <PreviewText embedded id="BlogArticlePage.link.2550d962e536.1">E-mail</PreviewText></a>
+                  <BlogArticleEmailLink path={path} title={content.title} url={page.url}><Mail aria-hidden="true" /> <PreviewText embedded id="BlogArticlePage.link.2550d962e536.1">E-mail</PreviewText></BlogArticleEmailLink>
                 </div>
               </footer>
             </article>

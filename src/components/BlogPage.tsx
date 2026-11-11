@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowUpRight, CalendarDays } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
+import { BlogArticleImageLink } from "./BlogArticleLinks";
 import type { BookingKey } from "@/lib/site-data";
 
 type BookingLinks = Record<BookingKey, string>;
@@ -132,7 +133,7 @@ export function BlogPage({
             {!en && <div className="blog-origin-grid">
               {articles.map((article, index) => (
                 <article className="blog-origin-card" key={article.href}>
-                  <Link className="blog-origin-image" href={article.href} aria-label={article.title}>
+                  <BlogArticleImageLink href={article.href} title={article.title}>
                     <Image
                       src={article.image}
                       alt=""
@@ -141,7 +142,7 @@ export function BlogPage({
                     />
                     <span className="blog-origin-image-shade" />
                     <span className="blog-origin-index">{String(index + 1).padStart(2, "0")}</span>
-                  </Link>
+                  </BlogArticleImageLink>
                   <div className="blog-origin-card-copy">
                     <p className="blog-origin-date">
                       <CalendarDays aria-hidden="true" size={15} /> {article.date}

@@ -113,6 +113,18 @@ test("preview saves text and switches between editing links and navigation", asy
   )));
   assert.match(blogLinks, /aria-label="Titre corrigé"/);
   assert.match(blogLinks, /subject=Titre%20corrig%C3%A9/);
+  const legalTitlePath = path.resolve("src/components/LegalSummaryTitle.tsx");
+  const legalTitleSource = await readFile(legalTitlePath, "utf8");
+  const legalTitleModule = new Module(legalTitlePath);
+  legalTitleModule.filename = legalTitlePath;
+  legalTitleModule.paths = Module._nodeModulePaths(path.dirname(legalTitlePath));
+  const legalTitleRequire = legalTitleModule.require.bind(legalTitleModule);
+  legalTitleModule.require = (id) => id === "./PreviewText" ? componentModule.exports : legalTitleRequire(id);
+  legalTitleModule._compile(ts.transpileModule(legalTitleSource, { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText, legalTitlePath);
+  const legalSummary = renderToStaticMarkup(React.createElement(PreviewTextProvider, {
+    enabled: false, initialDrafts: {}, published: { "legal.test.section.2.title": "3. Nouveau titre" }, shared: true,
+  }, React.createElement(legalTitleModule.exports.LegalSummaryTitle, { id: "legal.test.section.2.title", title: "3. Ancien titre" })));
+  assert.equal(legalSummary, "Nouveau titre");
   const root = createRoot(document.getElementById("root"));
   try {
     await React.act(async () => root.render(React.createElement(PreviewTextProvider, { enabled: true, initialDrafts: {}, published: {}, shared: true },

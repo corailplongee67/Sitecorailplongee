@@ -1,4 +1,5 @@
 import { PreviewText } from "./PreviewText";
+import { LegalSummaryTitle } from "./LegalSummaryTitle";
 import { SiteImage as Image } from "./SiteImage";
 import Link from "next/link";
 import { ArrowLeft, FileText } from "lucide-react";
@@ -208,10 +209,10 @@ export function LegalPage({
                 <h2><PreviewText id="LegalPage.b8bd7ae4658a.1">{en ? "Contents" : "Sommaire"}</PreviewText></h2>
               </div>
               <nav>
-                {sections.filter((section) => section.level === 2).map((section, index) => (
+                {sections.map((section, index) => ({ section, index })).filter(({ section }) => section.level === 2).map(({ section, index }, summaryIndex) => (
                   <a href={`#${section.id}`} key={section.id}>
-                    <span>{String(index + 1).padStart(2, "0")}</span>
-                    {section.title.replace(/^\d+[.]?\s*/, "")}
+                    <span>{String(summaryIndex + 1).padStart(2, "0")}</span>
+                    <LegalSummaryTitle id={`legal.${path}.section.${index}.title`} title={section.title} />
                   </a>
                 ))}
               </nav>
@@ -220,7 +221,7 @@ export function LegalPage({
             <article className="legal-origin-document">
               <header>
                 <p className="eyebrow"><PreviewText id="LegalPage.0d3a5fab1798.1">{en ? "Information document" : "Document d’information"}</PreviewText></p>
-                <p>{decodeEntities(page.metaDescription ?? (en ? "Legal information from Corail Plongée." : "Informations légales de Corail Plongée."))}</p>
+                <p><PreviewText id={`legal.${path}.introduction`}>{decodeEntities(page.metaDescription ?? (en ? "Legal information from Corail Plongée." : "Informations légales de Corail Plongée."))}</PreviewText></p>
               </header>
               {sections.map((section, index) => (
                 <section

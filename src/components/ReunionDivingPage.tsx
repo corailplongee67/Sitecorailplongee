@@ -138,9 +138,9 @@ export function ReunionDivingPage({
               </article>
             </div>
             <div className="reunion-origin-facts">
-              <div><CalendarDays aria-hidden="true" /><strong>365</strong><span>{en ? "days a year" : "jours par an"}</span></div>
-              <div><ThermometerSun aria-hidden="true" /><strong>24–30°</strong><span>{en ? "water temperature" : "température de l’eau"}</span></div>
-              <div><Eye aria-hidden="true" /><strong>{en ? "Excellent" : "Excellente"}</strong><span>{en ? "visibility" : "visibilité"}</span></div>
+              <div><CalendarDays aria-hidden="true" /><strong>365</strong><span><PreviewText id="reunion.facts.days.label">{en ? "days a year" : "jours par an"}</PreviewText></span></div>
+              <div><ThermometerSun aria-hidden="true" /><strong>24–30°</strong><span><PreviewText id="reunion.facts.temperature.label">{en ? "water temperature" : "température de l’eau"}</PreviewText></span></div>
+              <div><Eye aria-hidden="true" /><strong>{en ? "Excellent" : "Excellente"}</strong><span><PreviewText id="reunion.facts.visibility.label">{en ? "visibility" : "visibilité"}</PreviewText></span></div>
             </div>
             <p className="reunion-origin-condition-note">
               <PreviewText id="ReunionDivingPage.cbf0a61c043a.1">{en ? "On the leeward coast, diving conditions are ideal 365 days a year, with water temperatures between 24 and 30°C and exceptional visibility." : "Sur la côte sous le vent, les conditions de plongées sont idéales, possibles 365 jours par an, avec une température de l’eau qui évolue entre 24 et 30°, et une visibilité excellente."}</PreviewText>

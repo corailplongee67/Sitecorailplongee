@@ -903,7 +903,7 @@ h2 { margin-bottom: 0; font-size: clamp(2.6rem, 5.2vw, 5.4rem); line-height: 0.9
 .reunion-origin-facts > div:last-child { border-right: 0; }
 .reunion-origin-facts svg { grid-row: span 2; align-self: center; color: #0a7183; }
 .reunion-origin-facts strong { color: #0a3475; font-family: var(--serif); font-size: clamp(1.8rem, 3vw, 2.7rem); font-weight: 400; line-height: 1; }
-.reunion-origin-facts span { color: #617279; font-size: .7rem; font-weight: 740; letter-spacing: .1em; text-transform: uppercase; }
+.reunion-origin-facts > div > span { color: #617279; font-size: .7rem; font-weight: 740; letter-spacing: .1em; text-transform: uppercase; }
 .reunion-origin-condition-note { grid-column: 1 / -1; max-width: 920px; margin: -26px auto 0; color: #40545b; font-size: 1.05rem; line-height: 1.82; text-align: center; }
 .reunion-origin-environments { padding: 110px 0 95px; color: white; background: #082d6d; }
 .reunion-origin-environments-heading { margin-bottom: 58px; text-align: center; }

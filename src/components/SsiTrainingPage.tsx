@@ -276,7 +276,7 @@ export function SsiTrainingPage({
                   <li><Check aria-hidden="true" /><PreviewText id="ssi.list.f56cb7c93d5f.2">{en ? "Equipment provided" : "Matériel fourni"}</PreviewText></li>
                 </ul>
               </div>
-              <a className="button ssi-origin-gold-button" href={bookingLinks.ssi_booking} target="_blank" rel="noreferrer"><PreviewText embedded id="SsiTrainingPage.link.ae939a163e2a.2">{en ? "Order an Open Water Diver course" : "Commander une formation Open Water Diver"}</PreviewText> <ArrowUpRight aria-hidden="true" size={18} /></a>
+              <a className="button ssi-origin-gold-button" href={bookingLinks.ssi_booking} target="_blank" rel="noreferrer"><PreviewText embedded id="SsiTrainingPage.link.ae939a163e2a.1">{en ? "Order an Open Water Diver course" : "Commander une formation Open Water Diver"}</PreviewText> <ArrowUpRight aria-hidden="true" size={18} /></a>
             </div>
           </div>
         </section>

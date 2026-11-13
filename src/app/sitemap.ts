@@ -8,7 +8,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const auditedRoutes = auditPages.flatMap((page) => {
     if (page.status !== 200) return [];
     const path = new URL(page.url).pathname;
-    if (seen.has(path) || path.startsWith("/admin/")) return [];
+    if (seen.has(path) || path.startsWith("/admin/") || path.startsWith("/en/")) return [];
     seen.add(path);
     return [{
       url: new URL(path, base).toString(),
@@ -20,7 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     ...auditedRoutes,
-    ...["/boutique/", "/en/shop/"].map((path) => ({
+    ...["/boutique/"].map((path) => ({
       url: new URL(path, base).toString(),
       changeFrequency: "weekly" as const,
       priority: 0.7,

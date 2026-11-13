@@ -4,8 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronDown, LockKeyhole, Menu, UserRound, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
-import { alternateLocalePath, nav, type Locale, type NavigationItem } from "@/lib/site-data";
+import { nav, type Locale, type NavigationItem } from "@/lib/site-data";
 import { usePreviewTextValue } from "./PreviewText";
 
 function navigationTextKey(item: NavigationItem) {
@@ -38,8 +37,6 @@ export function Header({
   const [scrolled, setScrolled] = useState(false);
   const isFr = locale === "fr";
   const items = nav[locale];
-  const pathname = usePathname();
-  const languageHref = alternateLocalePath(pathname, locale);
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -117,13 +114,6 @@ export function Header({
         </nav>
 
         <div className="header-actions">
-          <Link
-            className="language-switch"
-            href={languageHref}
-            aria-label={isFr ? "Afficher cette page en anglais" : "View this page in French"}
-          >
-            {isFr ? "EN" : "FR"}
-          </Link>
           <a className="account-link" href={accountUrl} target="_blank" rel="noreferrer" aria-label={isFr ? "Mon compte" : "My account"}>
             <UserRound size={19} />
           </a>

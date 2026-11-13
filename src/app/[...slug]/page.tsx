@@ -54,7 +54,7 @@ function findPage(path: string): AuditPage | undefined {
 export async function generateStaticParams() {
   return auditPages.flatMap((page) => {
     const path = new URL(page.url).pathname;
-    if (page.status !== 200 || path === "/" || path === "/en/home/" || redirectPaths.has(path)) return [];
+    if (page.status !== 200 || path === "/" || path.startsWith("/en/") || redirectPaths.has(path)) return [];
     return [{ slug: path.split("/").filter(Boolean) }];
   });
 }

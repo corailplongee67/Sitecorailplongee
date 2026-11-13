@@ -198,7 +198,7 @@ export function DiscoveryPage({
                   ? "After a first dive, people wishing to continue and develop their scuba diving skills can follow training courses leading to a diploma. Several training organisations are available to you: FFESSM, SSI and ANMP. All of them deliver diplomas that will allow you, in the long run, to dive in total autonomy."
                   : "Après un baptême, les personnes désirant poursuivre et évoluer en plongée sous-marine peuvent suivre des formations diplômantes. Plusieurs organismes de formations s’offrent à vous : FFESSM, SSI et ANMP. Toutes délivrent des diplômes qui vous permettront, à terme, de plonger en totale autonomie."}</PreviewText></p>
                 <p><PreviewText id="DiscoveryPage.93955ead76da.1">{isEnglish
-                  ? "If your child was amazed by the underwater world after a first dive, they can begin their first level of diving from the age of 8."
+                  ? "If your child was amazed by the underwater world after a first dive, they cannot begin their first level of diving at age 8."
                   : "Si votre enfant a été émerveillé par le monde subaquatique suite à un baptême, sachez qu’il n’est pas possible de passer son premier niveau de plongée à partir de l’âge de 8 ans."}</PreviewText></p>
                 <a
                   className="button button-coral"

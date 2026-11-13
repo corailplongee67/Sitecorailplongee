@@ -31,11 +31,12 @@ test("discovery pack shows the current catalog amount and hides it when unavaila
     return originalRequire(id);
   };
   pageModule._compile(output, filename);
-  const render = (amount) => new JSDOM(renderToStaticMarkup(React.createElement(pageModule.exports.DiscoveryPage, {
+  const render = (amount, locale = "fr") => new JSDOM(renderToStaticMarkup(React.createElement(pageModule.exports.DiscoveryPage, {
     bookingLinks: { agenda: "/agenda", gift_dive: "/gift", customer_account: "/account", discovery_booking: "/book" },
     packAmountCents: amount,
-    locale: "fr",
+    locale,
   }))).window.document;
   assert.match(render(23750).querySelector(".discovery-origin-pack-price strong").textContent, /237,50\s*€/);
   assert.equal(render(null).querySelector(".discovery-origin-pack-price"), null);
+  assert.match(render(null, "en").querySelector(".discovery-origin-after-copy").textContent, /cannot begin their first level of diving at age 8/);
 });

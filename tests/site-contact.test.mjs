@@ -31,7 +31,7 @@ test("shared contact keeps display, call, email and map links aligned", async ()
   assert.throws(() => util.validateSiteContact({ ...changed, phone: "12" }));
   assert.deepEqual(util.resolveSiteContact(JSON.stringify(changed)), changed);
   assert.deepEqual(util.resolveSiteContact("invalid"), util.defaultSiteContact);
-  const components = await compile("src/components/SiteContact.tsx", { "@/lib/site-contact": util, "./PreviewText": { useSiteContact: () => changed } });
+  const components = await compile("src/components/SiteContact.tsx", { "@/lib/site-contact": util, "./PreviewText": { useSiteContact: () => changed, PreviewText: ({ children }) => children } });
   const markup = renderToStaticMarkup(React.createElement("div", null,
     React.createElement(components.FooterContact),
     React.createElement(components.FooterLocation, { english: false }),
@@ -46,6 +46,12 @@ test("shared contact keeps display, call, email and map links aligned", async ()
   assert.match(document.querySelector("iframe").src, /12%20rue%20du%20Port/);
   assert.match(document.body.textContent, /12 rue du Port, La Réunion/);
   assert.equal(document.querySelector("div > span").textContent, changed.address);
-  const defaults = await compile("src/components/SiteContact.tsx", { "@/lib/site-contact": util, "./PreviewText": { useSiteContact: () => util.defaultSiteContact } });
+  const defaults = await compile("src/components/SiteContact.tsx", { "@/lib/site-contact": util, "./PreviewText": { useSiteContact: () => util.defaultSiteContact, PreviewText: ({ children }) => children } });
   assert.equal(renderToStaticMarkup(React.createElement(defaults.FooterLocation, { english: false })), "<span>Port de Saint-Gilles · Île de La Réunion</span>");
+  const labels = { "contact.details.address-label": "Nous trouver", "contact.details.phone-label": "Nous appeler", "contact.details.email-label": "Nous écrire" };
+  const edited = await compile("src/components/SiteContact.tsx", { "@/lib/site-contact": util, "./PreviewText": { useSiteContact: () => changed, PreviewText: ({ id, children }) => labels[id] ?? children } });
+  const editedDocument = new JSDOM(renderToStaticMarkup(React.createElement(edited.ContactDetails, { english: false }))).window.document;
+  assert.equal(editedDocument.querySelector('a[href="tel:+262692123456"] strong').textContent, "Nous appeler");
+  assert.equal(editedDocument.querySelector('a[href="mailto:accueil%2Btest@example.com"] strong').textContent, "Nous écrire");
+  assert.match(editedDocument.body.textContent, /Nous trouver/);
 });

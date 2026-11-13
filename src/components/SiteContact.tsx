@@ -3,7 +3,7 @@
 import { Mail, MapPin, Phone } from "lucide-react";
 import type { ReactNode } from "react";
 import { contactMapUrl, defaultSiteContact, emailHref, phoneHref } from "@/lib/site-contact";
-import { useSiteContact } from "./PreviewText";
+import { PreviewText, useSiteContact } from "./PreviewText";
 
 export function FooterContact() {
   const contact = useSiteContact();
@@ -29,9 +29,9 @@ export function ContactDetails({ english }: { english: boolean }) {
   const map = defaultAddress ? "https://maps.google.com/?q=Corail+Plongee+Saint-Gilles-les-Bains" : contactMapUrl(contact.address);
   const displayedPhone = contact.phone === defaultSiteContact.phone ? "02.62.24.37.25" : contact.phone;
   return <>
-    <a href={map} target="_blank" rel="noreferrer"><MapPin aria-hidden="true" /><span><strong>{english ? "Address" : "Adresse"}</strong>{defaultAddress ? <>Port de plaisance,<br />Saint-Gilles les Bains 97434,<br />{english ? "Reunion Island" : "La Réunion"}</> : contact.address}</span></a>
-    <a href={`tel:${phoneHref(contact.phone)}`}><Phone aria-hidden="true" /><span><strong>{english ? "Phone" : "Téléphone"}</strong>{displayedPhone}</span></a>
-    <a href={emailHref(contact.email)}><Mail aria-hidden="true" /><span><strong>Mail</strong>{contact.email}</span></a>
+    <a href={map} target="_blank" rel="noreferrer"><MapPin aria-hidden="true" /><span><strong><PreviewText id="contact.details.address-label">{english ? "Address" : "Adresse"}</PreviewText></strong>{defaultAddress ? <>Port de plaisance,<br />Saint-Gilles les Bains 97434,<br />{english ? "Reunion Island" : "La Réunion"}</> : contact.address}</span></a>
+    <a href={`tel:${phoneHref(contact.phone)}`}><Phone aria-hidden="true" /><span><strong><PreviewText id="contact.details.phone-label">{english ? "Phone" : "Téléphone"}</PreviewText></strong>{displayedPhone}</span></a>
+    <a href={emailHref(contact.email)}><Mail aria-hidden="true" /><span><strong><PreviewText id="contact.details.email-label">Mail</PreviewText></strong>{contact.email}</span></a>
   </>;
 }
 

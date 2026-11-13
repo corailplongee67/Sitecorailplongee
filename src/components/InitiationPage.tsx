@@ -9,12 +9,17 @@ type BookingLinks = Record<BookingKey, string>;
 
 export function InitiationPage({
   bookingLinks,
+  amountCents,
   locale = "fr",
 }: {
   bookingLinks: BookingLinks;
+  amountCents: number | null;
   locale?: "fr" | "en";
 }) {
   const en = locale === "en";
+  const price = amountCents === null ? null : new Intl.NumberFormat(en ? "en-GB" : "fr-FR", {
+    style: "currency", currency: "EUR", minimumFractionDigits: amountCents % 100 === 0 ? 0 : 2, maximumFractionDigits: 2,
+  }).format(amountCents / 100);
   return (
     <>
       <Header
@@ -56,7 +61,7 @@ export function InitiationPage({
                     loading="eager"
                     sizes="(max-width: 900px) 100vw, 50vw"
                   />
-                  <div className="initiation-origin-price" aria-label="Tarif : 95 euros">
+                  {price !== null && <div className="initiation-origin-price" aria-label={`${en ? "Price" : "Tarif"} : ${price}`}>
                     <Image
                       src="/images/initiation/original/fond-prix.png"
                       alt=""
@@ -64,8 +69,8 @@ export function InitiationPage({
                       sizes="180px"
                       aria-hidden="true"
                     />
-                    <strong>95€</strong>
-                  </div>
+                    <strong>{price}</strong>
+                  </div>}
                 </div>
 
                 <div className="initiation-origin-copy">

@@ -83,6 +83,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
+  if (path === "/je-decouvre-initiation/" || path === "/en/i-discover-initiation/") {
+    const isEnglish = path.startsWith("/en/");
+    return {
+      title: isEnglish ? "Diving initiation in Saint-Gilles-les-Bains" : "Initiation plongée à Saint-Gilles-les-Bains",
+      description: isEnglish
+        ? "Discover Reunion Island’s marine life with an instructor in Saint-Gilles-les-Bains."
+        : "Découvrez les fonds marins de La Réunion avec un moniteur à Saint-Gilles-les-Bains.",
+      alternates: { canonical: path },
+    };
+  }
+
   if (path === "/je-plonge-autonome/" || path === "/en/i-dive/") {
     const isEnglish = path.startsWith("/en/");
     const title = isEnglish
@@ -124,7 +135,7 @@ export default async function Page({ params }: PageProps) {
   const page = findPage(path);
   if (!page) notFound();
 
-  const needsSharedPrices = path === "/decouverte/" || path === "/formation-francaise/" || path === "/en/french-training/";
+  const needsSharedPrices = ["/decouverte/", "/je-decouvre-initiation/", "/en/i-discover-initiation/", "/formation-francaise/", "/en/french-training/"].includes(path);
   const [bookingLinks, sharedCatalog] = await Promise.all([
     getBookingLinks(),
     needsSharedPrices ? getPriceCatalog() : Promise.resolve(null),
@@ -151,6 +162,7 @@ export default async function Page({ params }: PageProps) {
     return (
       <InitiationPage
         bookingLinks={bookingLinks}
+        amountCents={sharedCatalog?.prices.find((price) => price.content_key === "discovery-initiation")?.amount_cents ?? null}
         locale={path.startsWith("/en/") ? "en" : "fr"}
       />
     );

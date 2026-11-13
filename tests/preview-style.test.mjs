@@ -14,6 +14,8 @@ test("editing spans do not inherit styles reserved for section numbers or subtit
     [design, ".exploration-practical-facts", '<div class="exploration-practical-facts"><article><div><strong><span class="preview-editable-text" id="edit">Titre</span></strong><span id="original">Détail</span></div></article></div>'],
     [globals, ".shop-gateway-categories > div > span", '<div class="shop-gateway-categories"><div><span id="original"><b>01</b><span class="preview-editable-text" id="edit">Découverte</span></span></div></div>'],
     [globals, ".reunion-origin-facts > div > span", '<div class="reunion-origin-facts"><div><strong>365</strong><span id="original"><span class="preview-editable-text" id="edit">jours par an</span></span></div></div>'],
+    [globals, ".discovery-origin-pack-price > span", '<div class="discovery-origin-pack-price"><span id="original">Tarif</span><strong>220 €</strong><small><span class="preview-editable-text" id="edit">l’expérience complète</span></small></div>'],
+    [globals, ".article-origin-meta > span", '<div class="article-origin-meta"><span id="original">5 <span class="preview-editable-text" id="edit">min de lecture</span></span></div>'],
   ];
   for (const [css, prefix, html] of rules) {
     const line = css.split("\n").find((entry) => entry.startsWith(prefix) && entry.includes("span") && entry.includes("{"));

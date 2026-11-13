@@ -571,7 +571,7 @@ h2 { margin-bottom: 0; font-size: clamp(2.6rem, 5.2vw, 5.4rem); line-height: 0.9
 .discovery-origin-pack-heading h2 { max-width: 560px; font-size: clamp(3.1rem, 6vw, 6.2rem); line-height: .9; }
 .discovery-origin-pack-tagline { margin: 30px 0 36px; color: #a8e9e6; font-family: var(--serif); font-size: clamp(1.35rem, 2.4vw, 2rem); line-height: 1.35; }
 .discovery-origin-pack-price { padding-top: 28px; display: grid; grid-template-columns: auto 1fr; gap: 5px 18px; align-items: end; border-top: 1px solid rgba(255,255,255,.25); }
-.discovery-origin-pack-price span { grid-column: 1 / -1; color: #ff9b80; font-size: .7rem; font-weight: 760; letter-spacing: .14em; text-transform: uppercase; }
+.discovery-origin-pack-price > span { grid-column: 1 / -1; color: #ff9b80; font-size: .7rem; font-weight: 760; letter-spacing: .14em; text-transform: uppercase; }
 .discovery-origin-pack-price strong { font-family: var(--serif); font-size: clamp(3.3rem, 5vw, 5.2rem); font-weight: 400; line-height: 1; }
 .discovery-origin-pack-price small { padding-bottom: 8px; color: rgba(255,255,255,.66); font-size: .82rem; }
 .discovery-origin-pack-copy > p { margin-bottom: 22px; color: rgba(255,255,255,.84); font-size: clamp(1rem, 1.3vw, 1.12rem); line-height: 1.75; }
@@ -1682,7 +1682,7 @@ h2 { margin-bottom: 0; font-size: clamp(2.6rem, 5.2vw, 5.4rem); line-height: 0.9
 }
 .article-origin-meta { display: flex; justify-content: center; flex-wrap: wrap; gap: 13px 27px; }
 .article-origin-meta time,
-.article-origin-meta span { display: inline-flex; align-items: center; gap: 8px; color: rgba(255, 255, 255, .78); font-size: .74rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.article-origin-meta > span { display: inline-flex; align-items: center; gap: 8px; color: rgba(255, 255, 255, .78); font-size: .74rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .article-origin-meta svg { width: 15px; height: 15px; color: #f3ce79; }
 .article-origin-content { padding-bottom: 110px; }
 .article-origin-layout {

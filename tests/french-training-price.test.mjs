@@ -34,8 +34,10 @@ test("French training prices follow the existing catalog across both placements"
   const prices = [
     { content_key: "french-pe20", amount_cents: 43050 },
     { content_key: "french-level-2", amount_cents: 77500, prefix_fr: "À partir de ", suffix_fr: " / personne" },
+    { content_key: "french-level-2-nitrox", amount_cents: 86000 },
     { content_key: "french-level-3-rifap", amount_cents: 90500 },
     { content_key: "french-level-3", amount_cents: 79500 },
+    { content_key: "french-level-3-rifap-nitrox", amount_cents: 109050 },
     { content_key: "french-ffessm-licence", amount_cents: 6250 },
   ];
   const render = (locale, entries = prices) => new JSDOM(renderToStaticMarkup(React.createElement(pageModule.exports.FrenchTrainingPage, {
@@ -52,7 +54,9 @@ test("French training prices follow the existing catalog across both placements"
   assert.equal(textIds.filter((id) => id === "french-training.price.after").length, 4);
   assert.ok(textIds.includes("french-training.niveau-2.option.1.description"));
   assert.ok(textIds.includes("french-training.niveau-3.option.1.description"));
-  assert.match(page.querySelector("#niveau-2 .french-training-origin-options p:nth-child(2)").textContent, /Nitrox 80€/);
+  assert.match(page.querySelector("#niveau-2 .french-training-origin-options p:nth-child(2)").textContent, /Nitrox 85€/);
+  assert.match(page.querySelector("#niveau-3 .french-training-origin-options p:nth-child(2)").textContent, /1 090,50€/);
+  assert.doesNotMatch(render("fr", []).querySelector("#niveau-2 .french-training-origin-options p:nth-child(2)").textContent, /80€/);
   assert.match(render("en").querySelector("#niveau-3 header strong").textContent, /795/);
   assert.equal(render("fr", []).querySelector("#niveau-1 header strong"), null);
 });

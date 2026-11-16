@@ -176,6 +176,12 @@ export function FrenchTrainingPage({
   const en = locale === "en";
   const licencePrice = prices.find((entry) => entry.content_key === "french-ffessm-licence");
   const licenceAmount = licencePrice ? `${new Intl.NumberFormat(en ? "en-GB" : "fr-FR", { minimumFractionDigits: licencePrice.amount_cents % 100 === 0 ? 0 : 2, maximumFractionDigits: 2 }).format(licencePrice.amount_cents / 100)}€` : null;
+  const level2 = prices.find((entry) => entry.content_key === "french-level-2");
+  const level2Nitrox = prices.find((entry) => entry.content_key === "french-level-2-nitrox");
+  const level3Nitrox = prices.find((entry) => entry.content_key === "french-level-3-rifap-nitrox");
+  const formatOptionAmount = (amount: number) => `${new Intl.NumberFormat("fr-FR", { minimumFractionDigits: amount % 100 === 0 ? 0 : 2, maximumFractionDigits: 2 }).format(amount / 100)}€`;
+  const level2NitroxSupplement = level2 && level2Nitrox && level2Nitrox.amount_cents >= level2.amount_cents
+    ? formatOptionAmount(level2Nitrox.amount_cents - level2.amount_cents) : null;
   return (
     <>
       <Header
@@ -255,7 +261,8 @@ export function FrenchTrainingPage({
                           <div className="french-training-origin-options">
                             {copy.options.map((option, index) => {
                               const optionParts = !en && index > 0 ? option.match(/^(.*?)(\d+€)$/) : null;
-                              return <p key={option}><span><PreviewText id="FrenchTrainingPage.rich.45aaacba7ea1.1">Option</PreviewText></span><span>{!en && index === 0 ? <><PreviewText id="french-training.licence.before">Licence </PreviewText>{licenceAmount}<PreviewText id="french-training.licence.after"> pour le diplôme FFESSM / CMAS</PreviewText></> : optionParts ? <><PreviewText id={`french-training.${level.id}.option.${index}.description`}>{optionParts[1]}</PreviewText>{optionParts[2]}</> : option}</span></p>;
+                              const optionAmount = level.id === "niveau-2" ? level2NitroxSupplement : level.id === "niveau-3" && level3Nitrox ? formatOptionAmount(level3Nitrox.amount_cents) : null;
+                              return <p key={option}><span><PreviewText id="FrenchTrainingPage.rich.45aaacba7ea1.1">Option</PreviewText></span><span>{!en && index === 0 ? <><PreviewText id="french-training.licence.before">Licence </PreviewText>{licenceAmount}<PreviewText id="french-training.licence.after"> pour le diplôme FFESSM / CMAS</PreviewText></> : optionParts ? <><PreviewText id={`french-training.${level.id}.option.${index}.description`}>{optionParts[1]}</PreviewText>{optionAmount}</> : option}</span></p>;
                             })}
                           </div>
                         </section>

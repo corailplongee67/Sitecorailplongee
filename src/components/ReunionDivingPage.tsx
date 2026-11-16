@@ -3,6 +3,7 @@ import { SiteImage as Image } from "./SiteImage";
 import { ArrowUpRight, CalendarDays, Droplets, Eye, ThermometerSun } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
+import { ReunionConditionsEyebrow, ReunionConditionsText } from "@/components/ReunionConditionsText";
 import type { BookingKey } from "@/lib/site-data";
 
 type BookingLinks = Record<BookingKey, string>;
@@ -121,7 +122,7 @@ export function ReunionDivingPage({
           />
           <div className="shell reunion-origin-conditions-grid">
             <header>
-              <p className="eyebrow coral"><PreviewText id="ReunionDivingPage.5dae7ae935f2.1">{en ? "365 days of diving" : "365 jours de plongée"}</PreviewText></p>
+              <p className="eyebrow coral">{en ? <PreviewText id="ReunionDivingPage.5dae7ae935f2.1">365 days of diving</PreviewText> : <ReunionConditionsEyebrow />}</p>
               <h2><PreviewText id="ReunionDivingPage.e23e83213259.1">{en ? "Geographic diversity" : "Les conditions"}</PreviewText></h2>
               <p className="reunion-origin-conditions-lead"><PreviewText id="ReunionDivingPage.22e17a174b91.1">{en ? "Two types of diving are available:" : "Deux types de plongées sont proposés :"}</PreviewText></p>
             </header>
@@ -143,7 +144,7 @@ export function ReunionDivingPage({
               <div><Eye aria-hidden="true" /><strong><PreviewText id="reunion.facts.visibility.value">{en ? "Excellent" : "Excellente"}</PreviewText></strong><span><PreviewText id="reunion.facts.visibility.label">{en ? "visibility" : "visibilité"}</PreviewText></span></div>
             </div>
             <p className="reunion-origin-condition-note">
-              <PreviewText id="ReunionDivingPage.cbf0a61c043a.1">{en ? "On the leeward coast, diving conditions are ideal 365 days a year, with water temperatures between 24 and 30°C and exceptional visibility." : "Sur la côte sous le vent, les conditions de plongées sont idéales, possibles 365 jours par an, avec une température de l’eau qui évolue entre 24 et 30°, et une visibilité excellente."}</PreviewText>
+              {en ? <PreviewText id="ReunionDivingPage.cbf0a61c043a.1">On the leeward coast, diving conditions are ideal 365 days a year, with water temperatures between 24 and 30°C and exceptional visibility.</PreviewText> : <ReunionConditionsText />}
             </p>
           </div>
         </section>

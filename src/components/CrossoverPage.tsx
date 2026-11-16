@@ -75,7 +75,8 @@ function formatAmount(amountCents: number, suffix: string | null | undefined, lo
   const amount = new Intl.NumberFormat(locale === "en" ? "en-GB" : "fr-FR", {
     style: "currency",
     currency: "EUR",
-    maximumFractionDigits: 0,
+    minimumFractionDigits: amountCents % 100 === 0 ? 0 : 2,
+    maximumFractionDigits: 2,
   }).format(amountCents / 100);
 
   return `${amount}${suffix ?? ""}`;
@@ -135,10 +136,11 @@ export function CrossoverPage({
                   <div className="crossover-origin-grid">
                     {group.items.map((item, index) => {
                       const price = bridgePrices.get(item.contentKey);
+                      if (!price) return null;
                       const label = en
-                        ? (price?.label_en || item.fallbackLabelEn)
-                        : (price?.label_fr || item.fallbackLabel);
-                      const amount = price?.amount_cents ?? item.fallbackAmount;
+                        ? (price.label_en || item.fallbackLabelEn)
+                        : (price.label_fr || item.fallbackLabel);
+                      const amount = price.amount_cents;
 
                       return (
                         <article className="crossover-origin-card" key={item.contentKey}>
@@ -150,7 +152,7 @@ export function CrossoverPage({
                           />
                           <div className="crossover-origin-card-shade" />
                           <strong className="crossover-origin-price">
-                            {formatAmount(amount, en ? price?.suffix_en : price?.suffix_fr, locale)}
+                            {formatAmount(amount, en ? price.suffix_en : price.suffix_fr, locale)}
                           </strong>
                           <div className="crossover-origin-card-copy">
                             <span>{String(index + 1).padStart(2, "0")}</span>

@@ -105,8 +105,8 @@ export function LegacyPage({
           <div className="shell legacy-layout">
             <article>
               {page.lastmod && page.kind === "posts" ? (
-                <time dateTime={page.lastmod}>
-                  {new Intl.DateTimeFormat(fr ? "fr-FR" : "en-GB", { dateStyle: "long" }).format(new Date(page.lastmod))}
+                <time>
+                  <PreviewText id={`legacy.${path}.date`}>{new Intl.DateTimeFormat(fr ? "fr-FR" : "en-GB", { dateStyle: "long" }).format(new Date(page.lastmod))}</PreviewText>
                 </time>
               ) : null}
               {paragraphs.length ? paragraphs.map((paragraph, index) => (

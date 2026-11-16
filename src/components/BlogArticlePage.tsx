@@ -155,7 +155,7 @@ export function BlogArticlePage({
             <h1><PreviewText id={`article.${path}.title`}>{content.title}</PreviewText></h1>
             <div className="article-origin-meta">
               {content.date ? <time><CalendarDays aria-hidden="true" /> <PreviewText id={`article.${path}.date`}>{content.date}</PreviewText></time> : null}
-              <span><Clock3 aria-hidden="true" /> {content.readingMinutes} <PreviewText id="article.reading-time">min de lecture</PreviewText></span>
+              <span><Clock3 aria-hidden="true" /> <PreviewText id={`article.${path}.reading-minutes`}>{String(content.readingMinutes)}</PreviewText> <PreviewText id="article.reading-time">min de lecture</PreviewText></span>
             </div>
           </div>
         </section>

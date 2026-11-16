@@ -154,7 +154,7 @@ export function BlogArticlePage({
             <Link href="/blog/"><PreviewText embedded id="BlogArticlePage.link.f1a3f7af124c.1">Le journal de Corail Plongée</PreviewText></Link>
             <h1><PreviewText id={`article.${path}.title`}>{content.title}</PreviewText></h1>
             <div className="article-origin-meta">
-              {content.date ? <time dateTime={page.lastmod}><CalendarDays aria-hidden="true" /> {content.date}</time> : null}
+              {content.date ? <time><CalendarDays aria-hidden="true" /> <PreviewText id={`article.${path}.date`}>{content.date}</PreviewText></time> : null}
               <span><Clock3 aria-hidden="true" /> {content.readingMinutes} <PreviewText id="article.reading-time">min de lecture</PreviewText></span>
             </div>
           </div>

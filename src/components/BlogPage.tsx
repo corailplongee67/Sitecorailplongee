@@ -145,7 +145,7 @@ export function BlogPage({
                   </BlogArticleImageLink>
                   <div className="blog-origin-card-copy">
                     <p className="blog-origin-date">
-                      <CalendarDays aria-hidden="true" size={15} /> {article.date}
+                      <CalendarDays aria-hidden="true" size={15} /> <PreviewText id={`article.${article.href}.date`}>{article.date}</PreviewText>
                     </p>
                     <h3><Link href={article.href}><PreviewText embedded id={`article.${article.href}.title`}>{article.title}</PreviewText></Link></h3>
                     <p className="blog-origin-excerpt"><PreviewText id={`article.${article.href}.excerpt`}>{article.excerpt}</PreviewText>…</p>

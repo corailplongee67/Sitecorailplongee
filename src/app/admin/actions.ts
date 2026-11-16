@@ -40,13 +40,8 @@ function revalidateEvents() {
 }
 
 function revalidatePrices() {
-  revalidatePath("/");
-  revalidatePath("/en/home/");
-  revalidatePath("/nos-tarifs/");
-  revalidatePath("/decouverte/");
-  revalidatePath("/formation-francaise/");
-  revalidatePath("/en/french-training/");
-  revalidatePath("/en/rates/");
+  // Catalog prices also appear on individual service pages.
+  revalidatePath("/", "layout");
   revalidatePath("/admin/");
 }
 

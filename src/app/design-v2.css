@@ -1450,5 +1450,6 @@ p { line-height: 1.68; }
 .discovery-origin-main :is(h1, h2, h3, p, li) { overflow-wrap: anywhere; }
 .initiation-origin-main :is(h1, h2, h3, p) { overflow-wrap: anywhere; }
 .ssi-origin-main :is(h1, h2, h3, h4, p, li) { overflow-wrap: anywhere; }
+:is(.french-training-origin-main, .exploration-origin-main, .cetacean-origin-main, .crossover-origin-main, .contact-origin-main, .reunion-origin-main, .blog-origin-main, .article-origin-main, .legal-origin-main, .legacy-main, .shop-gateway-main, .cart-origin-main, .rates-main) :is(h1, h2, h3, h4, p, li, figcaption) { overflow-wrap: anywhere; }
 .home-origin-service-copy > div { flex-wrap: wrap; }
 .home-origin-service-copy a { max-width: 100%; overflow-wrap: anywhere; }

@@ -38,6 +38,7 @@ test("French training prices follow the existing catalog across both placements"
     { content_key: "french-level-3-rifap", amount_cents: 90500 },
     { content_key: "french-level-3", amount_cents: 79500 },
     { content_key: "french-level-3-rifap-nitrox", amount_cents: 109050 },
+    { content_key: "french-level-4", amount_cents: 182550 },
     { content_key: "french-ffessm-licence", amount_cents: 6250 },
   ];
   const render = (locale, entries = prices) => new JSDOM(renderToStaticMarkup(React.createElement(pageModule.exports.FrenchTrainingPage, {
@@ -48,6 +49,8 @@ test("French training prices follow the existing catalog across both placements"
   assert.match(page.querySelector("#niveau-1 .french-training-origin-level-details p strong").textContent, /430,50\s*€/);
   assert.match(page.querySelector("#niveau-2 header strong").textContent, /À partir de 775\s*€ \/ personne/);
   assert.match(page.querySelector("#niveau-3 header strong").textContent, /905\s*€/);
+  assert.match(page.querySelector("#niveau-4 header strong").textContent, /1 825,50\s*€/);
+  assert.match(page.querySelector("#niveau-4 .french-training-origin-level-details p strong").textContent, /1 825,50\s*€/);
   assert.equal([...page.querySelectorAll(".french-training-origin-options p:first-child")].length, 4);
   for (const licence of page.querySelectorAll(".french-training-origin-options p:first-child")) assert.match(licence.textContent, /Licence 62,50€ pour le diplôme FFESSM \/ CMAS/);
   assert.equal(textIds.filter((id) => id === "french-training.price.before").length, 4);
@@ -59,4 +62,5 @@ test("French training prices follow the existing catalog across both placements"
   assert.doesNotMatch(render("fr", []).querySelector("#niveau-2 .french-training-origin-options p:nth-child(2)").textContent, /80€/);
   assert.match(render("en").querySelector("#niveau-3 header strong").textContent, /795/);
   assert.equal(render("fr", []).querySelector("#niveau-1 header strong"), null);
+  assert.equal(render("fr", []).querySelector("#niveau-4 header strong"), null);
 });

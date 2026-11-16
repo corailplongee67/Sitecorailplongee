@@ -220,7 +220,7 @@ export function FrenchTrainingPage({
               <div className="french-training-origin-levels">
                 {levels.map((level) => {
                   const copy = en ? levelCopyEn[level.id] : level;
-                  const priceKey = level.id === "niveau-1" ? "french-pe20" : level.id === "niveau-2" ? "french-level-2" : level.id === "niveau-3" ? (en ? "french-level-3" : "french-level-3-rifap") : null;
+                  const priceKey = level.id === "niveau-1" ? "french-pe20" : level.id === "niveau-2" ? "french-level-2" : level.id === "niveau-3" ? (en ? "french-level-3" : "french-level-3-rifap") : "french-level-4";
                   const price = priceKey ? prices.find((entry) => entry.content_key === priceKey) : null;
                   const displayPrice = priceKey ? (price ? `${(en ? price.prefix_en : price.prefix_fr) ?? ""}${new Intl.NumberFormat(en ? "en-GB" : "fr-FR", { minimumFractionDigits: price.amount_cents % 100 === 0 ? 0 : 2, maximumFractionDigits: 2 }).format(price.amount_cents / 100)} €${(en ? price.suffix_en : price.suffix_fr) ?? ""}` : null) : copy.price;
                   return (

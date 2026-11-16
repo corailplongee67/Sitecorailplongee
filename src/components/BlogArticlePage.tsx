@@ -170,7 +170,7 @@ export function BlogArticlePage({
               {content.sections.map((section, index) => (
                 <div key={section.id}>
                   <section className={section.level === 3 ? "article-origin-faq" : undefined} id={section.id}>
-                    <p className="article-origin-chapter">{section.level === 3 ? "Question" : `Chapitre ${String(index + 1).padStart(2, "0")}`}</p>
+                    <p className="article-origin-chapter">{section.level === 3 ? <PreviewText id="article.chapter.question">Question</PreviewText> : <><PreviewText id="article.chapter.label">Chapitre </PreviewText>{String(index + 1).padStart(2, "0")}</>}</p>
                     {section.level === 3 ? <h3><PreviewText id={`article.${path}.section.${index}.title`}>{section.title}</PreviewText></h3> : <h2><PreviewText id={`article.${path}.section.${index}.title`}>{section.title}</PreviewText></h2>}
                     {section.paragraphs.map((paragraph, paragraphIndex) => (
                       <p key={`${section.id}-${paragraphIndex}`}><PreviewText id={`article.${path}.section.${index}.paragraph.${paragraphIndex}`}>{paragraph}</PreviewText></p>

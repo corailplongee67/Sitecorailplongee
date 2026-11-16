@@ -26,7 +26,8 @@ function textLimit(target: Element, current: string) {
 
 export function PreviewTextProvider({ enabled, initialDrafts, published, shared, children }: { enabled: boolean; initialDrafts: Record<string, string>; published: Record<string, string>; shared: boolean; children: ReactNode }) {
   const pathname = usePathname();
-  const [drafts, setDrafts] = useState(initialDrafts);
+  // Shared editing publishes immediately: old review drafts must not mask the public site.
+  const [drafts, setDrafts] = useState<Record<string, string>>(() => shared ? {} : initialDrafts);
   const [editing, setEditing] = useState(true);
   const french = !pathname.startsWith("/en/") && !pathname.startsWith("/admin");
   const preview = enabled && french;

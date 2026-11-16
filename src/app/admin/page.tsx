@@ -116,7 +116,7 @@ export default async function AdminPage() {
   const siteImageOverrides = new Map((siteImages ?? []).map((image) => [image.slot_key, image]));
   const sharedEditor = sharedTextEditorEnabled();
   const [contactDrafts, publishedText] = await Promise.all([
-    sharedEditor ? readSharedText(false) : process.env.NODE_ENV === "development" ? readLocalTextDrafts() : Promise.resolve({} as Record<string, string>),
+    !sharedEditor && process.env.NODE_ENV === "development" ? readLocalTextDrafts() : Promise.resolve({} as Record<string, string>),
     sharedEditor ? readSharedText(true) : Promise.resolve({} as Record<string, string>),
   ]);
   const siteContact = resolveSiteContact(contactDrafts[SITE_CONTACT_TEXT_KEY] ?? publishedText[SITE_CONTACT_TEXT_KEY]);

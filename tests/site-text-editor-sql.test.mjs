@@ -52,6 +52,8 @@ test("text reviews protect private drafts and only publish the validated version
     await claims(editor);
     await db.exec("insert into public.site_text_drafts (text_key, content) values ('home.other', 'À conserver')");
     await db.query("select public.publish_single_site_text($1, $2)", ["home.test", "Publié directement"]);
+    await db.query("select public.publish_single_site_text($1, $2)", ["article./decouverte/.title", "Titre de l’article"]);
+    await db.query("select public.publish_single_site_text($1, $2)", ["home.test", "Accueil mis à jour"]);
     assert.equal((await db.query("select count(*)::int as count from public.site_text_drafts")).rows[0].count, 1);
     await assert.rejects(db.query("select public.publish_single_site_text($1, $2)", ["events.title", "Interdit"]));
     await claims(JSON.stringify({ sub: user, app_metadata: { role: "member" } }));
@@ -61,7 +63,8 @@ test("text reviews protect private drafts and only publish the validated version
     await claims("{}");
     await assert.rejects(db.exec("select * from public.site_text_drafts"));
     await assert.rejects(db.exec("select * from public.site_text_reviews"));
-    assert.equal((await db.query("select content from public.site_text_published where text_key = 'home.test'")).rows[0].content, "Publié directement");
+    assert.equal((await db.query("select content from public.site_text_published where text_key = 'home.test'")).rows[0].content, "Accueil mis à jour");
+    assert.equal((await db.query("select content from public.site_text_published where text_key = 'article./decouverte/.title'")).rows[0].content, "Titre de l’article");
     assert.deepEqual(JSON.parse((await db.query("select content from public.site_text_published where text_key = 'global.contact'")).rows[0].content), JSON.parse(contact));
   } finally {
     await db.close();

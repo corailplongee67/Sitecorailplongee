@@ -60,6 +60,15 @@ test("preview saves text and switches between editing links and navigation", asy
   }, React.createElement("h1", null, React.createElement(PreviewText, { id: "home.hero.title" }, "Texte d’origine"))));
   assert.equal(publicMarkup, "<h1>Titre publié</h1>");
   assert.doesNotMatch(publicMarkup, /Brouillon privé/);
+  const previewWithOldDraft = renderToStaticMarkup(React.createElement(PreviewTextProvider, {
+    enabled: true, initialDrafts: { "home.hero.title": "Ancien brouillon" }, published: { "home.hero.title": "Titre publié" }, shared: true,
+  }, React.createElement(PreviewText, { id: "home.hero.title" }, "Texte d’origine")));
+  assert.match(previewWithOldDraft, />Titre publié<\/span>/);
+  assert.doesNotMatch(previewWithOldDraft, /Ancien brouillon/);
+  const localPreview = renderToStaticMarkup(React.createElement(PreviewTextProvider, {
+    enabled: true, initialDrafts: { "home.hero.title": "Brouillon local" }, published: {}, shared: false,
+  }, React.createElement(PreviewText, { id: "home.hero.title" }, "Texte d’origine")));
+  assert.match(localPreview, />Brouillon local<\/span>/);
   pathname = "/en/contact/";
   const SharedHours = () => React.createElement("span", null, useSharedTextValue("global.hours.weekdays", "Horaires par défaut"));
   const englishHours = renderToStaticMarkup(React.createElement(PreviewTextProvider, { enabled: false, initialDrafts: {}, published: { "global.hours.weekdays": "8h à 18h" }, shared: true }, React.createElement(SharedHours)));
@@ -76,13 +85,13 @@ test("preview saves text and switches between editing links and navigation", asy
     enabled, initialDrafts: { "global.contact": contactDraft }, published: { "global.contact": contactPublished }, shared: true,
   }, React.createElement(ContactValue)));
   assert.equal(renderContact(false), "<span>published@example.com</span>");
-  assert.equal(renderContact(true), "<span>draft@example.com</span>");
+  assert.equal(renderContact(true), "<span>published@example.com</span>");
   const TeamName = () => React.createElement("span", null, usePreviewTextValue("about.team.0.name", "Ancien nom"));
   const renderTeam = (enabled) => renderToStaticMarkup(React.createElement(PreviewTextProvider, {
     enabled, initialDrafts: { "about.team.0.name": "Nom en brouillon" }, published: { "about.team.0.name": "Nom publié" }, shared: true,
   }, React.createElement(TeamName)));
   assert.equal(renderTeam(false), "<span>Nom publié</span>");
-  assert.equal(renderTeam(true), "<span>Nom en brouillon</span>");
+  assert.equal(renderTeam(true), "<span>Nom publié</span>");
   const teamImagePath = path.resolve("src/components/AboutTeamImage.tsx");
   const teamImageSource = await readFile(teamImagePath, "utf8");
   const teamImageModule = new Module(teamImagePath);
@@ -152,6 +161,15 @@ test("preview saves text and switches between editing links and navigation", asy
     assert.deepEqual(saved, [["home.hero.title", "Nouveau titre"]]);
     assert.equal(document.querySelector("h1").textContent, "Nouveau titre");
     assert.equal(document.querySelector("#repeated").textContent, "Nouveau titre");
+    // A fresh provider represents a reload or another page receiving published data.
+    const afterReload = renderToStaticMarkup(React.createElement(PreviewTextProvider, {
+      enabled: false, initialDrafts: {}, published: Object.fromEntries(saved), shared: true,
+    }, React.createElement(React.Fragment, null,
+      React.createElement(PreviewText, { id: "home.hero.title" }, "Corail Plongée"),
+      " | ",
+      React.createElement(PreviewText, { id: "another.page.title" }, "Autre page"),
+    )));
+    assert.equal(afterReload, "Nouveau titre | Autre page");
     await React.act(async () => document.querySelector("h1 span").click());
     const secondEditor = document.querySelector("textarea");
     await React.act(async () => {

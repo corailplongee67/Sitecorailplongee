@@ -80,9 +80,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const canEdit = showPreview && (process.env.NODE_ENV === "development" || sharedEditor);
   const [publishedText, drafts] = await Promise.all([
     sharedEditor ? readSharedText(true) : Promise.resolve({} as Record<string, string>),
-    canEdit ? (sharedEditor ? readSharedText(false) : readLocalTextDrafts()) : Promise.resolve({} as Record<string, string>),
+    canEdit && !sharedEditor ? readLocalTextDrafts() : Promise.resolve({} as Record<string, string>),
   ]);
-  const previewRevision = canEdit ? createHash("sha256").update(JSON.stringify(Object.entries(drafts).sort(([a], [b]) => a.localeCompare(b)))).digest("hex") : "public";
+  const previewRevision = canEdit ? createHash("sha256").update(JSON.stringify([Object.entries(drafts).sort(([a], [b]) => a.localeCompare(b)), Object.entries(publishedText).sort(([a], [b]) => a.localeCompare(b))])).digest("hex") : "public";
   const publishedContact = resolveSiteContact(publishedText[SITE_CONTACT_TEXT_KEY]);
   const publicBusiness = {
     ...localBusinessJsonLd,

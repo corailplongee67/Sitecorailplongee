@@ -76,13 +76,13 @@ export async function getPriceCatalog(): Promise<{
     supabase.from("prices").select("*").eq("active", true).order("display_order"),
   ]);
 
-  if (sectionResult.error || priceResult.error || !sectionResult.data?.length || !priceResult.data?.length) {
+  if (sectionResult.error || priceResult.error) {
     return { sections: fallbackPriceSections, prices: fallbackPriceCatalog };
   }
 
   return {
-    sections: sectionResult.data as PublicPriceSection[],
-    prices: priceResult.data as PublicCatalogPrice[],
+    sections: (sectionResult.data ?? []) as PublicPriceSection[],
+    prices: (priceResult.data ?? []) as PublicCatalogPrice[],
   };
 }
 

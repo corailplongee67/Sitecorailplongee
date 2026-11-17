@@ -38,6 +38,7 @@ test("preview saves text and switches between editing links and navigation", asy
   const React = require("react");
   const { createRoot } = require("react-dom/client");
   const saved = [];
+  let publicationFails = false;
   const sourcePath = path.resolve("src/components/PreviewText.tsx");
   const source = await readFile(sourcePath, "utf8");
   const output = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX, target: ts.ScriptTarget.ES2020 } }).outputText;
@@ -48,7 +49,7 @@ test("preview saves text and switches between editing links and navigation", asy
   let pathname = "/";
   componentModule.require = (id) => {
     if (id === "next/navigation") return { usePathname: () => pathname };
-    if (id === "@/app/admin/actions") return { publishTextBlock: async (key, text) => { saved.push([key, text]); } };
+    if (id === "@/app/admin/actions") return { publishTextBlock: async (key, text) => { if (publicationFails) throw new Error("Connexion indisponible"); saved.push([key, text]); } };
     if (id === "@/lib/site-contact") return { SITE_CONTACT_TEXT_KEY: "global.contact", resolveSiteContact: (raw) => raw ? JSON.parse(raw) : { email: "default@example.com" } };
     return originalRequire(id);
   };
@@ -179,6 +180,22 @@ test("preview saves text and switches between editing links and navigation", asy
     await React.act(async () => [...document.querySelectorAll("button")].find((button) => button.textContent === "Valider et mettre en ligne").click());
     assert.deepEqual(saved.at(-1), ["home.hero.title", "Titre corrigé"]);
     assert.equal(document.querySelector("#repeated").textContent, "Titre corrigé");
+    await React.act(async () => document.querySelector("h1 span").click());
+    const failedEditor = document.querySelector("textarea");
+    await React.act(async () => {
+      Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set.call(failedEditor, "Texte à réessayer");
+      failedEditor.dispatchEvent(new window.Event("input", { bubbles: true }));
+    });
+    publicationFails = true;
+    await React.act(async () => [...document.querySelectorAll("button")].find((button) => button.textContent === "Valider et mettre en ligne").click());
+    assert.match(document.querySelector('[role="alert"]').textContent, /Impossible de publier/);
+    assert.equal(document.querySelector("textarea").value, "Texte à réessayer");
+    assert.equal(document.querySelector("h1").textContent, "Titre corrigé");
+    assert.equal(saved.length, 2);
+    publicationFails = false;
+    await React.act(async () => [...document.querySelectorAll("button")].find((button) => button.textContent === "Valider et mettre en ligne").click());
+    assert.equal(document.querySelector("h1").textContent, "Texte à réessayer");
+    assert.deepEqual(saved.at(-1), ["home.hero.title", "Texte à réessayer"]);
     const link = document.querySelector('a[href="/test"]');
     await React.act(async () => link.dispatchEvent(new window.MouseEvent("click", { bubbles: true, cancelable: true })));
     assert.ok(document.querySelector('[role="dialog"]'));
@@ -190,7 +207,7 @@ test("preview saves text and switches between editing links and navigation", asy
     await React.act(async () => link.dispatchEvent(new window.MouseEvent("click", { bubbles: true, cancelable: true })));
     assert.equal(navigated, true);
     assert.equal(document.querySelector('[role="dialog"]'), null);
-    assert.equal(document.querySelector("h1").textContent, "Titre corrigé");
+    assert.equal(document.querySelector("h1").textContent, "Texte à réessayer");
   } finally {
     await React.act(async () => root.unmount());
     dom.window.close();

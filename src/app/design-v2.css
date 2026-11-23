@@ -1457,3 +1457,8 @@ p { line-height: 1.68; }
 .home-reviews-inner { display: grid; justify-items: center; gap: 18px; }
 .home-reviews-inner h2, .home-reviews-inner p { margin: 0; overflow-wrap: anywhere; }
 .home-reviews-inner p:not(.eyebrow) { max-width: 620px; }
+.admin-team-member { display: grid; grid-template-columns: 90px minmax(0,1fr); gap: 16px; padding: 20px 0; border-bottom: 1px solid #d9e4e6; }
+.admin-team-member > img { width: 90px; height: 90px; object-fit: cover; border-radius: 50%; }
+.admin-team-actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.admin-team-crop { width: min(280px, 75vw); aspect-ratio: 1; border-radius: 50%; background-repeat: no-repeat; margin: 12px auto; }
+.admin-team .preview-editor label { display: block; margin: 12px 0; }

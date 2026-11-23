@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { CalendarDays, CloudSun, ExternalLink, Images, Link2, LogOut, MapPin, Music2, Pencil, Plus, RotateCcw, Save, Tags, Trash2 } from "lucide-react";
 import { AdminBackgroundMusic } from "@/components/AdminBackgroundMusic";
+import { AdminTeam } from "@/components/AdminTeam";
 import { AdminImageCropper } from "@/components/AdminImageCropper";
 import { OptimizedEventImageInput } from "@/components/OptimizedEventImageInput";
 import { createClient, hasSupabaseEnv } from "@/lib/supabase/server";
@@ -15,6 +16,7 @@ import { readLocalTextDrafts } from "@/lib/local-text-drafts";
 import { readSharedText, sharedTextEditorEnabled } from "@/lib/shared-text-drafts";
 import { resolveSiteContact, SITE_CONTACT_TEXT_KEY } from "@/lib/site-contact";
 import { GOOGLE_REVIEWS_URL_KEY, googleReviewsUrl } from "@/lib/google-reviews";
+import { parseTeam, TEAM_TEXT_KEY } from "@/lib/team";
 import { deleteEvent, deletePrice, importLegacyEvents, openSitePreview, resetSiteImage, saveBookingLink, saveEvent, saveGoogleReviewsUrl, savePrice, savePriceSection, saveSiteContact, signOut } from "./actions";
 
 export const metadata = { title: "Administration", robots: { index: false, follow: false } };
@@ -121,12 +123,17 @@ export default async function AdminPage() {
     sharedEditor ? readSharedText(true) : Promise.resolve({} as Record<string, string>),
   ]);
   const siteContact = resolveSiteContact(contactDrafts[SITE_CONTACT_TEXT_KEY] ?? publishedText[SITE_CONTACT_TEXT_KEY]);
+  const team = parseTeam(contactDrafts[TEAM_TEXT_KEY] ?? publishedText[TEAM_TEXT_KEY]).map((member) => {
+    const key = member.textKey ?? member.id;
+    return { ...member, name: publishedText[`about.team.${key}.name`] ?? member.name, role: publishedText[`about.team.${key}.role`] ?? member.role };
+  });
+  const teamImages = Object.fromEntries((siteImages ?? []).map((image) => [image.slot_key, publicSiteImageUrl(image.image_path)]));
 
   return (
     <main className="admin-shell">
       <aside className="admin-sidebar">
         <Link href="/"><Image src="/images/brand/logo.png" alt="Corail Plongée" width={165} height={78} /></Link>
-        <nav><form action={openSitePreview}><button className="admin-edit-site" type="submit"><Pencil /> Modifier le site</button></form>{(sharedEditor || process.env.NODE_ENV === "development") ? <a href="#contact"><MapPin /> Coordonnées</a> : null}{(sharedEditor || process.env.NODE_ENV === "development") ? <a href="#google-reviews"><Link2 /> Avis Google</a> : null}<a href="#photos"><Images /> Photos</a><a href="#music"><Music2 /> Musique</a><a href="#events"><CalendarDays /> Évènements</a><a href="#prices"><Tags /> Tarifs</a><a href="#links"><Link2 /> Réservations</a><a className="admin-weather-link" href="#weather"><CloudSun /> Météo</a></nav>
+        <nav><form action={openSitePreview}><button className="admin-edit-site" type="submit"><Pencil /> Modifier le site</button></form>{(sharedEditor || process.env.NODE_ENV === "development") ? <a href="#contact"><MapPin /> Coordonnées</a> : null}{(sharedEditor || process.env.NODE_ENV === "development") ? <a href="#team"><Images /> Mon équipe</a> : null}{(sharedEditor || process.env.NODE_ENV === "development") ? <a href="#google-reviews"><Link2 /> Avis Google</a> : null}<a href="#photos"><Images /> Photos</a><a href="#music"><Music2 /> Musique</a><a href="#events"><CalendarDays /> Évènements</a><a href="#prices"><Tags /> Tarifs</a><a href="#links"><Link2 /> Réservations</a><a className="admin-weather-link" href="#weather"><CloudSun /> Météo</a></nav>
         <div className="admin-sidebar-bottom"><Link href="/" target="_blank">Voir le site <ExternalLink /></Link><form action={signOut}><button><LogOut /> Déconnexion</button></form></div>
       </aside>
 
@@ -137,6 +144,8 @@ export default async function AdminPage() {
           <div className="admin-section-title"><div><ExternalLink /><div><h2>Modifier le site</h2><p>Ouvrez le site, cliquez sur un texte et publiez votre modification.</p></div></div></div>
           <form action={openSitePreview}><button className="button button-navy" type="submit">Modifier le site</button></form>
         </section>
+
+        {(sharedEditor || process.env.NODE_ENV === "development") ? <section id="team" className="admin-section"><div className="admin-section-title"><div><Images /><div><h2>Mon équipe</h2><p>Gérez les membres affichés sur la page Qui sommes-nous.</p></div></div></div><AdminTeam initial={team} images={teamImages} /></section> : null}
 
         {(sharedEditor || process.env.NODE_ENV === "development") ? <section id="google-reviews" className="admin-section">
           <div className="admin-section-title"><div><Link2 /><div><h2>Avis Google</h2><p>Lien vers la fiche Google affiché sur la page d’accueil.</p></div></div></div>

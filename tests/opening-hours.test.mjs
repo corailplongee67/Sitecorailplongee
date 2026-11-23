@@ -38,6 +38,7 @@ test("opening hours use the same editable values on the contact and about pages"
       if (id === "./OpeningHoursText") return { OpeningHoursText: ({ id: key, fallback }) => formatHours(values[key] ?? fallback) };
       if (id === "./SiteImage") return { SiteImage: Empty };
       if (id === "./AboutTeamImage") return { AboutTeamImage: Empty };
+      if (id === "./TeamGrid") return { TeamGrid: Empty };
       if (id === "./SiteContact") return { ContactDetails: Empty, ContactMap: Empty };
       if (id === "@/components/Header") return { Header: Empty };
       if (id === "@/components/Footer") return { Footer: Empty, PartnerStrip: Empty };

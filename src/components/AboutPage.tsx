@@ -1,6 +1,7 @@
 import { PreviewText } from "./PreviewText";
 import { OpeningHoursText } from "./OpeningHoursText";
 import { AboutTeamImage } from "./AboutTeamImage";
+import { TeamGrid } from "./TeamGrid";
 import { SiteImage as Image } from "./SiteImage";
 import { ArrowUpRight } from "lucide-react";
 import { Footer, PartnerStrip } from "@/components/Footer";
@@ -191,13 +192,6 @@ const englishSections = [
   },
 ] as const;
 
-const frenchTeam = [
-  { name: "Chris", role: "The boss", image: "/images/about/original/equipe-chris.jpg" },
-  { name: "Jennifer", role: "Monitrice de plongée", image: "/images/about/original/equipe-jennifer.jpg" },
-  { name: "Christophe", role: "Moniteur de plongée", image: "/images/about/original/equipe-christophe.jpg" },
-  { name: "Popote", role: "Macgyver", image: "/images/about/original/equipe-popote.jpg" },
-] as const;
-
 const englishTeam = [
   { name: "Chris", role: "The boss", image: "/images/about/original/equipe-chris.jpg" },
   { name: "Jennifer", role: "Diving instructor", image: "/images/about/original/equipe-jennifer.jpg" },
@@ -214,7 +208,6 @@ export function AboutPage({
 }) {
   const isEnglish = locale === "en";
   const sections = isEnglish ? englishSections : frenchSections;
-  const team = isEnglish ? englishTeam : frenchTeam;
   return (
     <>
       <Header
@@ -287,8 +280,8 @@ export function AboutPage({
                   : "Une équipe de professionnels pour vous accompagner à la découverte des fonds marins de La Réunion."}</PreviewText>
               </p>
             </div>
-            <div className="about-origin-team-grid">
-              {team.map((member, index) => (
+            {isEnglish ? <div className="about-origin-team-grid">
+              {englishTeam.map((member, index) => (
                 <article className="about-origin-team-card" key={member.name}>
                   <div className="about-origin-team-image">
                     <AboutTeamImage image={member.image} name={member.name} role={member.role} index={index} english={isEnglish} />
@@ -299,7 +292,7 @@ export function AboutPage({
                   </div>
                 </article>
               ))}
-            </div>
+            </div> : <TeamGrid />}
           </div>
         </section>
 

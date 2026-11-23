@@ -13,6 +13,7 @@ import { requestLocalTextReview, writeLocalTextDraft } from "@/lib/local-text-dr
 import { sharedTextEditorEnabled, submitSharedTextReview, writeSharedTextDraft } from "@/lib/shared-text-drafts";
 import { SITE_CONTACT_TEXT_KEY, validateSiteContact } from "@/lib/site-contact";
 import { GOOGLE_REVIEWS_URL_KEY, validateGoogleReviewsUrl } from "@/lib/google-reviews";
+import { TEAM_TEXT_KEY, validateTeam } from "@/lib/team";
 
 function value(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
@@ -121,6 +122,19 @@ export async function saveGoogleReviewsUrl(formData: FormData) {
     const { error } = await supabase.rpc("publish_single_site_text", { text_key_value: GOOGLE_REVIEWS_URL_KEY, content_value: url });
     if (error) throw error;
   } else await writeLocalTextDraft(GOOGLE_REVIEWS_URL_KEY, url);
+  revalidatePath("/", "layout");
+  revalidatePath("/admin/");
+}
+
+export async function saveTeamConfiguration(raw: string) {
+  const supabase = await requireAdmin();
+  const team = validateTeam(JSON.parse(raw));
+  const content = JSON.stringify(team);
+  if (content.length > 5000) throw new Error("La liste d’équipe est trop longue.");
+  if (sharedTextEditorEnabled()) {
+    const { error } = await supabase.rpc("publish_single_site_text", { text_key_value: TEAM_TEXT_KEY, content_value: content });
+    if (error) throw error;
+  } else await writeLocalTextDraft(TEAM_TEXT_KEY, content);
   revalidatePath("/", "layout");
   revalidatePath("/admin/");
 }

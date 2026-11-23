@@ -14,7 +14,8 @@ import { publicSiteImageUrl } from "@/lib/site-images-data";
 import { readLocalTextDrafts } from "@/lib/local-text-drafts";
 import { readSharedText, sharedTextEditorEnabled } from "@/lib/shared-text-drafts";
 import { resolveSiteContact, SITE_CONTACT_TEXT_KEY } from "@/lib/site-contact";
-import { deleteEvent, deletePrice, importLegacyEvents, openSitePreview, resetSiteImage, saveBookingLink, saveEvent, savePrice, savePriceSection, saveSiteContact, signOut } from "./actions";
+import { GOOGLE_REVIEWS_URL_KEY, googleReviewsUrl } from "@/lib/google-reviews";
+import { deleteEvent, deletePrice, importLegacyEvents, openSitePreview, resetSiteImage, saveBookingLink, saveEvent, saveGoogleReviewsUrl, savePrice, savePriceSection, saveSiteContact, signOut } from "./actions";
 
 export const metadata = { title: "Administration", robots: { index: false, follow: false } };
 
@@ -125,7 +126,7 @@ export default async function AdminPage() {
     <main className="admin-shell">
       <aside className="admin-sidebar">
         <Link href="/"><Image src="/images/brand/logo.png" alt="Corail Plongée" width={165} height={78} /></Link>
-        <nav><form action={openSitePreview}><button className="admin-edit-site" type="submit"><Pencil /> Modifier le site</button></form>{(sharedEditor || process.env.NODE_ENV === "development") ? <a href="#contact"><MapPin /> Coordonnées</a> : null}<a href="#photos"><Images /> Photos</a><a href="#music"><Music2 /> Musique</a><a href="#events"><CalendarDays /> Évènements</a><a href="#prices"><Tags /> Tarifs</a><a href="#links"><Link2 /> Réservations</a><a className="admin-weather-link" href="#weather"><CloudSun /> Météo</a></nav>
+        <nav><form action={openSitePreview}><button className="admin-edit-site" type="submit"><Pencil /> Modifier le site</button></form>{(sharedEditor || process.env.NODE_ENV === "development") ? <a href="#contact"><MapPin /> Coordonnées</a> : null}{(sharedEditor || process.env.NODE_ENV === "development") ? <a href="#google-reviews"><Link2 /> Avis Google</a> : null}<a href="#photos"><Images /> Photos</a><a href="#music"><Music2 /> Musique</a><a href="#events"><CalendarDays /> Évènements</a><a href="#prices"><Tags /> Tarifs</a><a href="#links"><Link2 /> Réservations</a><a className="admin-weather-link" href="#weather"><CloudSun /> Météo</a></nav>
         <div className="admin-sidebar-bottom"><Link href="/" target="_blank">Voir le site <ExternalLink /></Link><form action={signOut}><button><LogOut /> Déconnexion</button></form></div>
       </aside>
 
@@ -136,6 +137,11 @@ export default async function AdminPage() {
           <div className="admin-section-title"><div><ExternalLink /><div><h2>Modifier le site</h2><p>Ouvrez le site, cliquez sur un texte et publiez votre modification.</p></div></div></div>
           <form action={openSitePreview}><button className="button button-navy" type="submit">Modifier le site</button></form>
         </section>
+
+        {(sharedEditor || process.env.NODE_ENV === "development") ? <section id="google-reviews" className="admin-section">
+          <div className="admin-section-title"><div><Link2 /><div><h2>Avis Google</h2><p>Lien vers la fiche Google affiché sur la page d’accueil.</p></div></div></div>
+          <form action={saveGoogleReviewsUrl}><label>Lien Google<input name="url" type="url" defaultValue={googleReviewsUrl(contactDrafts[GOOGLE_REVIEWS_URL_KEY] ?? publishedText[GOOGLE_REVIEWS_URL_KEY])} required /></label><button className="button button-navy" type="submit"><Save /> Enregistrer le lien</button></form>
+        </section> : null}
 
         {(sharedEditor || process.env.NODE_ENV === "development") ? <section id="contact" className="admin-section">
           <div className="admin-section-title"><div><MapPin /><div><h2>Coordonnées du centre</h2><p>Une seule fiche pour le pied de page, la page Contact et les liens associés.</p></div></div></div>

@@ -1453,3 +1453,7 @@ p { line-height: 1.68; }
 :is(.french-training-origin-main, .exploration-origin-main, .cetacean-origin-main, .crossover-origin-main, .contact-origin-main, .reunion-origin-main, .blog-origin-main, .article-origin-main, .legal-origin-main, .legacy-main, .shop-gateway-main, .cart-origin-main, .rates-main) :is(h1, h2, h3, h4, p, li, figcaption) { overflow-wrap: anywhere; }
 .home-origin-service-copy > div { flex-wrap: wrap; }
 .home-origin-service-copy a { max-width: 100%; overflow-wrap: anywhere; }
+.home-reviews { background: var(--foam); text-align: center; }
+.home-reviews-inner { display: grid; justify-items: center; gap: 18px; }
+.home-reviews-inner h2, .home-reviews-inner p { margin: 0; overflow-wrap: anywhere; }
+.home-reviews-inner p:not(.eyebrow) { max-width: 620px; }

@@ -12,6 +12,7 @@ import { createClient } from "@/lib/supabase/server";
 import { requestLocalTextReview, writeLocalTextDraft } from "@/lib/local-text-drafts";
 import { sharedTextEditorEnabled, submitSharedTextReview, writeSharedTextDraft } from "@/lib/shared-text-drafts";
 import { SITE_CONTACT_TEXT_KEY, validateSiteContact } from "@/lib/site-contact";
+import { GOOGLE_REVIEWS_URL_KEY, validateGoogleReviewsUrl } from "@/lib/google-reviews";
 
 function value(formData: FormData, key: string) {
   return String(formData.get(key) ?? "").trim();
@@ -109,6 +110,17 @@ export async function saveSiteContact(formData: FormData) {
     if (error) throw error;
   }
   else await writeLocalTextDraft(SITE_CONTACT_TEXT_KEY, data);
+  revalidatePath("/", "layout");
+  revalidatePath("/admin/");
+}
+
+export async function saveGoogleReviewsUrl(formData: FormData) {
+  const supabase = await requireAdmin();
+  const url = validateGoogleReviewsUrl(value(formData, "url"));
+  if (sharedTextEditorEnabled()) {
+    const { error } = await supabase.rpc("publish_single_site_text", { text_key_value: GOOGLE_REVIEWS_URL_KEY, content_value: url });
+    if (error) throw error;
+  } else await writeLocalTextDraft(GOOGLE_REVIEWS_URL_KEY, url);
   revalidatePath("/", "layout");
   revalidatePath("/admin/");
 }

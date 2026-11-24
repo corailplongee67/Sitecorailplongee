@@ -7,7 +7,6 @@ import { BookingCta } from "./BookingCta";
 import { Footer, PartnerStrip } from "./Footer";
 import { Header } from "./Header";
 import { PreviewDisabledButton, PreviewText } from "./PreviewText";
-import { GoogleReviewsLink } from "./GoogleReviewsLink";
 
 type BookingLinks = Record<BookingKey, string>;
 
@@ -266,14 +265,6 @@ export function FrenchHomePage({
           </div>
         </section>
         <PartnerStrip />
-        <section className="home-reviews section-shell">
-          <div className="shell home-reviews-inner">
-            <p className="eyebrow"><PreviewText id="home.reviews.eyebrow">Votre expérience compte</PreviewText></p>
-            <h2><PreviewText id="home.reviews.title">Vos avis sur Google</PreviewText></h2>
-            <p><PreviewText id="home.reviews.description">Découvrez les avis de nos plongeurs et partagez votre expérience avec Corail Plongée.</PreviewText></p>
-            <GoogleReviewsLink />
-          </div>
-        </section>
       </main>
       <Footer locale="fr" />
     </>

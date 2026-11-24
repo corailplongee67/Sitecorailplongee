@@ -77,11 +77,11 @@ export function AdminTeam({ initial, images }: { initial: TeamMember[]; images: 
         <button type="button" disabled={busy} onClick={() => setCrop({ id: member.id, url: images[member.image] ?? member.image, zoom: 1, x: 50, y: 50 })}>Recadrer</button>
         <button type="button" disabled={busy || index === 0} onClick={() => move(index, -1)}>Monter</button>
         <button type="button" disabled={busy || index === members.length - 1} onClick={() => move(index, 1)}>Descendre</button>
-        <button type="button" disabled={busy} onClick={() => setMembers((current) => current.filter((item) => item.id !== member.id))}>Retirer</button>
+        <button className="admin-team-remove" type="button" disabled={busy} onClick={() => setMembers((current) => current.filter((item) => item.id !== member.id))}>Retirer</button>
       </div>
     </div>)}
     <button type="button" disabled={busy || members.length >= 50} onClick={() => setMembers((current) => [...current, { id: crypto.randomUUID(), name: "Nouveau membre", role: "", image: "/images/about/original/centre.jpg" }])}>Ajouter un membre</button>{" "}
-    <button type="button" disabled={busy} onClick={() => void save()}>Enregistrer l’équipe</button>
+    <button className="admin-team-save" type="button" disabled={busy} onClick={() => void save()}>Enregistrer l’équipe</button>
     {message && <p role="status">{message}</p>}
     {crop && <div className="preview-editor-backdrop"><div className="preview-editor" role="dialog" aria-modal="true" aria-label="Recadrer la photo">
       <h3>Recadrer la photo</h3>

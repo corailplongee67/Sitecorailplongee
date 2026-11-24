@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 import { Suspense } from "react";
 import { draftMode } from "next/headers";
 import { BackgroundMusicPlayer } from "@/components/BackgroundMusicPlayer";
+import { FloatingGoogleReviews } from "@/components/FloatingGoogleReviews";
 import { SiteImageProvider } from "@/components/SiteImage";
 import { PreviewModeButton, PreviewTextProvider } from "@/components/PreviewText";
 import { closeSitePreview } from "@/app/admin/actions";
@@ -113,6 +114,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             </div>
           ) : null}
           {children}
+          <Suspense fallback={null}><FloatingGoogleReviews /></Suspense>
         </PreviewTextProvider></SiteImageProvider>
         {siteAudio ? (
           <Suspense fallback={null}>

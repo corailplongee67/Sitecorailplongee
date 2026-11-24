@@ -68,8 +68,11 @@ export const viewport: Viewport = {
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const [siteImages, siteAudio] = await Promise.all([getSiteImages(), getSiteAudioSettings()]);
-  const draft = await draftMode();
+  const sharedEditor = sharedTextEditorEnabled();
+  const [siteImages, siteAudio, draft, publishedText] = await Promise.all([
+    getSiteImages(), getSiteAudioSettings(), draftMode(),
+    sharedEditor ? readSharedText(true) : Promise.resolve({} as Record<string, string>),
+  ]);
   let showPreview = false;
   if (draft.isEnabled && hasSupabaseEnv()) {
     const supabase = await createClient();
@@ -77,12 +80,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     const role = (data?.claims?.app_metadata as { role?: string } | undefined)?.role;
     showPreview = Boolean(data?.claims?.sub && role === "admin");
   }
-  const sharedEditor = sharedTextEditorEnabled();
   const canEdit = showPreview && (process.env.NODE_ENV === "development" || sharedEditor);
-  const [publishedText, drafts] = await Promise.all([
-    sharedEditor ? readSharedText(true) : Promise.resolve({} as Record<string, string>),
-    canEdit && !sharedEditor ? readLocalTextDrafts() : Promise.resolve({} as Record<string, string>),
-  ]);
+  const drafts = canEdit && !sharedEditor ? await readLocalTextDrafts() : {} as Record<string, string>;
   const previewRevision = canEdit ? createHash("sha256").update(JSON.stringify([Object.entries(drafts).sort(([a], [b]) => a.localeCompare(b)), Object.entries(publishedText).sort(([a], [b]) => a.localeCompare(b))])).digest("hex") : "public";
   const publishedContact = resolveSiteContact(publishedText[SITE_CONTACT_TEXT_KEY]);
   const publicBusiness = {

@@ -221,7 +221,6 @@ p { line-height: 1.68; }
   isolation: isolate;
 }
 
-.home-origin-hero::before,
 .hero::before {
   content: "";
   position: absolute;
@@ -238,7 +237,6 @@ p { line-height: 1.68; }
   animation: v2-rays 7s ease-in-out infinite alternate;
 }
 
-.home-origin-hero::after,
 .hero::after {
   content: "";
   position: absolute;

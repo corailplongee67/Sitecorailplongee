@@ -115,7 +115,7 @@ export function FrenchHomePage({
           {events.length ? (
             <div className="shell home-origin-event-grid">
               {events.slice(0, 3).map((event) => (
-                <Link className="home-origin-event-card" href="/evenements/" key={event.id}>
+                <Link className="home-origin-event-card" href={`/evenements/?evenement=${encodeURIComponent(event.id)}`} key={event.id}>
                   <div className="home-origin-event-image">
                     <Image
                       src={eventImage(event, storageBase)}

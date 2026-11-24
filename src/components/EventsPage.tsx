@@ -5,10 +5,11 @@ import { Header } from "./Header";
 import type { PublicEvent } from "@/lib/events-data";
 import type { BookingKey, Locale } from "@/lib/site-data";
 
-export function EventsPage({ locale, events, bookingLinks }: {
+export function EventsPage({ locale, events, bookingLinks, initialEventId }: {
   locale: Locale;
   events: PublicEvent[];
   bookingLinks: Record<BookingKey, string>;
+  initialEventId?: string;
 }) {
   const fr = locale === "fr";
   const storageBase = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -28,7 +29,7 @@ export function EventsPage({ locale, events, bookingLinks }: {
             <p>{fr ? "Plongées à thème, sorties spéciales et rendez-vous de la semaine, réunis dans un programme clair." : "Themed dives, special trips and this week’s rendezvous, all gathered in one clear programme."}</p>
           </div>
         </section>
-        <EventExplorer events={events} locale={locale} bookingLinks={bookingLinks} storageBase={storageBase} referenceDate={new Date().toISOString()} />
+        <EventExplorer events={events} locale={locale} bookingLinks={bookingLinks} storageBase={storageBase} referenceDate={new Date().toISOString()} initialEventId={initialEventId} />
       </main>
       <Footer locale={locale} />
     </>

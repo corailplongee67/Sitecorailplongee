@@ -8,7 +8,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/evenements/", languages: { fr: "/evenements/", en: "/en/our-events/" } },
 };
 
-export default async function EventsPageFr() {
-  const [bookingLinks, events] = await Promise.all([getBookingLinks(), getEventsCatalog()]);
-  return <EventsPage locale="fr" events={events} bookingLinks={bookingLinks} />;
+export default async function EventsPageFr({ searchParams }: { searchParams: Promise<{ evenement?: string | string[] }> }) {
+  const [bookingLinks, events, params] = await Promise.all([getBookingLinks(), getEventsCatalog(), searchParams]);
+  const initialEventId = typeof params.evenement === "string" ? params.evenement : undefined;
+  return <EventsPage locale="fr" events={events} bookingLinks={bookingLinks} initialEventId={initialEventId} />;
 }

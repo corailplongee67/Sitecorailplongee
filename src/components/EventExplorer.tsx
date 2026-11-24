@@ -152,19 +152,20 @@ function EventDialog({ event, locale, storageBase, bookingLinks, onClose }: {
   );
 }
 
-export function EventExplorer({ events, locale, bookingLinks, storageBase, referenceDate }: {
+export function EventExplorer({ events, locale, bookingLinks, storageBase, referenceDate, initialEventId }: {
   events: PublicEvent[];
   locale: Locale;
   bookingLinks: Record<BookingKey, string>;
   storageBase: string;
   referenceDate: string;
+  initialEventId?: string;
 }) {
   const labels = copy[locale];
   const [archivesOpen, setArchivesOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [year, setYear] = useState("all");
   const [visible, setVisible] = useState(9);
-  const [selected, setSelected] = useState<PublicEvent | null>(null);
+  const [selected, setSelected] = useState<PublicEvent | null>(() => events.find((event) => event.id === initialEventId) ?? null);
   const closeDialog = useCallback(() => setSelected(null), []);
 
   useEffect(() => {

@@ -1,0 +1,23 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
+import { createRequire, Module } from 'node:module';
+const require = createRequire(import.meta.url);
+const React = require('react');
+const { renderToStaticMarkup } = require('react-dom/server');
+const ts = require('typescript');
+test('an event selected from the home page opens its details immediately', async () => {
+  const filename = path.resolve('src/components/EventExplorer.tsx');
+  const source = await readFile(filename, 'utf8');
+  const mod = new Module(filename); mod.filename = filename; mod.paths = Module._nodeModulePaths(path.dirname(filename));
+  const original = mod.require.bind(mod);
+  mod.require = (id) => id === './SiteImage' ? { SiteImage: () => null } : original(id);
+  mod._compile(ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX } }).outputText, filename);
+  const event = { id: 'event-123', title_fr: 'Sortie test', excerpt_fr: '', description_fr: 'Détails de la sortie', location_fr: 'Saint-Gilles', starts_at: '2026-11-24T08:00:00Z', ends_at: null, image_paths: [], booking_link_key: 'agenda', title_color: '#fff', text_color: '#fff', card_color_start: '#000', card_color_end: '#111' };
+  const props = { events: [event], locale: 'fr', bookingLinks: { agenda: '#' }, storageBase: '', referenceDate: '2026-11-24T08:00:00Z', initialEventId: event.id };
+  const html = renderToStaticMarkup(React.createElement(mod.exports.EventExplorer, props));
+  assert.match(html, /role="dialog"/); assert.match(html, /Détails de la sortie/);
+  const plain = renderToStaticMarkup(React.createElement(mod.exports.EventExplorer, { ...props, initialEventId: 'missing' }));
+  assert.doesNotMatch(plain, /role="dialog"/);
+});

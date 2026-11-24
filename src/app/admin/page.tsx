@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { CalendarDays, CloudSun, ExternalLink, Images, Link2, LogOut, MapPin, Music2, Pencil, Plus, RotateCcw, Save, Tags, Trash2 } from "lucide-react";
 import { AdminBackgroundMusic } from "@/components/AdminBackgroundMusic";
 import { AdminTeam } from "@/components/AdminTeam";
+import { EventSubmitButton } from "@/components/EventSubmitButton";
 import { AdminImageCropper } from "@/components/AdminImageCropper";
 import { OptimizedEventImageInput } from "@/components/OptimizedEventImageInput";
 import { createClient, hasSupabaseEnv } from "@/lib/supabase/server";
@@ -45,23 +46,23 @@ function EventFields({ event, bookingKeys }: { event?: {
 }; bookingKeys: string[] }) {
   return (
     <>
-      <input type="hidden" name="id" value={event?.id ?? ""} />
+      <input type="hidden" name="id" value={event?.id ?? crypto.randomUUID()} />
       <input type="hidden" name="existing_image_paths" value={JSON.stringify(event?.image_paths ?? [])} />
+      <input type="hidden" name="title_en" value={event?.title_en ?? ""} />
+      <input type="hidden" name="slug_en" value={event?.slug_en ?? ""} />
+      <input type="hidden" name="excerpt_en" value={event?.excerpt_en ?? ""} />
+      <input type="hidden" name="description_en" value={event?.description_en ?? ""} />
+      <input type="hidden" name="location_en" value={event?.location_en ?? ""} />
       <div className="field-grid">
-        <label>Titre français<input name="title_fr" defaultValue={event?.title_fr} required /></label>
-        <label>Titre anglais<input name="title_en" defaultValue={event?.title_en} required /></label>
+        <label>Titre<input name="title_fr" defaultValue={event?.title_fr} required /></label>
         <label>Slug français<input name="slug_fr" defaultValue={event?.slug_fr} placeholder="créé automatiquement" /></label>
-        <label>Slug anglais<input name="slug_en" defaultValue={event?.slug_en ?? ""} placeholder="created automatically" /></label>
       </div>
       <div className="field-grid">
         <label>Résumé français<textarea name="excerpt_fr" defaultValue={event?.excerpt_fr} rows={3} placeholder="Texte court visible sur la carte" /></label>
-        <label>Résumé anglais<textarea name="excerpt_en" defaultValue={event?.excerpt_en} rows={3} placeholder="Short text shown on the card" /></label>
         <label>Description française<textarea name="description_fr" defaultValue={event?.description_fr} rows={4} /></label>
-        <label>Description anglaise<textarea name="description_en" defaultValue={event?.description_en} rows={4} /></label>
       </div>
       <div className="field-grid field-grid-3">
         <label>Lieu en français<input name="location_fr" defaultValue={event?.location_fr ?? "Saint-Gilles-les-Bains"} /></label>
-        <label>Lieu en anglais<input name="location_en" defaultValue={event?.location_en ?? "Saint-Gilles-les-Bains"} /></label>
         <label>Début<input type="datetime-local" name="starts_at" defaultValue={dateTimeInput(event?.starts_at ?? null)} required /></label>
         <label>Fin (facultatif)<input type="datetime-local" name="ends_at" defaultValue={dateTimeInput(event?.ends_at ?? null)} /></label>
         <label>Lien de réservation<select name="booking_link_key" defaultValue={event?.booking_link_key ?? "agenda"}>{bookingKeys.map((key) => <option key={key}>{key}</option>)}</select></label>
@@ -79,7 +80,7 @@ function EventFields({ event, bookingKeys }: { event?: {
         <label><span>Dégradé · fin</span><input type="color" name="card_color_end" defaultValue={event?.card_color_end ?? "#0b6078"} /></label>
       </div>
       <p className="field-help">Les horaires sont saisis selon le fuseau de La Réunion.</p>
-      <button className="button button-navy" type="submit"><Save size={16} /> Enregistrer</button>
+      <EventSubmitButton />
     </>
   );
 }
